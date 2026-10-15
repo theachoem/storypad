@@ -1,6 +1,7 @@
 import 'dart:io' as io;
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:storypad/core/objects/yearly_backup_files_object.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
@@ -366,7 +367,7 @@ class _FakeCloudService implements BackupCloudService {
   Future<List<CloudFileObject>> listFilesInFolder(String folderName) async => [];
 
   @override
-  Future<Map<int, CloudFileObject>> fetchYearlyBackups() async => {};
+  Future<YearlyBackupFilesObject> fetchYearlyBackups() async => const YearlyBackupFilesObject();
 
   @override
   Future<(String, int)?> getFileContent(CloudFileObject file) async => null;

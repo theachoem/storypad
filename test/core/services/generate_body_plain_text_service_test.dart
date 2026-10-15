@@ -18,7 +18,7 @@ void main() {
 
       test('returns GenerateBodyPlainTextResult with required fields', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: 'Test',
             body: json.decode('[{"insert":"Content\\n"}]'),
@@ -34,7 +34,7 @@ void main() {
     group('Single Page Processing', () {
       test('converts single page with simple text', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: 'Page 1',
             body: json.decode('[{"insert":"Hello World\\n"}]'),
@@ -47,7 +47,7 @@ void main() {
 
       test('handles single page with null body', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: 'Empty Page',
             body: null,
@@ -60,7 +60,7 @@ void main() {
 
       test('handles single page with empty body array', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: 'Page',
             body: json.decode('[]'),
@@ -73,7 +73,7 @@ void main() {
 
       test('handles single page with null title', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: null,
             body: json.decode('[{"insert":"Content\\n"}]'),
@@ -88,12 +88,12 @@ void main() {
     group('Multiple Pages Processing', () {
       test('combines multiple pages with titles', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: 'First',
             body: json.decode('[{"insert":"Content 1\\n"}]'),
           ),
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 2,
             title: 'Second',
             body: json.decode('[{"insert":"Content 2\\n"}]'),
@@ -106,17 +106,17 @@ void main() {
 
       test('handles multiple pages with some null titles', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: 'First',
             body: json.decode('[{"insert":"Content 1\\n"}]'),
           ),
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 2,
             title: null,
             body: json.decode('[{"insert":"Content 2\\n"}]'),
           ),
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 3,
             title: 'Third',
             body: json.decode('[{"insert":"Content 3\\n"}]'),
@@ -129,17 +129,17 @@ void main() {
 
       test('handles three or more pages', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: 'Chapter 1',
             body: json.decode('[{"insert":"First\\n"}]'),
           ),
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 2,
             title: 'Chapter 2',
             body: json.decode('[{"insert":"Second\\n"}]'),
           ),
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 3,
             title: 'Chapter 3',
             body: json.decode('[{"insert":"Third\\n"}]'),
@@ -158,7 +158,7 @@ void main() {
     group('Character Count (with Filtering)', () {
       test('counts only actual text, not markdown formatting', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: 'Test',
             body: json.decode('[{"insert":"**bold**","attributes":{"bold":true}},{"insert":"\\n"}]'),
@@ -172,7 +172,7 @@ void main() {
 
       test('does not count bullet markers', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: null,
             body: json.decode('[{"insert":"Item"},{"insert":"\\n","attributes":{"list":"bullet"}}]'),
@@ -186,7 +186,7 @@ void main() {
 
       test('does not count checkbox markers', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: null,
             body: json.decode('[{"insert":"Task"},{"insert":"\\n","attributes":{"list":"unchecked"}}]'),
@@ -200,7 +200,7 @@ void main() {
 
       test('does not count list numbering', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: null,
             body: json.decode('[{"insert":"First"},{"insert":"\\n","attributes":{"list":"ordered"}}]'),
@@ -214,7 +214,7 @@ void main() {
 
       test('includes title in character count', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: 'Title',
             body: json.decode('[{"insert":"Body\\n"}]'),
@@ -228,7 +228,7 @@ void main() {
 
       test('handles empty content correctly', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: null,
             body: json.decode('[{"insert":"\\n"}]'),
@@ -241,7 +241,7 @@ void main() {
 
       test('counts multi-line content correctly', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: null,
             body: json.decode('[{"insert":"Line 1\\nLine 2\\nLine 3\\n"}]'),
@@ -257,7 +257,7 @@ void main() {
     group('Word Count (with Filtering)', () {
       test('counts words correctly', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: 'My Title',
             body: json.decode('[{"insert":"Hello World\\n"}]'),
@@ -271,7 +271,7 @@ void main() {
 
       test('does not count bullet markers as words', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: null,
             body: json.decode('[{"insert":"Item one"},{"insert":"\\n","attributes":{"list":"bullet"}}]'),
@@ -285,7 +285,7 @@ void main() {
 
       test('does not count checkbox markers as words', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: null,
             body: json.decode('[{"insert":"Buy milk"},{"insert":"\\n","attributes":{"list":"unchecked"}}]'),
@@ -299,7 +299,7 @@ void main() {
 
       test('does not count markdown formatting as separate words', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: null,
             body: json.decode('[{"insert":"bold text","attributes":{"bold":true}},{"insert":"\\n"}]'),
@@ -313,7 +313,7 @@ void main() {
 
       test('counts words in multiple lines', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: null,
             body: json.decode('[{"insert":"First line\\nSecond line\\nThird line\\n"}]'),
@@ -327,7 +327,7 @@ void main() {
 
       test('handles empty content correctly', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: null,
             body: json.decode('[{"insert":"\\n"}]'),
@@ -340,7 +340,7 @@ void main() {
 
       test('handles only whitespace correctly', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: '   ',
             body: json.decode('[{"insert":"   \\n"}]'),
@@ -355,7 +355,7 @@ void main() {
     group('Complex Formatting Scenarios', () {
       test('handles pages with mixed formatting', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: 'Story',
             body: json.decode('''
@@ -382,7 +382,7 @@ void main() {
 
       test('handles pages with links and images', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: null,
             body: json.decode(
@@ -399,7 +399,7 @@ void main() {
 
       test('handles pages with blockquotes', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: null,
             body: json.decode('[{"insert":"Quoted text"},{"insert":"\\n","attributes":{"blockquote":true}}]'),
@@ -414,7 +414,7 @@ void main() {
 
       test('handles pages with code blocks', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: null,
             body: json.decode('[{"insert":"const x = 5;"},{"insert":"\\n","attributes":{"code-block":true}}]'),
@@ -431,12 +431,12 @@ void main() {
     group('Multiple Pages with Counts', () {
       test('calculates counts for each page separately', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: 'Short',
             body: json.decode('[{"insert":"Hi\\n"}]'),
           ),
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 2,
             title: 'Longer Title',
             body: json.decode('[{"insert":"This is a much longer sentence.\\n"}]'),
@@ -454,9 +454,9 @@ void main() {
 
       test('returns same number of pages with counts', () {
         final pages = [
-          StoryPageDbModel(id: 1, title: 'P1', body: json.decode('[{"insert":"A\\n"}]')),
-          StoryPageDbModel(id: 2, title: 'P2', body: json.decode('[{"insert":"B\\n"}]')),
-          StoryPageDbModel(id: 3, title: 'P3', body: json.decode('[{"insert":"C\\n"}]')),
+          StoryPageDbModel.legacy(id: 1, title: 'P1', body: json.decode('[{"insert":"A\\n"}]')),
+          StoryPageDbModel.legacy(id: 2, title: 'P2', body: json.decode('[{"insert":"B\\n"}]')),
+          StoryPageDbModel.legacy(id: 3, title: 'P3', body: json.decode('[{"insert":"C\\n"}]')),
         ];
         final result = GenerateBodyPlainTextService.call(pages);
         expect(result!.richPagesWithCounts.length, 3);
@@ -464,7 +464,7 @@ void main() {
 
       test('preserves page IDs and titles', () {
         final pages = [
-          StoryPageDbModel(id: 42, title: 'Important', body: json.decode('[{"insert":"Text\\n"}]')),
+          StoryPageDbModel.legacy(id: 42, title: 'Important', body: json.decode('[{"insert":"Text\\n"}]')),
         ];
         final result = GenerateBodyPlainTextService.call(pages);
         final page = result!.richPagesWithCounts.first;
@@ -476,7 +476,7 @@ void main() {
     group('Edge Cases', () {
       test('handles page with only markdown formatting', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: null,
             body: json.decode('[{"insert":"---\\n"}]'),
@@ -491,7 +491,7 @@ void main() {
 
       test('handles page with special characters', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: null,
             body: json.decode('[{"insert":"@#\$%^&*()\\n"}]'),
@@ -504,7 +504,7 @@ void main() {
 
       test('handles page with unicode characters', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: null,
             body: json.decode('[{"insert":"你好世界\\n"}]'),
@@ -518,7 +518,7 @@ void main() {
 
       test('handles page with emojis', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: null,
             body: json.decode('[{"insert":"Hello 😊 World\\n"}]'),
@@ -534,7 +534,7 @@ void main() {
     group('Integration - Filters Applied Correctly', () {
       test('user sees only content they wrote, not structure', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: 'My List',
             body: json.decode('''
@@ -562,7 +562,7 @@ void main() {
 
       test('formatted story counts accurately', () {
         final pages = [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: 1,
             title: 'Chapter One',
             body: json.decode('''

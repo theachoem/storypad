@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/locale_constants.dart';
-import 'package:storypad/core/rich_text/rich_text.dart';
 import 'package:storypad/core/services/windowed_detector_service.dart';
 import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/core/types/time_format_option.dart';
@@ -51,6 +51,8 @@ class App extends StatelessWidget {
           return MediaQuery(
             data: mediaQuery.copyWith(
               padding: mediaQuery.padding.copyWith(top: mediaQuery.padding.top + topMainMenuPadding),
+              viewPadding: mediaQuery.viewPadding.copyWith(top: mediaQuery.viewPadding.top + topMainMenuPadding),
+              viewInsets: _nonNegative(mediaQuery.viewInsets),
               textScaler: textScaler,
               alwaysUse24HourFormat:
                   context.read<DevicePreferencesProvider>().timeFormatOf(context) == TimeFormatOption.h24,
@@ -66,7 +68,6 @@ class App extends StatelessWidget {
                 DefaultCupertinoLocalizations.delegate,
                 DefaultMaterialLocalizations.delegate,
                 DefaultWidgetsLocalizations.delegate,
-                ...editorAdapter.localizationsDelegates,
               ],
               supportedLocales: context.supportedLocales,
               locale: context.locale,
@@ -74,6 +75,18 @@ class App extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+
+  /// iOS can report a keyboard inset below zero while the keyboard animates (its spring curve) or in iPad multitasking,
+  /// and `CupertinoAlertDialog` asserts its padding (the inset plus its own) isn't negative.
+  static EdgeInsets _nonNegative(EdgeInsets insets) {
+    if (insets.isNonNegative) return insets;
+    return EdgeInsets.fromLTRB(
+      math.max(0, insets.left),
+      math.max(0, insets.top),
+      math.max(0, insets.right),
+      math.max(0, insets.bottom),
     );
   }
 }

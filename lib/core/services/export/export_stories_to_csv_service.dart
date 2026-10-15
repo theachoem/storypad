@@ -79,10 +79,10 @@ class ExportStoriesToCsvService {
 
     final texts = <String>[];
     for (final page in content.richPages!) {
-      if (page.body == null) continue;
+      if (page.quillBody.isEmpty) continue;
 
       final plainText = QuillDeltaToPlainTextService.call(
-        page.body!,
+        page.quillBody,
         markdown: false,
         includeMarkdownEmbeds: true,
       ).trim();

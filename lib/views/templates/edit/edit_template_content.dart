@@ -34,6 +34,7 @@ class _EditTemplateContent extends StatelessWidget {
           ),
         ),
         leading: const CloseButton(),
+        flexibleSpace: const StoryAppBarUnfocusArea(),
         actions: [
           const SizedBox(width: 8.0),
           IconButton(
@@ -57,8 +58,6 @@ class _EditTemplateContent extends StatelessWidget {
         managingPage: viewModel.pagesManager.managingPage,
         pages: pages,
         backgroundColor: ColorScheme.of(context).readOnly.surface1,
-        preferences: viewModel.template.preferences,
-        onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
       ),
     );
   }
@@ -75,18 +74,16 @@ class _EditTemplateContent extends StatelessWidget {
       storyContent: viewModel.draftContent!,
       headerBuilder: (_) => buildPageHeader(context),
       padding: EdgeInsets.only(
-        left: MediaQuery.of(context).padding.left,
-        right: MediaQuery.of(context).padding.right,
-        bottom: MediaQuery.of(context).padding.bottom + 12,
+        left: MediaQuery.viewPaddingOf(context).left,
+        right: MediaQuery.viewPaddingOf(context).right,
       ),
+      bottomSpacing: 12,
       pageScrollController: viewModel.pagesManager.pageScrollController,
-      viewInsets: MediaQuery.viewInsetsOf(context),
-      onPageChanged: (newRichPage) => viewModel.onPageChanged(newRichPage),
+      onPageChanged: viewModel.onPageChanged,
       actions: StoryPageBuilderAction(
         onAddPage: () => viewModel.addNewPage(),
         onSwapPages: (oldIndex, newIndex) => viewModel.swapPages(oldIndex: oldIndex, newIndex: newIndex),
         onDelete: (page) => viewModel.deleteAPage(context, page.page),
-        onFocusChange: (pageIndex, page, titleFocused, bodyFocused) {},
         canDeletePage: viewModel.pagesManager.canDeletePage,
       ),
     );

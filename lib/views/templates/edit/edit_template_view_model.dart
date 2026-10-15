@@ -11,6 +11,7 @@ import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/mixins/list_reorderable.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
 import 'package:storypad/core/services/generate_body_plain_text_service.dart';
+import 'package:storypad/core/services/stories/story_convert_legacy_pages_service.dart';
 import 'package:storypad/core/services/stories/story_has_data_written_service.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
@@ -24,6 +25,12 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   EditTemplateViewModel({
     required this.params,
   }) {
+    pagesManager = StoryPagesManagerInfo(
+      initialPageIndex: 0,
+      initialScrollOffset: 0.0,
+      draftContent: () => draftContent,
+      notifyListeners: notifyListeners,
+    );
     template = params.initialTemplate ?? TemplateDbModel.newTemplate(createdAt: openedOn);
     latestContent = template.content ?? StoryContentDbModel.create(createdAt: openedOn);
     draftContent = template.content ?? StoryContentDbModel.create(createdAt: openedOn);
@@ -31,18 +38,22 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     bool alreadyHasPage = draftContent!.richPages?.isNotEmpty == true;
     if (!alreadyHasPage) draftContent = draftContent!.addRichPage();
 
-    pagesManager = StoryPagesManagerInfo(
-      initialPageIndex: 0,
-      initialScrollOffset: 0.0,
-      draftContent: () => draftContent,
-      notifyListeners: notifyListeners,
-    );
-
     load();
   }
 
   late TemplateDbModel template;
-  StoryContentDbModel? draftContent;
+
+  StoryContentDbModel? _draftContent;
+
+  /// The template's content as edited, its pages' latest edits included (read from their editors on first read after
+  /// an edit, not on every keystroke).
+  StoryContentDbModel? get draftContent {
+    final content = _draftContent;
+    if (content == null) return null;
+    return _draftContent = pagesManager.pagesMap.withPendingEdits(content);
+  }
+
+  set draftContent(StoryContentDbModel? value) => _draftContent = value;
   StoryContentDbModel? latestContent;
 
   final ValueNotifier<DateTime?> lastSavedAtNotifier = ValueNotifier(null);
@@ -52,6 +63,13 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   EditingFlowType get flowType => params.flowType;
 
   Future<void> load() async {
+    if (params.initialTemplate != null && template.content?.hasLegacyPages == true) {
+      template = await StoryConvertLegacyPagesService.template(template);
+      latestContent = template.content;
+      draftContent = template.content;
+      if (draftContent!.richPages?.isNotEmpty != true) draftContent = draftContent!.addRichPage();
+    }
+
     pagesManager.pagesMap = await StoryPageObjectsMap.fromContent(
       content: draftContent!,
       readOnly: false,
@@ -152,10 +170,8 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
     });
   }
 
-  Future<void> onPageChanged(StoryPageDbModel richPage) async {
-    draftContent = draftContent!.replacePage(richPage);
-    pagesManager.pagesMap[richPage.id]?.page = richPage;
-
+  /// A page's editor changed (marked on its page, see [StoryPageObject.markEdited]): saved once edits pause.
+  Future<void> onPageChanged() async {
     return debouncedCallback(() async {
       if (hasChange) {
         template = template.copyWith(content: draftContent, updatedAt: DateTime.now());
@@ -195,6 +211,10 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   }
 
   Future<void> done(BuildContext context) async {
+    // With every edit, including any still waiting for [onPageChanged]'s debounce. (Its timer is left running: it's
+    // shared with [onNameChanged], whose pending rename still has to land; a page save after this finds no change.)
+    if (hasChange) template = template.copyWith(content: draftContent, updatedAt: DateTime.now());
+
     // Re-save without check to make sure draft content is removed. We will revert back if no change anyway.
     await TemplateDbModel.db.set(template);
     lastSavedAtNotifier.value = template.updatedAt;
@@ -217,6 +237,11 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
 
   @override
   void dispose() {
+    // Closed with an edit still waiting to be saved: save it while the pages can still be read. (The timer runs on, as
+    // in [done].)
+    if (hasPendingCallback()) {
+      if (hasChange) TemplateDbModel.db.set(template.copyWith(content: draftContent, updatedAt: DateTime.now()));
+    }
     pagesManager.dispose();
     pageController.dispose();
     super.dispose();
@@ -225,6 +250,15 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   Future<void> onPopInvokedWithResult(bool didPop, Object? _, BuildContext context) async {
     if (pagesManager.managingPage) return pagesManager.toggleManagingPage();
     if (didPop) return;
+
+    // Edits not saved yet (from the last moment, or from a toolbar while their page was off screen) count as saved
+    // changes: asked about like any other.
+    if (hasChange) {
+      template = template.copyWith(content: draftContent, updatedAt: DateTime.now());
+      lastSavedAtNotifier.value = DateTime.now();
+      await TemplateDbModel.db.set(template);
+    }
+    if (!context.mounted) return;
 
     Future<OkCancelResult> showDiscardConfirmation(BuildContext context) async {
       return showOkCancelAlertDialog(

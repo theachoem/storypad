@@ -1,0 +1,67 @@
+name: storypad_editor
+description: >-
+  A controller-centric rich text editor built on super_editor, developed for
+  StoryPad: Markdown in/out, Quill Delta import, and app-supplied embeds.
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ^3.11.0
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Regular (not dev) dependency: lib/testing.dart ships a conformance kit
+  # (embed round-trip expectations, pumpStoryEditor) for consumers' own tests.
+  flutter_test:
+    sdk: flutter
+
+  # Pinned to a specific commit, not a version tag -- super_editor hasn't cut
+  # a stable release yet (0.3.0-dev.52). The vendored clone at
+  # super_editor_experiment/super_editor/ is this exact commit, used for
+  # source-diving; keep the two in sync when bumping.
+  super_editor:
+    git:
+      url: https://github.com/Flutter-Bounty-Hunters/super_editor.git
+      ref: ad86b14448c01f90b79f2e6c615bd21ea6cb26a0
+      path: super_editor
+
+  # Quill Delta is read (import) and written (export, while stories are still
+  # stored as Quill) through dart_quill_delta's Delta/Operation types.
+  #
+  # super_editor constrains this to ^9.4.1 (<10.0.0). Widened here, not
+  # narrowed to match, so a future consumer needing 10.x (e.g. StoryPad's
+  # app, which pins 10.8.3) isn't blocked by this package alone -- actually
+  # landing on a 10.x resolution still requires super_editor's own
+  # constraint to widen, or a dependency_override at the consumer.
+  dart_quill_delta: ">=9.4.1 <11.0.0"
+
+  # Opens tapped links when the app doesn't handle them (RawEditor.onTapLink);
+  # super_editor's own launcher isn't public. Same constraint as super_editor's.
+  url_launcher: ^6.3.1
+
+  follow_the_leader: ^0.5.3
+
+  # Markdown is the only format this package writes. package:html parses the
+  # block-level embed tags (<img>, <sp-album>, ...) that package:markdown would
+  # otherwise swallow as opaque text.
+  markdown: ^7.3.1
+  html: ^0.15.5
+  meta: ^1.16.0
+  collection: ^1.19.0
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+
+# A plugin on macOS only: the native right-click menu (macos/). Everywhere else the package is pure Dart.
+flutter:
+  plugin:
+    platforms:
+      # The "Process Text" apps for the selection menus, as a native TextView queries them.
+      android:
+        package: com.tc.storypad_editor
+        pluginClass: StorypadEditorPlugin
+      macos:
+        pluginClass: StorypadEditorPlugin

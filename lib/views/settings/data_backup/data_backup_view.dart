@@ -29,6 +29,7 @@ class DataBackupView extends StatelessWidget {
         children: [
           SpSectionTitle(title: tr("general.cloud_backup")),
           ..._buildCloudServiceTiles(context),
+          ?_buildOlderAppDevicesNotice(context),
           MediaSyncTile.globalTheme(),
           const Divider(),
           SpSectionTitle(title: tr("general.local_backup")),
@@ -52,6 +53,19 @@ class DataBackupView extends StatelessWidget {
           AssetCompressionTile.globalTheme(),
         ],
       ),
+    );
+  }
+
+  /// Another device still runs a StoryPad from before Markdown pages: its new stories can't reach this device (nor
+  /// this device's reach it) until it's updated.
+  Widget? _buildOlderAppDevicesNotice(BuildContext context) {
+    final deviceModels = context.watch<BackupProvider>().olderAppDeviceModels;
+    if (deviceModels.isEmpty) return null;
+
+    return ListTile(
+      leading: Icon(SpIcons.warning, color: ColorScheme.of(context).error),
+      title: Text(tr('general.older_app_devices.title')),
+      subtitle: Text(tr('general.older_app_devices.message', args: [deviceModels.join(', ')])),
     );
   }
 

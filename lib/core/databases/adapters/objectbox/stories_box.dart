@@ -489,18 +489,21 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     return storyFeelingByMonth;
   }
 
+  /// Saves [record]. [retagAssets]: whether to recompute its assets' tags -- off for a save that can't change them
+  /// (e.g. converting a story's format), since retagging updates each asset, which is a change to sync.
   @override
   Future<StoryDbModel?> set(
     StoryDbModel record, {
     bool runCallbacks = true,
     String? debugSource,
+    bool retagAssets = true,
   }) async {
     StoryDbModel? saved = await super.set(record, runCallbacks: runCallbacks, debugSource: debugSource);
 
     // Only rebuild asset tags when story is published (not draft).
     // Draft stories auto-save frequently, so we skip this expensive operation.
     // Tag computation happens once when user click "Done".
-    if (saved != null && !saved.draftStory && saved.assets?.isNotEmpty == true) {
+    if (retagAssets && saved != null && !saved.draftStory && saved.assets?.isNotEmpty == true) {
       List<AssetDbModel> assets = await AssetDbModel.db
           .where(filters: {'ids': saved.assets})
           .then((e) => e?.items ?? []);

@@ -8,6 +8,7 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/objects/default_story_preferences_object.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
+import 'package:storypad/core/services/stories/story_convert_legacy_pages_service.dart';
 import 'package:storypad/core/services/stories/story_should_revert_change_service.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
@@ -50,9 +51,12 @@ class EditStoryViewModel extends BaseStoryViewModel {
     story = this.initialStory = initialStory;
 
     if (params.id != null) story = this.initialStory = initialStory ?? await StoryDbModel.db.find(params.id!);
-    if (story?.draftContent != null) lastSavedAtNotifier.value = story?.updatedAt;
 
+    // Set before any further await: the view (e.g. the Done button) reads it on the next frame.
     flowType = story == null ? EditingFlowType.create : EditingFlowType.update;
+
+    if (story != null) story = this.initialStory = await StoryConvertLegacyPagesService.call(story);
+    if (story?.draftContent != null) lastSavedAtNotifier.value = story?.updatedAt;
     story ??= StoryDbModel.fromDate(
       openedOn,
       initialYear: params.initialYear,
@@ -74,23 +78,20 @@ class EditStoryViewModel extends BaseStoryViewModel {
       initialPagesMap: initialPagesMap,
     );
 
-    // Copy with richPages from pagesManager instead, since DB-loaded pages have null plainText.
-    // plainText is needed when saving back to draft content for homepage display & search.
-    draftContent = content.copyWith(
-      richPages: content.richPages?.map((e) => pagesManager.pagesMap[e.id]?.page ?? e).toList(),
-    );
+    // The pages as the editors hold them (their counts computed), and the title worked out from them: a content built
+    // elsewhere may lack it (e.g. a story made from a template before titles were set there).
+    final pages = [
+      for (final page in content.richPages ?? <StoryPageDbModel>[]) pagesManager.pagesMap[page.id]?.page ?? page,
+    ];
+    draftContent = content.copyWith(title: pages.firstOrNull?.title, richPages: pages);
 
     if (params.initialAsset?.relativeLocalFilePath != null) {
       final asset = params.initialAsset!;
-      final index = pagesManager.pagesMap.first.bodyController.selection.baseOffset;
-      final length = pagesManager.pagesMap.first.bodyController.selection.extentOffset - index;
-      final embedKey = asset.type == AssetType.audio ? 'audio' : 'media';
-      pagesManager.pagesMap.first.bodyController.replaceText(
-        index,
-        length,
-        {embedKey: asset.relativeLocalFilePath},
-        null,
-      );
+      final controller = pagesManager.pagesMap.first.bodyController;
+      // At the caret: the page's start for a new story.
+      controller.selection = TextSelection.collapsed(offset: controller.selection.baseOffset);
+      final path = asset.relativeLocalFilePath;
+      asset.type == AssetType.audio ? controller.insertAudio(path) : controller.insertMedia([path]);
     }
 
     notifyListeners();
@@ -101,6 +102,8 @@ class EditStoryViewModel extends BaseStoryViewModel {
   }
 
   Future<void> done(BuildContext context) async {
+    // Saved right here, with every edit -- a debounced save still pending would only repeat it.
+    cancelTimer(null);
     // Re-save without check to make sure draft content is removed. We will revert back if no change anyway.
     await _saveWithoutCheck();
     await _revertIfNoChange();
@@ -140,13 +143,6 @@ class EditStoryViewModel extends BaseStoryViewModel {
 
       for (StoryPageDbModel richPage in draftContent!.richPages!) {
         final page = pagesManager.pagesMap[richPage.id];
-
-        // only focus when it is a selection (no tap)
-        if (page != null &&
-            (page.titleController.selection.baseOffset != page.titleController.selection.extentOffset)) {
-          page.titleFocusNode.requestFocus();
-          requested = true;
-        }
 
         // only focus when it is a selection (no tap)
         if (page != null && (page.bodyController.selection.baseOffset != page.bodyController.selection.extentOffset)) {
@@ -189,6 +185,10 @@ class EditStoryViewModel extends BaseStoryViewModel {
   Future<void> onPopInvokedWithResult(bool didPop, Object? _, BuildContext context) async {
     if (pagesManager.managingPage) return pagesManager.toggleManagingPage();
     if (didPop) return;
+
+    // Edits from the last moment count as saved changes: asked about like any other.
+    await flushPendingSave(debugSource: '$runtimeType#onPopInvokedWithResult');
+    if (!context.mounted) return;
 
     Future<OkCancelResult> showDiscardConfirmation(BuildContext context) async {
       return showOkCancelAlertDialog(

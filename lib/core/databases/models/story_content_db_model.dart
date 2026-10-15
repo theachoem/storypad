@@ -40,7 +40,8 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
   final DateTime createdAt;
 
   @override
-  List<String>? get includeCompareKeys => ['title', 'rich_pages'];
+  // The title is worked out from the pages (see [withPages]), so comparing the pages covers it.
+  List<String>? get includeCompareKeys => ['rich_pages'];
 
   @override
   List<String> get excludeCompareKeys {
@@ -81,58 +82,68 @@ class StoryContentDbModel extends BaseDbModel with Comparable {
     required int oldIndex,
     required int newIndex,
   }) {
-    List<StoryPageDbModel> newRichPages = [
-      ...richPages ?? <StoryPageDbModel>[],
-    ].reorder(oldIndex: oldIndex, newIndex: newIndex);
-
-    final plainTextResult = GenerateBodyPlainTextService.call(newRichPages);
-
-    return copyWith(
-      title: newRichPages.first.title,
-      plainText: plainTextResult?.plainText,
-      richPages: plainTextResult?.richPagesWithCounts,
-    );
+    return withPages([...richPages ?? <StoryPageDbModel>[]].reorder(oldIndex: oldIndex, newIndex: newIndex));
   }
 
   StoryContentDbModel addRichPage() {
     return copyWith(
       richPages: [
         ...richPages ?? [],
-        StoryPageDbModel(
-          id: DateTime.now().millisecondsSinceEpoch,
-          title: null,
-          body: null,
-        ),
+        StoryPageDbModel.create(id: DateTime.now().millisecondsSinceEpoch),
       ],
     );
   }
 
   StoryContentDbModel removeRichPage(int pageId) {
-    List<StoryPageDbModel> newRichPages = [
-      ...richPages ?? [],
-    ]..removeWhere((e) => e.id == pageId);
-
-    final plainTextResult = GenerateBodyPlainTextService.call(newRichPages);
-
-    return copyWith(
-      title: richPages?.first.title,
-      plainText: plainTextResult?.plainText,
-      richPages: plainTextResult?.richPagesWithCounts,
-    );
+    return withPages([...richPages ?? <StoryPageDbModel>[]]..removeWhere((e) => e.id == pageId));
   }
 
   StoryContentDbModel replacePage(StoryPageDbModel newPage) {
     List<StoryPageDbModel> richPages = [...this.richPages ?? []];
     int index = richPages.indexWhere((e) => e.id == newPage.id);
     richPages[index] = newPage;
+    return withPages(richPages);
+  }
 
-    final plainTextResult = GenerateBodyPlainTextService.call(richPages);
-
+  /// This content holding [pages], with what's worked out from them recomputed: the [title] (the first page's), the
+  /// [plainText] and the pages' counts. Build contents with it (e.g. from a template), so these are never missing.
+  StoryContentDbModel withPages(List<StoryPageDbModel> pages) {
+    final plainTextResult = GenerateBodyPlainTextService.call(pages);
     return copyWith(
-      title: index == 0 ? newPage.title : title,
+      title: pages.firstOrNull?.title,
       plainText: plainTextResult?.plainText,
-      richPages: plainTextResult?.richPagesWithCounts,
+      richPages: plainTextResult?.richPagesWithCounts ?? pages,
     );
+  }
+
+  /// Whether a page is stored in a format this app version doesn't know (from a newer version): the story is shown
+  /// read-only and never saved.
+  bool get hasUnsupportedPages => richPages?.any((page) => page.isUnsupported) == true;
+
+  /// Whether a page is still stored in the legacy shape (a separate title and a Quill body).
+  bool get hasLegacyPages => richPages?.any((page) => page.isLegacy) == true;
+
+  /// This content with its legacy pages converted to Markdown ([StoryPageDbModel.toMarkdownPage]), title and plain
+  /// text recomputed -- or `null` when there's nothing to convert, or when any page wouldn't convert losslessly (see
+  /// [StoryPageDbModel.checkConversion]); the content then stays as stored, and the failure is logged.
+  StoryContentDbModel? convertLegacyPages() {
+    final pages = richPages;
+    if (pages == null || !hasLegacyPages || hasUnsupportedPages) return null;
+
+    for (final page in pages) {
+      if (!page.isLegacy) continue;
+      final check = page.checkConversion();
+      if (!check.isLossless) {
+        AppLogger.error(
+          'StoryContentDbModel#convertLegacyPages: page $id/${page.id} kept as Quill: $check '
+          '${check.losses.map((loss) => '${loss.kind.name}:${loss.key}').toSet()}',
+          tag: 'StoryContentDbModel',
+        );
+        return null;
+      }
+    }
+
+    return withPages([for (final page in pages) page.toMarkdownPage()]);
   }
 
   String? displayShortBody({int maxCharacterCount = 200}) {

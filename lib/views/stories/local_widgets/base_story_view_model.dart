@@ -28,7 +28,18 @@ part 'story_pages_manager_info.dart';
 
 abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedCallback {
   StoryDbModel? story;
-  StoryContentDbModel? draftContent;
+
+  StoryContentDbModel? _draftContent;
+
+  /// The story's content as edited, its pages' latest edits included (read from their editors on first read after an
+  /// edit, not on every keystroke).
+  StoryContentDbModel? get draftContent {
+    final content = _draftContent;
+    if (content == null) return null;
+    return _draftContent = pagesManager.pagesMap.withPendingEdits(content);
+  }
+
+  set draftContent(StoryContentDbModel? value) => _draftContent = value;
 
   bool get canShare => story != null && draftContent != null;
   final DateTime openedOn = DateTime.now();
@@ -302,9 +313,11 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
 
     if (result == OkCancelResult.ok) {
       draftContent = draftContent!.removeRichPage(richPage.id);
+      // Rebuild before awaiting anything: removing the page disposes its editor after the next frame, which must
+      // already be the frame without that page (see SpEditorController.dispose).
       pagesManager.pagesMap.remove(richPage.id);
-      await saveDraft(debugSource: '$runtimeType#deleteAPage');
       notifyListeners();
+      await saveDraft(debugSource: '$runtimeType#deleteAPage');
 
       AnalyticsService.instance.logDeleteStoryPage(
         story: story!,
@@ -334,13 +347,18 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     }
   }
 
-  Future<void> onPageChanged(StoryPageDbModel richPage) async {
-    draftContent = draftContent!.replacePage(richPage);
-    pagesManager.pagesMap[richPage.id]?.page = richPage;
-
+  /// A page's editor changed (marked on its page, see [StoryPageObject.markEdited]): saved once edits pause.
+  Future<void> onPageChanged() async {
     return debouncedCallback(() async {
       await saveDraft(debugSource: '$runtimeType#onPageChanged');
     });
+  }
+
+  /// Saves any edit not saved yet -- one still waiting for [onPageChanged]'s debounce, or one made from a toolbar while
+  /// its page was off screen -- before leaving, so the last edits count.
+  Future<void> flushPendingSave({required String debugSource}) async {
+    cancelTimer(null);
+    await saveDraft(debugSource: debugSource);
   }
 
   Future<void> saveDraft({
@@ -380,6 +398,12 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
 
   @override
   void dispose() {
+    // Closed with an edit still waiting to be saved (e.g. the route removed without a back press): save it while the
+    // pages can still be read.
+    if (hasPendingCallback()) {
+      cancelTimer(null);
+      if (story != null && hasChange) StoryDbModel.db.set(buildStory(draft: true));
+    }
     lastSavedAtNotifier.dispose();
     pagesManager.dispose();
     super.dispose();

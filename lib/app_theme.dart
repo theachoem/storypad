@@ -45,29 +45,6 @@ class AppTheme extends StatelessWidget {
     }
   }
 
-  static FontWeight getThemeFontWeight(BuildContext context, FontWeight defaultWeight) {
-    FontWeight preferredFontWeight = context.read<DevicePreferencesProvider>().preferences.fontWeight;
-
-    final fontWeights = {
-      0: FontWeight.w100,
-      1: FontWeight.w200,
-      2: FontWeight.w300,
-      3: FontWeight.w400,
-      4: FontWeight.w500,
-      5: FontWeight.w600,
-      6: FontWeight.w700,
-      7: FontWeight.w800,
-      8: FontWeight.w900,
-    };
-
-    int indexOf(FontWeight weight) => fontWeights.entries.firstWhere((e) => e.value == weight).key;
-
-    final diff = indexOf(defaultWeight) - indexOf(FontWeight.w400);
-    final newIndex = (indexOf(preferredFontWeight) + diff).clamp(0, 8);
-
-    return fontWeights[newIndex]!;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<DevicePreferencesProvider>(

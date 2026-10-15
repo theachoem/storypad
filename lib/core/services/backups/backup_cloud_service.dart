@@ -2,6 +2,7 @@ import 'dart:io' as io;
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/objects/cloud_service_user.dart';
 import 'package:storypad/core/objects/cloud_storage_quota_object.dart';
+import 'package:storypad/core/objects/yearly_backup_files_object.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 
 /// Abstract base class for cloud backup services
@@ -39,9 +40,9 @@ abstract class BackupCloudService {
   /// Sign out from the cloud service
   Future<void> signOut();
 
-  /// Fetch all yearly backups from cloud storage
-  /// Returns: Map of year -> CloudFileObject metadata
-  Future<Map<int, CloudFileObject>> fetchYearlyBackups();
+  /// Fetch all yearly backups from cloud storage, newest per year, split into the current format and legacy (v3) files
+  /// -- see [YearlyBackupFilesObject].
+  Future<YearlyBackupFilesObject> fetchYearlyBackups();
 
   /// Get file content and size
   /// Returns: Tuple of (content, size)

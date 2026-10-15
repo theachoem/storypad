@@ -14,6 +14,9 @@
 #   bin/build_release_macos --storypad
 #   bin/build_release_macos --community
 
+# stop at the first failing step (e.g. a failed export must not go on to upload)
+set -e
+
 source "$(dirname "$0")/helpers"
 sync_private_keys
 
@@ -47,11 +50,20 @@ function build_pkg() {
     -configuration Release-$FLAVOR
     -archivePath $ARCHIVE_PATH"
 
-  # exports the archive as a Mac App Store .pkg installer
+  # exports the archive as a Mac App Store .pkg installer. Signing uses Apple's cloud-managed
+  # distribution certificates (incl. the installer one for the .pkg), which requires
+  # -allowProvisioningUpdates and an App Store Connect API key with the Admin role.
+  API_ISSUER_ID=$(get_env_key 'APPLE_CONNECT_API_KEY_ISSUER_ID')
+  API_KEY_ID=$(get_env_key 'APPLE_CONNECT_API_KEY_ID')
+
   run_command "xcodebuild -exportArchive
     -archivePath $ARCHIVE_PATH
     -exportOptionsPlist $PROVISIONING_EXPORT_PATH
-    -exportPath $EXPORT_PATH"
+    -exportPath $EXPORT_PATH
+    -allowProvisioningUpdates
+    -authenticationKeyPath $HOME/.appstoreconnect/private_keys/AuthKey_$API_KEY_ID.p8
+    -authenticationKeyID $API_KEY_ID
+    -authenticationKeyIssuerID $API_ISSUER_ID"
 }
 
 # sync_private_keys mirrors AuthKey_<apikey>.p8 into ~/.appstoreconnect/private_keys/,
@@ -62,6 +74,11 @@ function upload_pkg_to_app_store() {
   API_ISSUER_ID=$(get_env_key 'APPLE_CONNECT_API_KEY_ISSUER_ID')
   API_KEY_ID=$(get_env_key 'APPLE_CONNECT_API_KEY_ID')
   PKG_FILE=(build/macos/export/$FLAVOR/*.pkg)
+
+  if [ ! -f "$PKG_FILE" ]; then
+    echo "❌ No .pkg found in build/macos/export/$FLAVOR - export failed?"
+    exit 1
+  fi
 
   echo "🔑 Issuer ID: $API_ISSUER_ID"
   echo "🔑 API Key ID: $API_KEY_ID"
@@ -81,6 +98,7 @@ function main(){
   echo "Building macOS app for $FLAVOR flavor..."
   echo ""
 
+  use_system_rsync
   setup_signing_certificates
   copy_provisioning_profile_to_xcode_home $FLAVOR "macos"
   install_provisioning_profile $FLAVOR "macos" "macos/Runner.xcodeproj"

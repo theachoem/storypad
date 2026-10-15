@@ -13,17 +13,14 @@ class WindowedDetectorService {
     double height = physicalSize.height / devicePixelRatio;
 
     // Always match current orientation
-    final mq = MediaQuery.of(context);
-    return mq.orientation == Orientation.landscape
+    return MediaQuery.orientationOf(context) == Orientation.landscape
         ? Size(width > height ? width : height, width > height ? height : width)
         : Size(width < height ? width : height, width < height ? height : width);
   }
 
-  /// Returns current app window size
-  static Size getAppWindowSize(BuildContext context) {
-    final mq = MediaQuery.of(context);
-    return mq.size;
-  }
+  /// Returns current app window size. Only the size is read (not all of MediaQuery), so a caller doesn't rebuild on
+  /// every frame of the keyboard's animation.
+  static Size getAppWindowSize(BuildContext context) => MediaQuery.sizeOf(context);
 
   /// Returns true if app is running in split view / slide over
   static bool isWindowed(BuildContext context, {double threshold = 0.95}) {

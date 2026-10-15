@@ -167,9 +167,9 @@ class ExportStoriesToMarkdownService {
         }
 
         // Add page content
-        if (page.body != null) {
+        if (page.quillBody.isNotEmpty) {
           final pageMarkdown = QuillDeltaToPlainTextService.call(
-            page.body!,
+            page.quillBody,
             markdown: true,
             includeMarkdownEmbeds: true,
             embedRelativePath: '../',

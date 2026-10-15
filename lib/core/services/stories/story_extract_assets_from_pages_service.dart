@@ -25,7 +25,7 @@ class StoryExtractAssetsFromPagesService {
     if (pages == null || pages.isEmpty) return assets;
 
     for (final page in pages) {
-      assets.addAll(AssetLinkParser.extractIds(page.body));
+      assets.addAll(AssetLinkParser.extractIds(page.quillBody));
     }
 
     return assets;

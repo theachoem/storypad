@@ -51,10 +51,14 @@ class SyncResponse {
   /// BackupProvider._syncBackupAcrossDevices).
   final bool didImport;
 
+  /// See [BackupLatestCheckerResponse.olderAppDeviceModels].
+  final Set<String> olderAppDeviceModels;
+
   SyncResponse({
     this.uploadedYearlyFiles,
     this.lastSyncedAtByYear,
     this.didImport = false,
+    this.olderAppDeviceModels = const {},
   });
 }
 
@@ -290,9 +294,11 @@ class BackupRepository {
     final backupCloudFileByYear = step2Result.data?.backupCloudFileByYear;
     final backupContentsByYear = step2Result.data?.backupContentsByYear;
 
-    // Step 3: Import yearly backups if needed
+    // Step 3: Import yearly backups if needed. Legacy (v3) contents count too: a service with only legacy files has
+    // no synced timestamps yet, but still has content to import.
     bool didImport = false;
-    if (lastSyncedAtByYear != null && lastSyncedAtByYear.isNotEmpty) {
+    if ((lastSyncedAtByYear != null && lastSyncedAtByYear.isNotEmpty) ||
+        (backupContentsByYear != null && backupContentsByYear.isNotEmpty)) {
       final step3Result = await startStep3(
         backupContentsByYear,
         lastSyncedAtByYear,
@@ -336,6 +342,7 @@ class BackupRepository {
         uploadedYearlyFiles: step4Result.data?.uploadedYearlyFiles,
         lastSyncedAtByYear: lastSyncedAtByYear,
         didImport: didImport,
+        olderAppDeviceModels: step2Result.data?.olderAppDeviceModels ?? const {},
       ),
     );
   }

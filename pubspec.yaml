@@ -1,5 +1,5 @@
 name: storypad
-version: 2.33.1+821
+version: 2.34.0+832
 publish_to: none
 environment:
   sdk: ^3.11.0
@@ -18,7 +18,6 @@ dependencies:
   crypto: 3.0.7
   csv: 8.0.0
   cupertino_icons: 1.0.9
-  dart_quill_delta: 10.8.3
   device_info_plus: 13.2.0
   dio: 5.11.1
   dismissible_page: 1.0.2
@@ -36,11 +35,6 @@ dependencies:
     sdk: flutter
   flutter_map: 8.3.2
   flutter_markdown_plus: 1.0.12
-  flutter_quill:
-    # path: packages/flutter-quill
-    git:
-      url: https://github.com/theachoem/flutter-quill.git
-      ref: d01480f4bc0c101ccb005bd6d1f8ac8404d45494
   flutter_secure_storage: 11.2.0
   flutter_slidable: 4.0.3
   flutter_staggered_grid_view: 0.7.0
@@ -69,7 +63,6 @@ dependencies:
   just_audio: 0.10.6
   latlong2: 0.9.1
   local_auth: 3.0.2
-  macos_window_utils: 1.9.1
   flutter_material_design_icons: 3.1.0+7447
   objectbox: 5.3.2
   objectbox_flutter_libs: any
@@ -82,6 +75,8 @@ dependencies:
   record: 7.1.1
   share_plus: 13.3.0
   shared_preferences: 2.5.5
+  storypad_editor:
+    path: packages/storypad_editor
   tar: 2.0.2
   video_player: 2.14.0
   visibility_detector: 0.4.0+2

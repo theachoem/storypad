@@ -27,7 +27,7 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
   QueryDateProperty<B> get permanentlyDeletedAtProperty;
 
   Future<void> cleanupOldDeletedRecords() async {
-    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
+    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 30));
     Condition<B> conditions = permanentlyDeletedAtProperty.notNull().and(
       permanentlyDeletedAtProperty.lessOrEqualDate(sevenDaysAgo),
     );
@@ -91,7 +91,8 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
     await SupportDirectoryPath.objectbox.ensureDirectoryExists();
     _store = await openStore(
       directory: SupportDirectoryPath.objectbox.directoryPath,
-      macosApplicationGroup: '24KJ877SZ9',
+      // ObjectBox rejects an empty group on every platform, so a build without the dart-define passes none.
+      macosApplicationGroup: kMacosAppGroup.isEmpty ? null : kMacosAppGroup,
     );
   }
 

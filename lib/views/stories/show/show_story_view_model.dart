@@ -1,10 +1,13 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/services/stories/story_convert_legacy_pages_service.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/initializers/database_initializer.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
+import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/services/stories/story_content_embed_extractor.dart';
 import 'package:storypad/core/types/page_layout_type.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
@@ -28,6 +31,7 @@ class ShowStoryViewModel extends BaseStoryViewModel {
   }) async {
     story = initialStory ?? await StoryDbModel.db.find(params.id);
     story = await _migrateEmbedAssetsToRelativeFilePathIfExists(story);
+    story = await StoryConvertLegacyPagesService.call(story);
     if (story?.draftContent != null) lastSavedAtNotifier.value = story?.updatedAt;
 
     StoryContentDbModel content = story!.generateDraftContent();
@@ -39,18 +43,22 @@ class ShowStoryViewModel extends BaseStoryViewModel {
       readOnly: readOnly,
     );
 
-    // Copy with richPages from pagesManager instead, since DB-loaded pages have null plainText.
-    // plainText is needed when saving back to draft content for homepage display & search.
-    draftContent = content.copyWith(
-      richPages: content.richPages?.map((e) => pagesManager.pagesMap[e.id]?.page ?? e).toList(),
-    );
+    // The pages as the editors hold them (their counts computed), and the title worked out from them: a content built
+    // elsewhere may lack it (e.g. a story made from a template before titles were set there).
+    final pages = [
+      for (final page in content.richPages ?? <StoryPageDbModel>[]) pagesManager.pagesMap[page.id]?.page ?? page,
+    ];
+    draftContent = content.copyWith(title: pages.firstOrNull?.title, richPages: pages);
 
-    // Save if detect data is invalid mostly from previous version before 2.12.3 (plainText), 2.23.0 (count)
-    // No need to do following in edit story view.
-    if (draftContent?.plainText != content.plainText ||
-        draftContent?.characterCount != content.characterCount ||
-        draftContent?.wordCount != content.wordCount) {
+    // Save if detect data is invalid: counts from before 2.23.0, or a story made from a template saved without its
+    // title. No need to do following in edit story view.
+    // Never for a story with a page from a newer app version: it's kept exactly as stored.
+    if (draftContent?.hasUnsupportedPages != true &&
+        (draftContent?.title != content.title ||
+            draftContent?.characterCount != content.characterCount ||
+            draftContent?.wordCount != content.wordCount)) {
       // Keep updatedAt same as before since this is just a silent fix. User didn't explicitly make change.
+      draftContent = draftContent!.withPages(pages);
       story = buildStory(draft: story?.draftStory == true, updatedAt: story?.updatedAt);
       StoryDbModel.db.set(story!, runCallbacks: false);
     }
@@ -60,6 +68,10 @@ class ShowStoryViewModel extends BaseStoryViewModel {
 
   Future<void> goToEditPage(BuildContext context) async {
     if (draftContent == null || draftContent?.richPages == null) return;
+    if (draftContent!.hasUnsupportedPages) {
+      MessengerService.of(context).showSnackBar(tr('page.newer_version_notice'), success: false);
+      return;
+    }
 
     int? nearestPageIndex;
     double? initialPageScrollOffet;
@@ -106,12 +118,8 @@ class ShowStoryViewModel extends BaseStoryViewModel {
   }
 
   @override
-  Future<void> onPageChanged(StoryPageDbModel richPage) async {
+  Future<void> onPageChanged() async {
     // unlike edit view, we can notify UI on each change, and won't need to use debounce callback here.
-
-    draftContent = draftContent!.replacePage(richPage);
-    pagesManager.pagesMap[richPage.id]?.page = richPage;
-
     await saveDraft(debugSource: '$runtimeType#onPageChanged');
     notifyListeners();
   }

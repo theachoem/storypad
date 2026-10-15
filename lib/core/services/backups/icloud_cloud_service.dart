@@ -7,6 +7,7 @@ import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' a
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/objects/cloud_storage_quota_object.dart';
 import 'package:storypad/core/objects/icloud_user_object.dart';
+import 'package:storypad/core/objects/yearly_backup_files_object.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
@@ -203,23 +204,9 @@ class ICloudCloudService extends BackupCloudService {
   String _trashPathFor(String originalPath) => '$_trashFolder/$originalPath';
 
   @override
-  Future<Map<int, CloudFileObject>> fetchYearlyBackups() async {
+  Future<YearlyBackupFilesObject> fetchYearlyBackups() async {
     return _run('fetchYearlyBackups', () async {
-      final files = await _listFiles('backups');
-      final Map<int, CloudFileObject> yearlyBackups = {};
-
-      for (final file in files) {
-        final year = file.year;
-        if (year == null) continue;
-
-        final existing = yearlyBackups[year];
-        final existingTs = existing?.lastUpdatedAt;
-        final newTs = file.lastUpdatedAt;
-        final isNewer = existing == null || (newTs != null && (existingTs == null || newTs.isAfter(existingTs)));
-        if (isNewer) yearlyBackups[year] = file;
-      }
-
-      return yearlyBackups;
+      return YearlyBackupFilesObject.fromFiles(await _listFiles('backups'));
     });
   }
 

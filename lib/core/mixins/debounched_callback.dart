@@ -24,6 +24,9 @@ mixin DebounchedCallback {
     }
   }
 
+  /// Whether a callback is waiting for its debounce to pass.
+  bool hasPendingCallback([String? key]) => _timer(key)?.isActive ?? false;
+
   void cancelTimer(String? key) {
     if (_timer(key) != null && _timer(key)!.isActive) {
       _timer(key)?.cancel();

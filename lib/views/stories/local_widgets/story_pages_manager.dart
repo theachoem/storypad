@@ -19,17 +19,17 @@ class StoryPagesManager extends StatelessWidget {
   const StoryPagesManager({
     super.key,
     required this.viewModel,
-    required this.mediaQueryPadding,
     required this.actions,
   });
 
   final BaseStoryViewModel viewModel;
-  final EdgeInsets mediaQueryPadding;
   final StoryPageBuilderAction? actions;
 
   @override
   Widget build(BuildContext context) {
     final richPages = viewModel.draftContent?.richPages ?? <StoryPageDbModel>[];
+    // Read here, not passed in by the story screen: the keyboard changing it then rebuilds this, not the pages.
+    final mediaQueryPadding = MediaQuery.paddingOf(context);
 
     return Stack(
       children: [
@@ -105,7 +105,8 @@ class StoryPagesManager extends StatelessWidget {
           children: [
             buildPageCard(
               context: context,
-              child: Text(page.bodyController.document.toPlainText()),
+              // The title is the label below: the card shows what follows it.
+              child: Text(page.bodyController.bodyPlainText()),
               onTap: () {
                 HapticFeedback.selectionClick();
                 viewModel.pagesManager.toggleManagingPage();
@@ -146,9 +147,9 @@ class StoryPagesManager extends StatelessWidget {
         ),
         const SizedBox(height: 8.0),
         Text(
-          page.titleController.text.trim().isNotEmpty == true
-              ? page.titleController.text.trim()
-              : tr('input.title.hint'),
+          page.page.title?.trim().isNotEmpty == true
+              ? page.page.title!.trim()
+              : tr('general.page_number', args: ['${pageIndex + 1}']),
           textAlign: TextAlign.center,
           style: TextTheme.of(context).titleSmall,
           maxLines: 2,

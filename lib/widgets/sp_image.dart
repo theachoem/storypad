@@ -55,7 +55,7 @@ class SpImage extends StatelessWidget {
             height: height,
             fit: fit ?? BoxFit.fitWidth,
             cacheWidth: width != null && width != double.infinity
-                ? (width! * MediaQuery.of(context).devicePixelRatio).round()
+                ? (width! * MediaQuery.devicePixelRatioOf(context)).round()
                 : null,
           );
         },
@@ -66,7 +66,7 @@ class SpImage extends StatelessWidget {
         width: width,
         height: height,
         cacheWidth: width != null && width != double.infinity
-            ? (width! * MediaQuery.of(context).devicePixelRatio).round()
+            ? (width! * MediaQuery.devicePixelRatioOf(context)).round()
             : null,
         fit: fit ?? BoxFit.cover,
       );
@@ -77,7 +77,7 @@ class SpImage extends StatelessWidget {
         height: height,
         fit: fit ?? BoxFit.cover,
         memCacheWidth: width != null && width != double.infinity
-            ? (width! * MediaQuery.of(context).devicePixelRatio).round()
+            ? (width! * MediaQuery.devicePixelRatioOf(context)).round()
             : null,
         placeholder: (context, url) {
           return SizedBox(
@@ -94,7 +94,7 @@ class SpImage extends StatelessWidget {
         height: height,
         fit: fit ?? BoxFit.cover,
         cacheWidth: width != null && width != double.infinity
-            ? (width! * MediaQuery.of(context).devicePixelRatio).round()
+            ? (width! * MediaQuery.devicePixelRatioOf(context)).round()
             : null,
       );
     } else {
