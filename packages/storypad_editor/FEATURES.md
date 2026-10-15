@@ -164,7 +164,8 @@ The mirror of the importer, in the shapes StoryPad's Quill editor wrote: for rea
   on iOS in Flutter's iOS-style toolbar -- iOS's own menu is bound to text input (a no-op without a connection), so a
   read-only page can't show it.
 - **Links** open through `RawEditor.onTapLink` (`widgets/link_tap_handler.dart`): on tap when read-only, on
-  Cmd/Ctrl-click while editing (a plain tap places the caret); without a callback, `url_launcher` opens them.
+  Cmd/Ctrl-click while editing (a plain tap places the caret); without a callback, `url_launcher` opens them. Either way
+  a link without a scheme gets one (`launchableLinkUrl`: `https://`, or `mailto:` for an address), as in Quill.
 - **Desktop context menu** (`RawEditor.desktopContextMenu`, default `showDefaultDesktopContextMenu`): native is the
   goal everywhere. On macOS it's a real `NSMenu` with the Services submenu, from the plugin's `macos/` side
   (CocoaPods podspec and Swift package, channel `storypad_editor/context_menu`). Flutter

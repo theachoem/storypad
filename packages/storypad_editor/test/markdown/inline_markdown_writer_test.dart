@@ -1,5 +1,6 @@
 import 'package:flutter/painting.dart' show Color;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:storypad_editor/src/markdown/inline_markdown_reader.dart';
 import 'package:storypad_editor/src/markdown/inline_markdown_writer.dart';
 import 'package:super_editor/super_editor.dart';
 
@@ -112,6 +113,19 @@ void main() {
       // Written the way Markdown normalizes it (spaces percent-encoded), so writing is a fixed point.
       expect(_write(_text('x', [(const LinkAttribution('a b'), 0, 0)])), '[x](a%20b)');
       expect(_write(_text('x', [(const LinkAttribution('a(b)'), 0, 0)])), '[x](<a(b)>)');
+    });
+
+    test('a link destination with backslashes stays a link, even with a trailing one', () {
+      // Markdown percent-encodes a destination's backslashes; written that way, so writing is a fixed point.
+      for (final url in [r'http://x/a\', r'folder\', r'a\b', r'a\\', r'a\>b']) {
+        final written = _write(_text('t', [(LinkAttribution(url), 0, 0)]));
+        final read = const InlineMarkdownReader().read(written);
+        expect(read.toPlainText(), 't', reason: written);
+        final link = read.getAllAttributionsAt(0).whereType<LinkAttribution>().single;
+        expect(link.plainTextUri, canonicalLinkDestination(url), reason: written);
+        expect(_write(read), written);
+      }
+      expect(canonicalLinkDestination(r'http://x/a\'), 'http://x/a%5C');
     });
   });
 

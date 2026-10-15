@@ -258,10 +258,16 @@ String escapeText(String text, {bool escapeHash = false, bool afterCodeSpan = fa
   return afterCodeSpan && escaped.startsWith('&') ? '<wbr>$escaped' : escaped;
 }
 
-/// A Markdown link destination for [url]: bare when it needs no escaping, otherwise in the `<…>` form.
+/// A Markdown link destination for [url]: bare when it needs no escaping, otherwise in the `<…>` form -- where a
+/// backslash is doubled, since one would escape the character after it (a trailing one, the closing `>`).
 String linkDestination(String url) {
   if (url.isNotEmpty && !RegExp(r'[\s<>()\\]').hasMatch(url)) return url;
-  final encoded = url.replaceAll('<', '%3C').replaceAll('>', '%3E').replaceAll('\n', '%0A').replaceAll('\r', '%0D');
+  final encoded = url
+      .replaceAll(r'\', r'\\')
+      .replaceAll('<', '%3C')
+      .replaceAll('>', '%3E')
+      .replaceAll('\n', '%0A')
+      .replaceAll('\r', '%0D');
   return '<$encoded>';
 }
 

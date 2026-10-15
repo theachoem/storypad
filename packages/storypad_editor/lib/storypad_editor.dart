@@ -28,7 +28,7 @@ export 'src/widgets/desktop_context_menu.dart'
         DesktopContextMenuRequest,
         showDefaultDesktopContextMenu,
         showMaterialDesktopContextMenu;
-export 'src/widgets/link_tap_handler.dart' show LinkTapCallback;
+export 'src/widgets/link_tap_handler.dart' show LinkTapCallback, launchableLinkUrl;
 export 'src/widgets/markdown_editor.dart';
 export 'src/widgets/raw_editor.dart';
 export 'src/widgets/story_editor_spacing.dart';

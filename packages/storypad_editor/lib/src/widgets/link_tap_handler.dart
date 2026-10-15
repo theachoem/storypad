@@ -2,8 +2,21 @@ import 'package:flutter/services.dart';
 import 'package:super_editor/super_editor.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
-/// Called with a tapped link's URL, as written in the document (e.g. to ask whether to open or copy it).
+/// Called with a tapped link's URL, made launchable ([launchableLinkUrl]) -- e.g. to ask whether to open or copy it.
 typedef LinkTapCallback = void Function(String url);
+
+/// [url] with a scheme a launcher can open: as written when it has one (`https://…`, `mailto:…`, `tel:…`), `mailto:`
+/// for an email address, otherwise `https://` -- so `example.com` opens, as it did in the Quill editor.
+String launchableLinkUrl(String url) {
+  final trimmed = url.trim();
+  if (trimmed.contains('://') || _schemeOnly.hasMatch(trimmed)) return trimmed;
+  if (_emailAddress.hasMatch(trimmed)) return 'mailto:$trimmed';
+  return 'https://$trimmed';
+}
+
+/// Schemes written without `//`.
+final _schemeOnly = RegExp(r'^(mailto|tel|sms|geo|data):', caseSensitive: false);
+final _emailAddress = RegExp(r'^[^\s@/]+@[^\s@/]+$');
 
 /// Opens tapped links through [onTapLink] -- or, when it returns `null`, launches them like super_editor's own
 /// handlers.
@@ -44,9 +57,10 @@ class StoryLinkTapHandler extends ContentTapDelegate {
 
     final callback = onTapLink();
     if (callback != null) {
-      callback(link.plainTextUri);
+      callback(launchableLinkUrl(link.plainTextUri));
     } else {
-      url_launcher.launchUrl(link.launchableUri);
+      final uri = Uri.tryParse(launchableLinkUrl(link.plainTextUri));
+      if (uri != null) url_launcher.launchUrl(uri);
     }
     return TapHandlingInstruction.halt;
   }
