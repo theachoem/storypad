@@ -15,11 +15,20 @@ class StoryPageObject {
   // The story's content doesn't have this page's latest edit yet (see [takeEdit]).
   bool _pendingEdit = false;
 
+  // The editor's document revision [_page] and the story's content were last brought up to. An edit is also noticed
+  // by the revision, not only [markEdited] -- which needs the page's editor on screen, while its toolbar can still edit
+  // it after it scrolled away (e.g. adding a photo once swiped to the next page).
+  int _readRevision;
+  int _takenRevision;
+
+  int get _revision => bodyController.editor.documentRevision.value;
+
   /// The page as stored. After an edit (see [markEdited]) it's read from the editor the first time it's needed -- a
   /// save, Done, leaving -- rather than on every keystroke.
   StoryPageDbModel get page {
-    if (_stale) {
+    if (_stale || _revision != _readRevision) {
       _stale = false;
+      _readRevision = _revision;
       _page = _page.withMarkdown(bodyController.serialize());
     }
     return _page;
@@ -29,6 +38,7 @@ class StoryPageObject {
     _page = value;
     _stale = false;
     _pendingEdit = false;
+    _readRevision = _takenRevision = _revision;
   }
 
   /// Whether the page is in a format from a newer app version (read-only). Editing never changes it, so it's read
@@ -36,7 +46,7 @@ class StoryPageObject {
   bool get isUnsupported => _page.isUnsupported;
 
   /// Whether the page was edited since the story's content last took it (see [takeEdit]).
-  bool get hasPendingEdit => _pendingEdit;
+  bool get hasPendingEdit => _pendingEdit || _revision != _takenRevision;
 
   /// The editor's content changed: [page] reads it from the editor when next read.
   void markEdited() => _stale = _pendingEdit = true;
@@ -44,6 +54,7 @@ class StoryPageObject {
   /// The edited [page], for the story's content, which now has it.
   StoryPageDbModel takeEdit() {
     _pendingEdit = false;
+    _takenRevision = _revision;
     return page;
   }
 
@@ -59,7 +70,9 @@ class StoryPageObject {
     required StoryPageDbModel page,
     required this.bodyController,
     required this.bodyFocusNode,
-  }) : _page = page;
+  }) : _page = page,
+       _readRevision = bodyController.editor.documentRevision.value,
+       _takenRevision = bodyController.editor.documentRevision.value;
 
   void dispose() {
     bodyController.dispose();

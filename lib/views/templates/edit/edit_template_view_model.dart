@@ -211,6 +211,10 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   }
 
   Future<void> done(BuildContext context) async {
+    // With every edit, including any still waiting for [onPageChanged]'s debounce. (Its timer is left running: it's
+    // shared with [onNameChanged], whose pending rename still has to land; a page save after this finds no change.)
+    if (hasChange) template = template.copyWith(content: draftContent, updatedAt: DateTime.now());
+
     // Re-save without check to make sure draft content is removed. We will revert back if no change anyway.
     await TemplateDbModel.db.set(template);
     lastSavedAtNotifier.value = template.updatedAt;
@@ -233,6 +237,11 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
 
   @override
   void dispose() {
+    // Closed with an edit still waiting to be saved: save it while the pages can still be read. (The timer runs on, as
+    // in [done].)
+    if (hasPendingCallback()) {
+      if (hasChange) TemplateDbModel.db.set(template.copyWith(content: draftContent, updatedAt: DateTime.now()));
+    }
     pagesManager.dispose();
     pageController.dispose();
     super.dispose();
@@ -241,6 +250,15 @@ class EditTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   Future<void> onPopInvokedWithResult(bool didPop, Object? _, BuildContext context) async {
     if (pagesManager.managingPage) return pagesManager.toggleManagingPage();
     if (didPop) return;
+
+    // Edits not saved yet (from the last moment, or from a toolbar while their page was off screen) count as saved
+    // changes: asked about like any other.
+    if (hasChange) {
+      template = template.copyWith(content: draftContent, updatedAt: DateTime.now());
+      lastSavedAtNotifier.value = DateTime.now();
+      await TemplateDbModel.db.set(template);
+    }
+    if (!context.mounted) return;
 
     Future<OkCancelResult> showDiscardConfirmation(BuildContext context) async {
       return showOkCancelAlertDialog(

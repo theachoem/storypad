@@ -102,6 +102,8 @@ class EditStoryViewModel extends BaseStoryViewModel {
   }
 
   Future<void> done(BuildContext context) async {
+    // Saved right here, with every edit -- a debounced save still pending would only repeat it.
+    cancelTimer(null);
     // Re-save without check to make sure draft content is removed. We will revert back if no change anyway.
     await _saveWithoutCheck();
     await _revertIfNoChange();
@@ -183,6 +185,10 @@ class EditStoryViewModel extends BaseStoryViewModel {
   Future<void> onPopInvokedWithResult(bool didPop, Object? _, BuildContext context) async {
     if (pagesManager.managingPage) return pagesManager.toggleManagingPage();
     if (didPop) return;
+
+    // Edits from the last moment count as saved changes: asked about like any other.
+    await flushPendingSave(debugSource: '$runtimeType#onPopInvokedWithResult');
+    if (!context.mounted) return;
 
     Future<OkCancelResult> showDiscardConfirmation(BuildContext context) async {
       return showOkCancelAlertDialog(

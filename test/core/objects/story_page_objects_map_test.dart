@@ -36,9 +36,6 @@ void main() {
 
   test('an edited page is read from its editor, once', () {
     type(1, ' there');
-    expect(identical(pagesMap.withPendingEdits(content), content), isTrue, reason: 'not marked yet');
-
-    pagesMap[1]!.markEdited();
     final edited = pagesMap.withPendingEdits(content);
     expect(edited.richPages!.first.markdown, '### Trip\n\nHello there');
     expect(edited.richPages!.last.markdown, 'Second');
@@ -50,9 +47,15 @@ void main() {
     expect(identical(pagesMap.withPendingEdits(edited), edited), isTrue, reason: 'read once');
   });
 
+  test('an edit counts even when nothing marked it (its editor off screen, edited from the toolbar)', () {
+    type(2, '!');
+    expect(pagesMap[2]!.hasPendingEdit, isTrue);
+    expect(pagesMap[1]!.hasPendingEdit, isFalse);
+    expect(pagesMap.withPendingEdits(content).richPages!.last.markdown, 'Second!');
+  });
+
   test('reading the page first (e.g. its title) still leaves the edit for the content', () {
     type(2, '!');
-    pagesMap[2]!.markEdited();
     expect(pagesMap[2]!.page.markdown, 'Second!');
     expect(pagesMap.withPendingEdits(content).richPages!.last.markdown, 'Second!');
   });

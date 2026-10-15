@@ -120,7 +120,8 @@ class _StoryPage extends StatelessWidget {
             readOnly: readOnly || _locked,
             storyContent: storyContent,
             layoutType: preferences?.layoutType,
-            onChanged: onChanged != null ? () => onChange() : null,
+            // None on a locked page, so its checkboxes don't toggle either: they'd tick but never be saved.
+            onChanged: onChanged != null && !_locked ? () => onChange() : null,
             onGoToEdit: onGoToEdit,
             card: smallPage,
           ),

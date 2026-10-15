@@ -354,6 +354,13 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     });
   }
 
+  /// Saves any edit not saved yet -- one still waiting for [onPageChanged]'s debounce, or one made from a toolbar while
+  /// its page was off screen -- before leaving, so the last edits count.
+  Future<void> flushPendingSave({required String debugSource}) async {
+    cancelTimer(null);
+    await saveDraft(debugSource: debugSource);
+  }
+
   Future<void> saveDraft({
     required String debugSource,
   }) async {
@@ -391,6 +398,12 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
 
   @override
   void dispose() {
+    // Closed with an edit still waiting to be saved (e.g. the route removed without a back press): save it while the
+    // pages can still be read.
+    if (hasPendingCallback()) {
+      cancelTimer(null);
+      if (story != null && hasChange) StoryDbModel.db.set(buildStory(draft: true));
+    }
     lastSavedAtNotifier.dispose();
     pagesManager.dispose();
     super.dispose();
