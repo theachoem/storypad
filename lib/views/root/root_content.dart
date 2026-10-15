@@ -49,30 +49,8 @@ class _RootContent extends StatelessWidget {
   }
 
   Widget buildPagesNavigator(BuildContext context) {
-    double left;
-    double right;
-
-    bool bigScreen = WindowedDetectorService.isBigWindow(context);
-
-    final screenPadding = MediaQuery.paddingOf(context);
-
-    if (bigScreen) {
-      left = 88;
-      right = screenPadding.right + 88;
-    } else {
-      left = screenPadding.left;
-      right = screenPadding.right;
-    }
-
-    return MediaQuery(
-      data: MediaQuery.of(context).copyWith(
-        padding: EdgeInsets.only(
-          top: screenPadding.top,
-          left: left,
-          bottom: screenPadding.bottom,
-          right: right,
-        ),
-      ),
+    return RootPagesMediaQuery(
+      bigScreen: WindowedDetectorService.isBigWindow(context),
       child: HeroControllerScope(
         controller: rootProvider.heroController,
         child: Navigator(

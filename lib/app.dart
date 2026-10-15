@@ -51,6 +51,7 @@ class App extends StatelessWidget {
           return MediaQuery(
             data: mediaQuery.copyWith(
               padding: mediaQuery.padding.copyWith(top: mediaQuery.padding.top + topMainMenuPadding),
+              viewPadding: mediaQuery.viewPadding.copyWith(top: mediaQuery.viewPadding.top + topMainMenuPadding),
               viewInsets: _nonNegative(mediaQuery.viewInsets),
               textScaler: textScaler,
               alwaysUse24HourFormat:
