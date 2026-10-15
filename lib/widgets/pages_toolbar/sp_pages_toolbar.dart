@@ -78,6 +78,12 @@ class SpPagesToolbarState extends State<SpPagesToolbar> {
 
   @override
   Widget build(BuildContext context) {
+    final focusedIndex = bodyFocusedIndex;
+    final showsToolbar = !widget.managingPage && focusedIndex != null && focusedIndex < widget.pages.length;
+    // The Scaffold takes the bottom safe area off its body for its bottom bar -- this one, even with no toolbar shown
+    // -- so the bar keeps that space then too.
+    if (!showsToolbar) return const _BottomSafeArea();
+
     return Visibility(
       visible: !widget.managingPage,
       child: Stack(
@@ -97,6 +103,14 @@ class SpPagesToolbarState extends State<SpPagesToolbar> {
       ),
     );
   }
+}
+
+/// The bottom safe area (the home indicator's inset), on its own.
+class _BottomSafeArea extends StatelessWidget {
+  const _BottomSafeArea();
+
+  @override
+  Widget build(BuildContext context) => SizedBox(height: MediaQuery.paddingOf(context).bottom);
 }
 
 /// Sits [child] above the keyboard (and the home indicator without one). The keyboard's animation changes that space on
