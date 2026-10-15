@@ -148,10 +148,14 @@ enum StoryEditorLayout {
 /// shrinks to fit a narrower padding the app passes, see `dragHandleSizeFor`).
 const _defaultDesktopLeftPadding = 18.0;
 
-/// The IME keyboard actions (super_editor's default input source), with free task indent swapped in.
+/// The IME keyboard actions (super_editor's default input source), with free task indent swapped in, and without
+/// `enterToUnIndentParagraph`: Enter on an empty indented paragraph keeps its indent, as an on-screen keyboard's Enter
+/// does (it never runs keyboard actions) -- see `newlineKeepingIndentHandler`.
 final _keyboardActions = List<SuperEditorKeyboardAction>.unmodifiable([
   for (final action in defaultImeKeyboardActions)
-    if (action == tabToIndentTask)
+    if (action == enterToUnIndentParagraph)
+      ...[]
+    else if (action == tabToIndentTask)
       tabToIndentTaskFreely
     else if (action == shiftTabToUnIndentTask)
       shiftTabToUnIndentTaskFreely

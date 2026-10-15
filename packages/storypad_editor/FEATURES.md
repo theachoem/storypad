@@ -123,6 +123,12 @@ The mirror of the importer, in the shapes StoryPad's Quill editor wrote: for rea
   callback that edits can't re-enter the editor mid-transaction).
 - **`RawEditor`** caches its stylesheet and component builders: super_editor rebuilds its whole layout presenter
   whenever they aren't the same objects.
+- **Indent** works as in most editors, the same on a hardware and an on-screen keyboard (`controller/keep_indent.dart`):
+  Enter keeps a line's indent (super_editor starts a new task unindented); Enter on an empty nested list item or task
+  moves it out one level, and only at the outermost level leaves the list; Backspace at the start of an indented line
+  moves it out one level (an on-screen keyboard's Backspace otherwise turned it into an unindented paragraph); the
+  `- `, `1. ` and `> ` shortcuts keep the line's indent. An empty indented paragraph keeps its indent on Enter too
+  (`RawEditor` leaves out super_editor's hardware-only `enterToUnIndentParagraph`).
 - **Code blocks** hold plain, unindented text: converting strips formatting, and inline/indent actions skip code.
 - **package:markdown quirks** handled in the inline writer: no entity decoding right after a backtick (separator
   `<wbr>`), a backslash-escaped backtick before a code span breaks it, `!` right before a link makes an image.

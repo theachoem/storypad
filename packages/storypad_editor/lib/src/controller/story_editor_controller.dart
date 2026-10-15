@@ -11,6 +11,7 @@ import '../embed/story_embed_registry.dart';
 import '../embed/unknown_embed.dart';
 import 'change_text_alignment_request.dart';
 import 'insert_block.dart';
+import 'keep_indent.dart';
 import 'newline_before_block.dart';
 import 'text_at_block_edge.dart';
 import 'story_editor_actions.dart';
@@ -65,6 +66,8 @@ class StoryEditorController extends ChangeNotifier {
       editables: {Editor.documentKey: _document, Editor.composerKey: _composer},
       requestHandlers: [
         newlineBeforeBlockHandler,
+        newlineKeepingIndentHandler,
+        outdentAtLineStartHandler,
         textAtBlockEdgeHandler,
         updateStoryEmbedHandler,
         changeTextAlignmentHandler,
@@ -72,7 +75,7 @@ class StoryEditorController extends ChangeNotifier {
         ...defaultRequestHandlers,
       ],
       reactionPipeline: [
-        for (final reaction in defaultEditorReactions)
+        for (final reaction in indentKeepingReactions(defaultEditorReactions.cast()))
           // Re-clamps free task indent whenever any task is deleted.
           if (reaction is! UpdateSubTaskIndentAfterTaskDeletionReaction &&
               // Turns a pasted image URL into a stock ImageNode, which isn't one of the app's embeds.
