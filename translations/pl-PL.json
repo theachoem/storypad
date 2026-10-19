@@ -273,6 +273,8 @@
   "general.word_count_args": "Liczba słów: {WORDS_COUNT}",
   "general.words": "Słowa",
   "general.years": "Lata",
+  "general.older_app_devices.message": "{} używa starszej wersji StoryPad. Zaktualizuj ją, aby Twoje historie dalej synchronizowały się między urządzeniami.",
+  "general.older_app_devices.title": "Zaktualizuj StoryPad na innych urządzeniach",
   "input.coordinates.label": "Współrzędne",
   "input.message.already_exist": "Już istnieje!",
   "input.message.incorrect": "Błędny",

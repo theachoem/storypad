@@ -273,6 +273,8 @@
   "general.word_count_args": "Слів: {WORDS_COUNT}",
   "general.words": "Слова",
   "general.years": "Роки",
+  "general.older_app_devices.message": "На {} стара версія StoryPad. Онови її, щоб історії й далі синхронізувалися між пристроями.",
+  "general.older_app_devices.title": "Онови StoryPad на інших пристроях",
   "input.coordinates.label": "Координати",
   "input.message.already_exist": "Вже існує!",
   "input.message.incorrect": "Неправильно",

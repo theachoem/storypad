@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
+import 'package:storypad/core/objects/yearly_backup_files_object.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_sync_messenger.dart';
 import 'package:storypad/core/services/backups/sync_steps/sync_step.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
@@ -9,11 +10,16 @@ import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/retry/retry_executor.dart';
 import 'package:storypad/core/services/retry/retry_policy.dart';
 import 'package:storypad/core/storages/backup_import_history_storage.dart';
+import 'package:storypad/core/storages/older_app_last_seen_storage.dart';
 
 class BackupLatestCheckerResponse {
   final bool hasError;
-  final Map<int, CloudFileObject>? backupCloudFileByYear; // v3: map of year -> CloudFileObject
-  final Map<int, BackupObject>? backupContentsByYear; // v3: map of year -> BackupObject
+  final Map<int, CloudFileObject>? backupCloudFileByYear; // year -> current (v4) file
+  final Map<int, BackupObject>? backupContentsByYear; // year -> its contents
+
+  /// Devices still writing legacy (v3) backups after this service has current ones: an older app on another device,
+  /// whose new stories this device can't receive until it updates. By device model.
+  final Set<String> olderAppDeviceModels;
 
   Map<int, DateTime?>? get lastSyncedAtByYear {
     return backupCloudFileByYear?.map((year, file) => MapEntry(year, file.lastUpdatedAt));
@@ -23,6 +29,7 @@ class BackupLatestCheckerResponse {
     required this.hasError,
     this.backupCloudFileByYear,
     this.backupContentsByYear,
+    this.olderAppDeviceModels = const {},
   });
 }
 
@@ -111,7 +118,16 @@ class BackupLatestCheckerService {
       operationName: 'fetch_yearly_backups_${cloudService.serviceType.id}',
     );
 
-    if (remoteYearlyBackupFiles.isEmpty) {
+    // Current-format files are the synced state. Legacy (v3) files are only imported, for years without a current
+    // file -- the uploader then writes that year's current file, leaving the legacy one untouched.
+    final legacyToImport = remoteYearlyBackupFiles.legacyOnly;
+    final olderAppDeviceModels = olderAppDeviceModelsOf(remoteYearlyBackupFiles);
+
+    // TODO: remove once no device runs an app before 2.34.0 (v3 backups) -- see OlderAppLastSeenStorage.
+    final olderAppUploadedAt = olderAppUploadedAtOf(remoteYearlyBackupFiles);
+    if (olderAppUploadedAt != null) await OlderAppLastSeenStorage().recordSeen(olderAppUploadedAt);
+
+    if (remoteYearlyBackupFiles.current.isEmpty && legacyToImport.isEmpty) {
       AppLogger.d('No backups found in ${cloudService.serviceType.displayName}');
       _messenger.report(
         serviceType: cloudService.serviceType,
@@ -125,14 +141,15 @@ class BackupLatestCheckerService {
         hasError: false,
         backupCloudFileByYear: {},
         backupContentsByYear: {},
+        olderAppDeviceModels: olderAppDeviceModels,
       );
     }
 
-    backupCloudFileByYear.addAll(remoteYearlyBackupFiles);
+    backupCloudFileByYear.addAll(remoteYearlyBackupFiles.current);
 
-    // Determine which years need to be downloaded
+    // Determine which years need to be downloaded (current files, and legacy files for years without one)
     Map<int, CloudFileObject> yearsToDownload = {};
-    for (var entry in backupCloudFileByYear.entries) {
+    for (var entry in {...legacyToImport, ...backupCloudFileByYear}.entries) {
       final year = entry.key;
       final remoteFile = entry.value;
       final remoteTimestamp = remoteFile.lastUpdatedAt;
@@ -158,6 +175,7 @@ class BackupLatestCheckerService {
         hasError: false,
         backupCloudFileByYear: backupCloudFileByYear,
         backupContentsByYear: {},
+        olderAppDeviceModels: olderAppDeviceModels,
       );
     }
 
@@ -206,6 +224,31 @@ class BackupLatestCheckerService {
       hasError: false,
       backupCloudFileByYear: backupCloudFileByYear,
       backupContentsByYear: backupContentsByYear,
+      olderAppDeviceModels: olderAppDeviceModels,
     );
+  }
+
+  /// Devices (by model) that wrote a legacy file newer than the current file for the same year: an app from before
+  /// the current format is still in use there (this app never writes legacy files).
+  static Set<String> olderAppDeviceModelsOf(YearlyBackupFilesObject files) {
+    return {for (final legacy in _olderAppFilesOf(files)) ?legacy.getFileInfo()?.device.model};
+  }
+
+  // TODO: remove once no device runs an app before 2.34.0 (v3 backups) -- see OlderAppLastSeenStorage.
+  /// When an older app last uploaded one of those legacy files, by the server's clock where the service gives one.
+  static DateTime? olderAppUploadedAtOf(YearlyBackupFilesObject files) {
+    DateTime? newest;
+    for (final legacy in _olderAppFilesOf(files)) {
+      final uploadedAt = legacy.modifiedAt ?? legacy.lastUpdatedAt;
+      if (uploadedAt != null && (newest == null || uploadedAt.isAfter(newest))) newest = uploadedAt;
+    }
+    return newest;
+  }
+
+  static Iterable<CloudFileObject> _olderAppFilesOf(YearlyBackupFilesObject files) sync* {
+    for (final MapEntry(key: year, value: legacy) in files.legacy.entries) {
+      final currentAt = files.current[year]?.lastUpdatedAt;
+      if (currentAt != null && legacy.lastUpdatedAt?.isAfter(currentAt) == true) yield legacy;
+    }
   }
 }

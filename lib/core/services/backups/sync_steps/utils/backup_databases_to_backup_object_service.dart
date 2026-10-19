@@ -26,7 +26,7 @@ class BackupDatabasesToBackupObjectService {
       fileInfo: BackupFileObject(
         createdAt: lastUpdatedAt,
         device: kDeviceInfo,
-        version: year != null ? '3' : '2', // v3 for yearly, v2 for legacy
+        version: year != null ? BackupFileObject.currentYearlyVersion : '2', // yearly, or v2 for a single-file export
         year: year,
         hasCompression: hasCompression,
       ),

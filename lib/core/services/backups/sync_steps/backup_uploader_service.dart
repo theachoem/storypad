@@ -149,9 +149,29 @@ class BackupUploaderService {
     try {
       Map<int, CloudFileObject> uploadedYearlyFiles = {};
 
+      // Years this upload would create the first current-format file for: list again first, in case another device
+      // just created one (e.g. both switching to the new format at once). Two first files for a year would leave the
+      // records only in the older one unseen by other devices until this one edits that year again, so such a year
+      // is left for the next sync, which imports that file and then updates it.
+      final creating = yearsToUpload.keys.where((year) => existingYearlyBackups?[year] == null).toList();
+      final Set<int> createdElsewhere = {};
+      if (creating.isNotEmpty) {
+        final latest = await RetryExecutor.execute(
+          () => cloudService.fetchYearlyBackups(),
+          policy: RetryPolicy.network,
+          operationName: 'refetch_yearly_backups_${cloudService.serviceType.id}',
+        );
+        createdElsewhere.addAll(creating.where(latest.current.containsKey));
+      }
+
       for (var entry in yearsToUpload.entries) {
         final year = entry.key;
         final lastUpdatedAt = entry.value;
+
+        if (createdElsewhere.contains(year)) {
+          AppLogger.d('BackupUploader: year $year was just created by another device; importing it next sync first');
+          continue;
+        }
 
         AppLogger.d('BackupUploader: Uploading year $year to ${cloudService.serviceType.displayName}');
 
@@ -214,7 +234,7 @@ class BackupUploaderService {
         }
       }
 
-      if (uploadedYearlyFiles.isEmpty) {
+      if (uploadedYearlyFiles.isEmpty && createdElsewhere.length < yearsToUpload.length) {
         throw const exp.ServiceException(
           'Failed to upload any yearly backups',
           exp.ServiceExceptionType.unexpectedError,

@@ -7,6 +7,7 @@ import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/services/backups/backup_cloud_service.dart';
 import 'package:storypad/core/services/backups/backup_service_type.dart';
 import 'package:storypad/core/services/cloud_optimize/cloud_asset_analyzer.dart';
+import 'package:storypad/core/services/cloud_optimize/older_app_asset_ids_service.dart';
 import 'package:storypad/core/types/asset_type.dart';
 
 import 'cloud_optimize_view.dart';
@@ -235,6 +236,25 @@ class CloudOptimizeViewModel extends ChangeNotifier with DisposeAwareMixin {
             return CloudAssetAnalyzer.isDetachedEligibleForCleanup(r.file, tombstone: tombstone);
           }).toList()
         : [];
+
+    // TODO: remove once no device runs an app before 2.34.0 (v3 backups) -- see OlderAppLastSeenStorage.
+    // An older app's photos and voice notes have no record here: keep a file its backups list, unless it was deleted
+    // here. Only read those backups when there is something to clean.
+    if (detachedCandidates.isNotEmpty) {
+      final olderAppAssetIds = await OlderAppAssetIdsService.fetch(service);
+      if (olderAppAssetIds == null) {
+        kErrorReportingService.log('$runtimeType#_analyzeFiles: detached cleanup skipped, legacy backups unreadable');
+        detachedCandidates = [];
+      } else {
+        bool usedByOlderApp(DetachedFileResult r) {
+          final assetId = r.file.fileName != null ? int.tryParse(r.file.fileName!.split('.').first) : null;
+          return assetId != null && tombstoneById[assetId] == null && olderAppAssetIds.contains(assetId);
+        }
+
+        detachedFiles.removeWhere(usedByOlderApp);
+        detachedCandidates.removeWhere(usedByOlderApp);
+      }
+    }
 
     notifyListeners();
   }

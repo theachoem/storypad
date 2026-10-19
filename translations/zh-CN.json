@@ -273,6 +273,8 @@
   "general.word_count_args": "字数：{WORDS_COUNT}",
   "general.words": "字",
   "general.years": "年",
+  "general.older_app_devices.message": "{} 使用的是旧版 StoryPad。更新后，你的故事才能继续在设备间同步。",
+  "general.older_app_devices.title": "在你的其他设备上更新 StoryPad",
   "input.coordinates.label": "坐标",
   "input.message.already_exist": "已存在！",
   "input.message.incorrect": "不正确",

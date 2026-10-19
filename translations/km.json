@@ -273,6 +273,8 @@
   "general.word_count_args": "ពាក្យ៖ {WORDS_COUNT}",
   "general.words": "ពាក្យ",
   "general.years": "ឆ្នាំ",
+  "general.older_app_devices.message": "{} កំពុងប្រើ StoryPad កំណែចាស់។ សូមធ្វើបច្ចុប្បន្នភាព ដើម្បីឱ្យរឿងរបស់អ្នកបន្តធ្វើសមកាលកម្មរវាងឧបករណ៍។",
+  "general.older_app_devices.title": "ធ្វើបច្ចុប្បន្នភាព StoryPad លើឧបករណ៍ផ្សេងទៀតរបស់អ្នក",
   "input.coordinates.label": "កូអរដោនេ",
   "input.message.already_exist": "មានរួចហើយ!",
   "input.message.incorrect": "មិនត្រឹមត្រូវ",

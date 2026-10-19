@@ -273,6 +273,8 @@
   "general.word_count_args": "शब्द: {WORDS_COUNT}",
   "general.words": "शब्द",
   "general.years": "साल",
+  "general.older_app_devices.message": "{} में StoryPad का पुराना वर्ज़न है। इसे अपडेट करो ताकि तुम्हारी कहानियाँ डिवाइस के बीच सिंक होती रहें।",
+  "general.older_app_devices.title": "अपने दूसरे डिवाइस पर StoryPad अपडेट करो",
   "input.coordinates.label": "निर्देशांक",
   "input.message.already_exist": "पहले से मौजूद है!",
   "input.message.incorrect": "ग़लत",
