@@ -1,0 +1,608 @@
+import 'dart:ui' show Color, TextAffinity, TextAlign;
+
+import 'package:super_editor/super_editor.dart';
+
+import '../markdown/markdown_format.dart';
+import 'change_text_alignment_request.dart';
+import 'insert_block.dart';
+import 'story_editor_controller.dart';
+import 'transform_text_request.dart';
+import '../document/heading.dart';
+import 'move_blocks.dart';
+import '../document/text_alignment.dart';
+
+/// Formatting and block commands on the current selection, plus the state a toolbar shows for them. Headless: no
+/// widgets or layout involved, so every action is unit-testable, and any toolbar (the app's, or the example's) is just
+/// buttons calling these.
+///
+/// Reach it through [StoryEditorController.actions]; listen to the controller to rebuild when the selection,
+/// document or pending styles change.
+///
+/// With a collapsed caret, inline toggles (bold, color, …) apply to the text typed next. Block commands apply to every
+/// block the selection touches.
+class StoryEditorActions {
+  StoryEditorActions(this._controller);
+
+  final StoryEditorController _controller;
+
+  Editor get _editor => _controller.editor;
+  MutableDocumentComposer get _composer => _controller.composer;
+  Document get _document => _controller.document;
+  DocumentSelection? get _selection => _composer.selection;
+
+  // ── Selection ──────────────────────────────────────────────────────────────
+
+  /// Whether some text is selected (an expanded selection, not just a caret).
+  bool get hasSelection => _selection != null && !_selection!.isCollapsed;
+
+  /// Every text block the selection touches, in document order.
+  List<TextNode> get selectedTextNodes {
+    final selection = _selection;
+    if (selection == null) return const [];
+    return _document.getNodesInside(selection.base, selection.extent).whereType<TextNode>().toList();
+  }
+
+  /// The selected text ranges `[start, end)` within each touched text block (empty for a collapsed caret).
+  List<({TextNode node, int start, int end})> get _selectedRanges {
+    final selection = _selection;
+    if (selection == null || selection.isCollapsed) return const [];
+
+    final normalized = selection.normalize(_document);
+    final ranges = <({TextNode node, int start, int end})>[];
+    for (final node in selectedTextNodes) {
+      final start = node.id == normalized.start.nodeId ? _offset(normalized.start.nodePosition) ?? 0 : 0;
+      final end = node.id == normalized.end.nodeId
+          ? _offset(normalized.end.nodePosition) ?? node.text.length
+          : node.text.length;
+      if (end > start) ranges.add((node: node, start: start, end: end));
+    }
+    return ranges;
+  }
+
+  static int? _offset(NodePosition position) => position is TextNodePosition ? position.offset : null;
+
+  /// [_selectedRanges] outside code blocks: the text inline formatting applies to.
+  List<({TextNode node, int start, int end})> get _formattableRanges => [
+    for (final range in _selectedRanges)
+      if (!_isCode(range.node)) range,
+  ];
+
+  /// One [request] per range, each over that one block. super_editor's attribution commands work out a multi-block
+  /// selection's ranges themselves and get them wrong at a block's edge -- e.g. a selection ending at the start of a
+  /// line gives that line the range `0..-1`, and removing an attribution there throws mid-edit.
+  static List<EditRequest> _overRanges(
+    List<({TextNode node, int start, int end})> ranges,
+    EditRequest Function(DocumentRange range) request,
+  ) {
+    return [
+      for (final range in ranges)
+        request(
+          DocumentRange(
+            start: DocumentPosition(
+              nodeId: range.node.id,
+              nodePosition: TextNodePosition(offset: range.start),
+            ),
+            end: DocumentPosition(
+              nodeId: range.node.id,
+              nodePosition: TextNodePosition(offset: range.end),
+            ),
+          ),
+        ),
+    ];
+  }
+
+  List<EditRequest> _removing(Set<Attribution> attributions) => _overRanges(
+    _selectedRanges,
+    (range) => RemoveTextAttributionsRequest(documentRange: range, attributions: attributions),
+  );
+
+  List<EditRequest> _adding(Set<Attribution> attributions) => _overRanges(
+    _formattableRanges,
+    (range) => AddTextAttributionsRequest(documentRange: range, attributions: attributions),
+  );
+
+  /// Replaces the selected text with `transform(text)` in each selected block, keeping its formatting -- e.g. to
+  /// upper or lower case. One undo step; the selection keeps covering the same text.
+  void transformSelectedText(String Function(String text) transform) {
+    final ranges = _selectedRanges;
+    // Nothing to change (e.g. uppercasing uppercase text): no edit, so no empty step in the undo history.
+    final changes = ranges.any((range) {
+      final text = range.node.text.toPlainText().substring(range.start, range.end);
+      return transform(text) != text;
+    });
+    if (!changes) return;
+    _editor.execute([
+      TransformTextRequest([
+        for (final range in ranges) (nodeId: range.node.id, start: range.start, end: range.end),
+      ], transform),
+    ]);
+  }
+
+  /// Every block the selection touches (text or not), in document order.
+  List<String> get selectedBlockIds {
+    final selection = _selection;
+    if (selection == null) return const [];
+    return [for (final node in _document.getNodesInside(selection.base, selection.extent)) node.id];
+  }
+
+  /// Whether [moveSelectedBlocks] can move the selected blocks that way (they're not already first/last).
+  bool canMoveSelectedBlocks({required bool up}) {
+    final ids = selectedBlockIds;
+    if (ids.isEmpty) return false;
+    return up
+        ? _document.getNodeIndexById(ids.first) > 0
+        : _document.getNodeIndexById(ids.last) < _document.nodeCount - 1;
+  }
+
+  /// Moves every block the selection touches one block up or down, together, as one undo step. The selection moves
+  /// with them.
+  void moveSelectedBlocks({required bool up}) {
+    if (!canMoveSelectedBlocks(up: up)) return;
+    final ids = selectedBlockIds;
+    final first = _document.getNodeIndexById(ids.first);
+    _editor.execute(MoveBlocks.requests(_document, ids, up ? first - 1 : first + 1));
+  }
+
+  /// Puts the caret at the end of the document -- e.g. when focusing an editor that has no selection yet.
+  void placeCaretAtEnd() =>
+      _placeCaret(DocumentPosition(nodeId: _document.last.id, nodePosition: _document.last.endPosition));
+
+  /// Whether [moveCaret] can move the caret that way (it's not already at that end of the document).
+  bool canMoveCaret({required bool forward}) {
+    final selection = _selection;
+    if (selection == null) return false;
+    if (!selection.isCollapsed) return true;
+    return _caretStep(selection.extent, forward: forward) != null;
+  }
+
+  /// Moves the caret one character toward the document's end ([forward]) or start, into the neighboring block at a
+  /// block's edge, like an arrow key. An expanded selection collapses to its end or start instead.
+  void moveCaret({required bool forward}) {
+    final selection = _selection;
+    if (selection == null) return;
+
+    if (!selection.isCollapsed) {
+      final range = selection.normalize(_document);
+      _placeCaret(forward ? range.end : range.start);
+      return;
+    }
+    final next = _caretStep(selection.extent, forward: forward);
+    if (next != null) _placeCaret(next);
+  }
+
+  /// The caret position one step from [position], or `null` at the document's edge.
+  DocumentPosition? _caretStep(DocumentPosition position, {required bool forward}) {
+    final node = _document.getNodeById(position.nodeId);
+    if (node == null) return null;
+
+    final nodePosition = position.nodePosition;
+    if (node is TextNode && nodePosition is TextNodePosition) {
+      final text = node.text.toPlainText();
+      final offset = nodePosition.offset.clamp(0, text.length);
+      if (forward && offset < text.length) {
+        return DocumentPosition(
+          nodeId: node.id,
+          nodePosition: TextNodePosition(offset: getCharacterEndBounds(text, offset)),
+        );
+      }
+      if (!forward && offset > 0) {
+        return DocumentPosition(
+          nodeId: node.id,
+          nodePosition: TextNodePosition(offset: getCharacterStartBounds(text, offset)),
+        );
+      }
+    } else if (nodePosition is UpstreamDownstreamNodePosition) {
+      // A block (embed, rule): its two edges are one step apart.
+      if (forward && nodePosition.affinity == TextAffinity.upstream) {
+        return DocumentPosition(nodeId: node.id, nodePosition: const UpstreamDownstreamNodePosition.downstream());
+      }
+      if (!forward && nodePosition.affinity == TextAffinity.downstream) {
+        return DocumentPosition(nodeId: node.id, nodePosition: const UpstreamDownstreamNodePosition.upstream());
+      }
+    }
+
+    final neighbor = forward ? _document.getNodeAfterById(node.id) : _document.getNodeBeforeById(node.id);
+    if (neighbor == null) return null;
+    return DocumentPosition(
+      nodeId: neighbor.id,
+      nodePosition: forward ? neighbor.beginningPosition : neighbor.endPosition,
+    );
+  }
+
+  void _placeCaret(DocumentPosition position) {
+    _editor.execute([
+      ChangeSelectionRequest(
+        DocumentSelection.collapsed(position: position),
+        SelectionChangeType.pushCaret,
+        SelectionReason.userInteraction,
+      ),
+    ]);
+  }
+
+  static bool _isCode(TextNode node) =>
+      node is ParagraphNode && node.getMetadataValue(NodeMetadata.blockType) == codeAttribution;
+
+  /// Code blocks store plain text only, so inline formatting there would show but not be saved.
+  bool get _onlyCode {
+    final nodes = selectedTextNodes;
+    return nodes.isNotEmpty && nodes.every(_isCode);
+  }
+
+  // ── Inline formatting ──────────────────────────────────────────────────────
+
+  bool get isBold => hasAttribution(boldAttribution);
+  bool get isItalic => hasAttribution(italicsAttribution);
+  bool get isUnderline => hasAttribution(underlineAttribution);
+  bool get isStrikethrough => hasAttribution(strikethroughAttribution);
+  bool get isInlineCode => hasAttribution(codeAttribution);
+  bool get isSuperscript => hasAttribution(const ScriptAttribution.superscript());
+  bool get isSubscript => hasAttribution(const ScriptAttribution.subscript());
+
+  void toggleBold() => toggleAttribution(boldAttribution);
+  void toggleItalic() => toggleAttribution(italicsAttribution);
+  void toggleUnderline() => toggleAttribution(underlineAttribution);
+  void toggleStrikethrough() => toggleAttribution(strikethroughAttribution);
+  void toggleInlineCode() => toggleAttribution(codeAttribution);
+  void toggleSuperscript() => _toggleScript(const ScriptAttribution.superscript());
+  void toggleSubscript() => _toggleScript(const ScriptAttribution.subscript());
+
+  /// Whether [attribution] applies throughout the selection -- or, for a caret, to the text typed next.
+  bool hasAttribution(Attribution attribution) {
+    final selection = _selection;
+    if (selection == null) return false;
+    if (selection.isCollapsed) return _composer.preferences.currentAttributions.contains(attribution);
+
+    final ranges = _formattableRanges;
+    return ranges.isNotEmpty &&
+        ranges.every(
+          (range) => range.node.text.hasAttributionsThroughout(
+            attributions: {attribution},
+            range: SpanRange(range.start, range.end - 1),
+          ),
+        );
+  }
+
+  /// Toggles [attribution] on the selection -- or, for a caret, on the text typed next.
+  void toggleAttribution(Attribution attribution) {
+    final selection = _selection;
+    if (selection == null || _onlyCode) return;
+
+    if (selection.isCollapsed) {
+      _composer.preferences.toggleStyles({attribution});
+    } else {
+      // Decided here, by what the toolbar shows: on throughout the (non-code) selection → off, otherwise → on.
+      final requests = hasAttribution(attribution) ? _removing({attribution}) : _adding({attribution});
+      if (requests.isNotEmpty) _editor.execute(requests);
+    }
+  }
+
+  /// Superscript and subscript are mutually exclusive (they conflict), so the other one is cleared first -- in the
+  /// same edit, so it's one undo step.
+  void _toggleScript(ScriptAttribution script) {
+    final selection = _selection;
+    if (selection == null || _onlyCode) return;
+    final other = script.type == ScriptAttribution.typeSuper
+        ? const ScriptAttribution.subscript()
+        : const ScriptAttribution.superscript();
+
+    if (selection.isCollapsed) {
+      _composer.preferences.removeStyles({other});
+      _composer.preferences.toggleStyles({script});
+      return;
+    }
+    final present = _attributionsInSelection((a) => a == other);
+    final requests = [
+      if (present.isNotEmpty) ..._removing(present),
+      ...hasAttribution(script) ? _removing({script}) : _adding({script}),
+    ];
+    if (requests.isNotEmpty) _editor.execute(requests);
+  }
+
+  /// The text color throughout the selection, or `null` if none or mixed.
+  Color? get textColor => _uniform<ColorAttribution>()?.color;
+
+  /// The highlight color throughout the selection, or `null` if none or mixed.
+  Color? get backgroundColor => _uniform<BackgroundColorAttribution>()?.color;
+
+  /// Sets the text color of the selection (or of the text typed next); `null` removes it.
+  void setTextColor(Color? color) => _setValued<ColorAttribution>(color == null ? null : ColorAttribution(color));
+
+  /// Sets the highlight color of the selection (or of the text typed next); `null` removes it.
+  void setBackgroundColor(Color? color) =>
+      _setValued<BackgroundColorAttribution>(color == null ? null : BackgroundColorAttribution(color));
+
+  /// The link URL throughout the selection, or `null` if it isn't (uniformly) linked -- e.g. to pre-fill a link
+  /// dialog.
+  String? get linkUrl => _uniform<LinkAttribution>()?.plainTextUri;
+
+  /// Links the selection to [url], replacing any link already there. No-op for a caret.
+  void setLink(String url) {
+    if (!hasSelection) return;
+    _setValued<LinkAttribution>(LinkAttribution(url, Uri.tryParse(url)));
+  }
+
+  /// Removes links from the selection.
+  void removeLink() => _setValued<LinkAttribution>(null);
+
+  /// Removes all inline formatting (and links) from the selection -- or, for a caret, from the text typed next.
+  void clearFormatting() {
+    final selection = _selection;
+    if (selection == null) return;
+    if (selection.isCollapsed) {
+      _composer.preferences.clearStyles();
+      return;
+    }
+    final attributions = _attributionsInSelection((_) => true);
+    if (attributions.isNotEmpty) _editor.execute(_removing(attributions));
+  }
+
+  /// Replaces any [A] attribution in the selection (or pending for the caret) with [attribution], or just removes
+  /// them when it's `null`. Valued attributions (colors, links) of the same kind conflict, so the old one must go
+  /// first.
+  void _setValued<A extends Attribution>(A? attribution) {
+    final selection = _selection;
+    if (selection == null || (attribution != null && _onlyCode)) return;
+
+    if (selection.isCollapsed) {
+      _composer.preferences.removeStyles(_composer.preferences.currentAttributions.whereType<A>().toSet());
+      if (attribution != null) _composer.preferences.addStyle(attribution);
+      return;
+    }
+
+    // One edit (one undo step): remove the old value, add the new one.
+    final existing = _attributionsInSelection((a) => a is A);
+    final requests = [
+      if (existing.isNotEmpty) ..._removing(existing),
+      if (attribution != null) ..._adding({attribution}),
+    ];
+    if (requests.isNotEmpty) _editor.execute(requests);
+  }
+
+  Set<Attribution> _attributionsInSelection(bool Function(Attribution) filter) => {
+    for (final range in _selectedRanges)
+      ...range.node.text
+          .getAttributionSpansInRange(attributionFilter: filter, range: SpanRange(range.start, range.end - 1))
+          .map((span) => span.attribution),
+  };
+
+  /// The one [A] attribution covering the whole selection (or pending for the caret), if there is exactly one.
+  A? _uniform<A extends Attribution>() {
+    final selection = _selection;
+    if (selection == null) return null;
+    if (selection.isCollapsed) return _composer.preferences.currentAttributions.whereType<A>().firstOrNull;
+
+    final found = _attributionsInSelection((a) => a is A);
+    if (found.length != 1) return null;
+    final attribution = found.single as A;
+    return hasAttribution(attribution) ? attribution : null;
+  }
+
+  // ── Blocks ─────────────────────────────────────────────────────────────────
+
+  /// The block type of the block under the caret/selection extent: [paragraphAttribution], `header1`…`header6`,
+  /// [blockquoteAttribution] or [codeAttribution]. List items and tasks report [paragraphAttribution].
+  Attribution get blockType {
+    final node = selectedTextNodes.lastOrNull;
+    if (node is! ParagraphNode) return paragraphAttribution;
+    return node.getMetadataValue(NodeMetadata.blockType) ?? paragraphAttribution;
+  }
+
+  /// The heading level (1–6) of the block under the selection extent, or `null` if it isn't a heading.
+  int? get headingLevel => Heading.levelOf(blockType);
+
+  /// Makes every selected block a heading of [level] (1–6), or a plain paragraph for `null`.
+  void setHeading(int? level) => _setBlockType(level == null ? paragraphAttribution : Heading.blockType(level));
+
+  bool get isBlockquote => _allHaveBlockType(blockquoteAttribution);
+  bool get isCodeBlock => _allHaveBlockType(codeAttribution);
+
+  void toggleBlockquote() => _toggleBlockType(blockquoteAttribution);
+  void toggleCodeBlock() => _toggleBlockType(codeAttribution);
+
+  bool _allHaveBlockType(Attribution blockType) {
+    final nodes = selectedTextNodes;
+    return nodes.isNotEmpty &&
+        nodes.every((node) => node is ParagraphNode && node.getMetadataValue(NodeMetadata.blockType) == blockType);
+  }
+
+  void _toggleBlockType(Attribution blockType) =>
+      _setBlockType(_allHaveBlockType(blockType) ? paragraphAttribution : blockType);
+
+  void _setBlockType(Attribution blockType) {
+    final nodes = selectedTextNodes;
+    if (nodes.isEmpty) return;
+    if (blockType == codeAttribution) {
+      // Code is plain, unindented text in storage; drop formatting and indent now so the editor shows what's saved.
+      _replaceAll(
+        nodes,
+        (node) => ParagraphNode(
+          id: node.id,
+          text: AttributedText(node.text.toPlainText()),
+          metadata: const {NodeMetadata.blockType: codeAttribution},
+        ),
+      );
+      return;
+    }
+    _editor.execute([
+      for (final node in nodes)
+        if (node is ParagraphNode)
+          ChangeParagraphBlockTypeRequest(nodeId: node.id, blockType: blockType)
+        else
+          ReplaceNodeRequest(
+            existingNodeId: node.id,
+            newNode: ParagraphNode(
+              id: node.id,
+              text: node.text,
+              indent: _indentOf(node),
+              metadata: {..._alignmentOf(node), NodeMetadata.blockType: blockType},
+            ),
+          ),
+    ]);
+  }
+
+  bool get isBulletList => _allListItems(ListItemType.unordered);
+  bool get isOrderedList => _allListItems(ListItemType.ordered);
+  bool get isTaskList {
+    final nodes = selectedTextNodes;
+    return nodes.isNotEmpty && nodes.every((node) => node is TaskNode);
+  }
+
+  void toggleBulletList() => _toggleList(ListItemType.unordered);
+  void toggleOrderedList() => _toggleList(ListItemType.ordered);
+
+  bool _allListItems(ListItemType type) {
+    final nodes = selectedTextNodes;
+    return nodes.isNotEmpty && nodes.every((node) => node is ListItemNode && node.type == type);
+  }
+
+  /// Converts every selected block to a [type] list item, or back to paragraphs if they all already are. Indent and
+  /// alignment are kept across the conversion.
+  void _toggleList(ListItemType type) {
+    final nodes = selectedTextNodes;
+    if (nodes.isEmpty) return;
+    final active = _allListItems(type);
+    _replaceAll(
+      nodes,
+      (node) => active
+          ? ParagraphNode(id: node.id, text: node.text, indent: _indentOf(node), metadata: _alignmentOf(node))
+          : ListItemNode(
+              id: node.id,
+              itemType: type,
+              text: node.text,
+              indent: _indentOf(node),
+              metadata: _alignmentOf(node),
+            ),
+    );
+  }
+
+  /// Converts every selected block to an unchecked task, or back to paragraphs if they all already are tasks. Indent
+  /// and alignment are kept.
+  void toggleTaskList() {
+    final nodes = selectedTextNodes;
+    if (nodes.isEmpty) return;
+    final active = isTaskList;
+    _replaceAll(
+      nodes,
+      (node) => active
+          ? ParagraphNode(id: node.id, text: node.text, indent: _indentOf(node), metadata: _alignmentOf(node))
+          : TaskNode(
+              id: node.id,
+              text: node.text,
+              isComplete: false,
+              indent: _indentOf(node),
+              metadata: _alignmentOf(node),
+            ),
+    );
+  }
+
+  void _replaceAll(List<TextNode> nodes, DocumentNode Function(TextNode node) replacement) {
+    _editor.execute([
+      for (final node in nodes) ReplaceNodeRequest(existingNodeId: node.id, newNode: replacement(node)),
+    ]);
+  }
+
+  /// [node]'s alignment as metadata for the block replacing it (none for code, which is never aligned).
+  static Map<String, dynamic> _alignmentOf(TextNode node) => {
+    if (!_isCode(node)) TextNodeMetadata.textAlign: ?node.getMetadataValue(TextNodeMetadata.textAlign),
+  };
+
+  static int _indentOf(TextNode node) => switch (node) {
+    ListItemNode() => node.indent,
+    TaskNode() => node.indent,
+    ParagraphNode() => node.indent,
+    _ => 0,
+  };
+
+  /// Whether any selected block can be indented further (up to 6 levels). Code blocks have no indent.
+  bool get canIndent => selectedTextNodes.any((node) => !_isCode(node) && _indentOf(node) < MarkdownFormat.maxIndent);
+
+  /// Whether any selected block is indented.
+  bool get canOutdent => selectedTextNodes.any((node) => !_isCode(node) && _indentOf(node) > 0);
+
+  /// Indents every selected block one level. Tasks indent freely, even without a parent task above (super_editor's
+  /// own task indent refuses that).
+  void indent() {
+    final requests = <EditRequest>[
+      for (final node in selectedTextNodes)
+        if (!_isCode(node) && _indentOf(node) < MarkdownFormat.maxIndent)
+          switch (node) {
+            ListItemNode() => IndentListItemRequest(nodeId: node.id),
+            TaskNode() => SetTaskIndentRequest(node.id, node.indent + 1),
+            _ => IndentParagraphRequest(node.id),
+          },
+    ];
+    if (requests.isNotEmpty) _editor.execute(requests);
+  }
+
+  /// Outdents every selected block one level.
+  void outdent() {
+    final requests = <EditRequest>[
+      for (final node in selectedTextNodes)
+        if (!_isCode(node) && _indentOf(node) > 0)
+          switch (node) {
+            ListItemNode() => UnIndentListItemRequest(nodeId: node.id),
+            TaskNode() => SetTaskIndentRequest(node.id, node.indent - 1),
+            _ => UnIndentParagraphRequest(node.id),
+          },
+    ];
+    if (requests.isNotEmpty) _editor.execute(requests);
+  }
+
+  /// The alignment of the block under the selection extent.
+  TextAlign get alignment {
+    return switch (selectedTextNodes.lastOrNull?.getMetadataValue(TextNodeMetadata.textAlign)) {
+      'center' => TextAlign.center,
+      'right' => TextAlign.right,
+      'justify' => TextAlign.justify,
+      _ => TextAlign.left,
+    };
+  }
+
+  /// Aligns every selected paragraph, heading, quote, list item and task. Code blocks have no alignment.
+  void setAlignment(TextAlign alignment) {
+    // Only blocks it changes: an edit that changes nothing would still be an (empty) undo step.
+    final name = TextAlignment.name(alignment);
+    final nodes = selectedTextNodes.where(
+      (node) => !_isCode(node) && node.getMetadataValue(TextNodeMetadata.textAlign) != name,
+    );
+    if (nodes.isEmpty) return;
+    _editor.execute([for (final node in nodes) ChangeTextAlignmentRequest(node.id, alignment)]);
+  }
+
+  /// Inserts a horizontal rule at the caret, placed like an embed (see [InsertBlock.requests]).
+  void insertHorizontalRule() {
+    final selection = _selection;
+    if (selection == null) return;
+    _editor.execute(InsertBlock.requests(_document, selection.extent, HorizontalRuleNode(id: Editor.createNodeId())));
+  }
+
+  // ── History ────────────────────────────────────────────────────────────────
+
+  /// Whether there's an edit to undo. Taps that only move the caret are history steps too, but not edits: a freshly
+  /// opened story has nothing to undo.
+  bool get canUndo => _editor.history.any(_changesDocument);
+  bool get canRedo => _editor.future.any(_changesDocument);
+
+  /// Undoes the last edit, with any caret moves made after it -- one press, one visible change.
+  void undo() {
+    if (!canUndo) return;
+    while (_editor.history.isNotEmpty) {
+      final last = _editor.history.last;
+      _editor.undo();
+      if (_changesDocument(last)) return;
+    }
+  }
+
+  /// Redoes the last undone edit (caret moves undone with it stay undone; the next edit drops them).
+  void redo() {
+    if (!canRedo) return;
+    while (_editor.future.isNotEmpty) {
+      final next = _editor.future.last;
+      _editor.redo();
+      if (_changesDocument(next)) return;
+    }
+  }
+
+  static bool _changesDocument(CommandTransaction transaction) =>
+      transaction.changes.any((change) => change is DocumentEdit);
+}

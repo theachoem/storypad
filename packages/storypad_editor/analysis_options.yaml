@@ -1,0 +1,15 @@
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    # This package must never depend on super_editor internals (package:super_editor/src/...).
+    implementation_imports: true
+
+formatter:
+  page_width: 120
+
+analyzer:
+  exclude:
+    - build/**
+    - macos/**
+    - android/**
