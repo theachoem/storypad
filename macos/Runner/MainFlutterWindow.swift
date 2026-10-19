@@ -22,7 +22,8 @@ class MainFlutterWindow: NSWindow {
     let channel = FlutterMethodChannel(name: "default_platform_channel", binaryMessenger: messenger)
 
     let services: [(FlutterMethodCall, @escaping FlutterResult) -> Bool] = [
-      ICloudBackupService.handle
+      ICloudBackupService.handle,
+      WindowAppearanceService.handle,
     ]
 
     channel.setMethodCallHandler { call, result in

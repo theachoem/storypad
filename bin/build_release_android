@@ -111,6 +111,10 @@ function main(){
 
   (cd android && ./gradlew clean)
 
+  # gradlew clean wipes all of build/. Flutter's SwiftPM step still rsyncs iOS/macOS plugins into
+  # build/<platform>/SourcePackages/ during an Android build, and rsync won't create missing parents.
+  mkdir -p build/ios/SourcePackages build/macos/SourcePackages
+
   if [ "$FLAVOR" == "community" ]; then
     echo "🚀 Building & releasing $FLAVOR to FDroid"
     echo ""

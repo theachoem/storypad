@@ -13,8 +13,10 @@ function run_command() {
 
   echo -e "[EXECUTING] $masked_command\n"
   eval "$(echo "$1" | tr -d '\n')"
+  local status=$?
 
   echo ""
+  return $status
 }
 
 function get_package_name() {
@@ -118,16 +120,42 @@ function install_provisioning_profile() {
   PROJECT_PATH=$3
 
   PROVISIONING_EXPORT_PATH=$(get_provision_export_path $FLAVOR $PLATFORM)
+  PROVISION_SOURCE_PATH=$(get_provision_source_path $FLAVOR $PLATFORM)
 
   mkdir -p $(dirname $PROVISIONING_EXPORT_PATH)
 
+  # --profile is explicit: the default globs every profile in ~/Library/MobileDevice/Provisioning Profiles,
+  # and iOS + macOS profiles share the bundle id, so it could pick the other platform's profile.
   run_command "xcode-project use-profiles \
     --project=$PROJECT_PATH \
+    --profile=$PROVISION_SOURCE_PATH \
     --export-options-plist=$PROVISIONING_EXPORT_PATH \
     --code-signing-setup-verbose-logging"
 
+  # macOS exports with Xcode cloud signing instead: use-profiles infers an iOS-style
+  # "ad-hoc" method that macOS rejects, and the .pkg also needs a "Mac Installer
+  # Distribution" certificate we don't keep locally - Apple's cloud-managed one signs it
+  # when build_release_macos exports with -allowProvisioningUpdates + an Admin API key.
+  if [ "$PLATFORM" == "macos" ]; then
+    /usr/libexec/PlistBuddy -c "Set :method app-store-connect" $PROVISIONING_EXPORT_PATH
+    /usr/libexec/PlistBuddy -c "Set :signingStyle automatic" $PROVISIONING_EXPORT_PATH
+    /usr/libexec/PlistBuddy -c "Delete :provisioningProfiles" $PROVISIONING_EXPORT_PATH
+    /usr/libexec/PlistBuddy -c "Delete :signingCertificate" $PROVISIONING_EXPORT_PATH
+  fi
+
   cat $PROVISIONING_EXPORT_PATH
   echo ""
+}
+
+# Xcode's IPA/pkg export runs /usr/bin/rsync -E, whose receiving side resolves `rsync`
+# from PATH. A Homebrew rsync 3.x there rejects --extended-attributes ("exportArchive Copy
+# failed"), so shim just rsync back to Apple's for the rest of the script.
+# Usage: use_system_rsync
+function use_system_rsync() {
+  SHIM_DIR="bin/.tmp/rsync_shim"
+  mkdir -p "$SHIM_DIR"
+  ln -sf /usr/bin/rsync "$SHIM_DIR/rsync"
+  export PATH="$(cd "$SHIM_DIR" && pwd):$PATH"
 }
 
 # Usage: get_env_key KEY_NAME
