@@ -175,6 +175,11 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
   Map<int, DateTime?>? _lastDbUpdatedAtByYear;
   Map<int, DateTime?>? get lastDbUpdatedAtByYear => _lastDbUpdatedAtByYear;
 
+  /// Devices (by model) seen writing old-format backups in the last sync: an older StoryPad whose new stories this
+  /// device can't receive until it's updated.
+  Set<String> _olderAppDeviceModels = const {};
+  Set<String> get olderAppDeviceModels => _olderAppDeviceModels;
+
   bool _syncing = false;
   bool get syncing => _syncing;
 
@@ -497,6 +502,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     // its listeners until it's done; this holds across services too, so a
     // sync across N providers triggers at most one home reload instead of N).
     var didImportAny = false;
+    final olderAppDeviceModels = <String>{};
 
     // Process each service individually
     for (final service in services) {
@@ -545,6 +551,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
       kErrorReportingService.log('$runtimeType#_syncBackupAcrossDevices[$serviceId]: succeeded');
 
       if (result.data?.didImport == true) didImportAny = true;
+      olderAppDeviceModels.addAll(result.data?.olderAppDeviceModels ?? const {});
 
       // Update local DB timestamps after successful sync (in case import happened)
       _lastDbUpdatedAtByYear = await repository.getLastDbUpdatedAtByYear();
@@ -587,6 +594,7 @@ class BackupProvider extends ChangeNotifier with DebounchedCallback {
     }
 
     if (didImportAny) await repository.restoreService.notify();
+    if (attemptedSync && allSyncsSucceeded) _olderAppDeviceModels = olderAppDeviceModels;
 
     notifyListeners();
     return attemptedSync && allSyncsSucceeded;

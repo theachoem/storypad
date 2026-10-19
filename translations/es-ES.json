@@ -273,6 +273,8 @@
   "general.word_count_args": "Palabras: {WORDS_COUNT}",
   "general.words": "Palabras",
   "general.years": "Años",
+  "general.older_app_devices.message": "{} usa una versión anterior de StoryPad. Actualízala para que tus historias sigan sincronizándose entre dispositivos.",
+  "general.older_app_devices.title": "Actualiza StoryPad en tus otros dispositivos",
   "input.coordinates.label": "Coordenadas",
   "input.message.already_exist": "¡Ya existen!",
   "input.message.incorrect": "Incorrecto",

@@ -273,6 +273,8 @@
   "general.word_count_args": "단어 수: {WORDS_COUNT}",
   "general.words": "단어",
   "general.years": "연도",
+  "general.older_app_devices.message": "{}에서 이전 버전의 StoryPad를 사용 중이에요. 기기 간에 이야기가 계속 동기화되도록 업데이트하세요.",
+  "general.older_app_devices.title": "다른 기기의 StoryPad를 업데이트하세요",
   "input.coordinates.label": "좌표",
   "input.message.already_exist": "이미 존재합니다!",
   "input.message.incorrect": "올바르지 않음",

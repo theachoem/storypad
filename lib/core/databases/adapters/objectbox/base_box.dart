@@ -5,6 +5,7 @@ import 'package:storypad/core/databases/models/base_db_model.dart';
 import 'package:storypad/core/databases/models/collection_db_model.dart';
 import 'package:storypad/core/objects/backup_file_object.dart';
 import 'package:storypad/core/services/logger/app_logger.dart';
+import 'package:storypad/core/storages/older_app_last_seen_storage.dart';
 import 'package:storypad/core/types/support_directory_path.dart';
 import 'package:storypad/objectbox.g.dart';
 
@@ -27,7 +28,11 @@ abstract class BaseBox<B extends BaseObjectBox, T extends BaseDbModel> extends B
   QueryDateProperty<B> get permanentlyDeletedAtProperty;
 
   Future<void> cleanupOldDeletedRecords() async {
-    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
+    // TODO: remove once no device runs an app before 2.34.0 (v3 backups) -- see OlderAppLastSeenStorage.
+    // An older app still uploading never learns of deletions made here: keep them while one was seen recently.
+    if (await OlderAppLastSeenStorage().seenWithin(OlderAppLastSeenStorage.keepDeletedRecordsFor)) return;
+
+    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 30));
     Condition<B> conditions = permanentlyDeletedAtProperty.notNull().and(
       permanentlyDeletedAtProperty.lessOrEqualDate(sevenDaysAgo),
     );

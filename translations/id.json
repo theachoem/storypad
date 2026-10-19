@@ -273,6 +273,8 @@
   "general.word_count_args": "Jumlah Kata: {WORDS_COUNT}",
   "general.words": "Kata-kata",
   "general.years": "Tahun",
+  "general.older_app_devices.message": "{} memakai StoryPad versi lama. Perbarui agar ceritamu tetap tersinkron antarperangkat.",
+  "general.older_app_devices.title": "Perbarui StoryPad di perangkatmu yang lain",
   "input.coordinates.label": "Koordinat",
   "input.message.already_exist": "Sudah ada!",
   "input.message.incorrect": "Salah",
