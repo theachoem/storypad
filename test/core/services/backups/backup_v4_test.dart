@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:storypad/core/objects/backup_file_object.dart';
 import 'package:storypad/core/objects/backup_object.dart';
 import 'package:storypad/core/objects/cloud_file_object.dart';
@@ -14,6 +15,7 @@ import 'package:storypad/core/services/backups/sync_steps/backup_latest_checker_
 import 'package:storypad/core/services/backups/sync_steps/backup_sync_messenger.dart';
 import 'package:storypad/core/services/backups/sync_steps/backup_uploader_service.dart';
 import 'package:storypad/core/storages/backup_import_history_storage.dart';
+import 'package:storypad/core/storages/older_app_last_seen_storage.dart';
 
 /// Backups v4: new apps write v4 files (pages may be Markdown); apps before them never see those; v3 files are read
 /// once for years without a v4 file, and never written.
@@ -151,6 +153,39 @@ void main() {
       );
       expect(response.olderAppDeviceModels, {'iPad'});
       expect(response.backupContentsByYear!.keys, [2025], reason: 'the legacy file itself is not imported');
+    });
+
+    group('remembers when an older app last uploaded', () {
+      setUp(() => SharedPreferences.setMockInitialValues({}));
+
+      test('by the server time of its legacy file', () async {
+        final uploadedAt = DateTime.utc(2025, 6, 1, 12);
+        final legacy = file('v3-2025', '3', 2025, 2000, model: 'iPad');
+        await check(
+          YearlyBackupFilesObject(
+            current: {2025: file('v4-2025', '4', 2025, 1000)},
+            legacy: {
+              2025: CloudFileObject(
+                fileName: legacy.fileName,
+                id: legacy.id,
+                description: null,
+                modifiedAt: uploadedAt,
+              ),
+            },
+          ),
+        );
+        expect(await OlderAppLastSeenStorage().readDate(), uploadedAt);
+      });
+
+      test('not for legacy files the current ones already replaced', () async {
+        await check(
+          YearlyBackupFilesObject(
+            current: {2025: file('v4-2025', '4', 2025, 2000)},
+            legacy: {2025: file('v3-2025', '3', 2025, 1000), 2024: file('v3-2024', '3', 2024, 900)},
+          ),
+        );
+        expect(await OlderAppLastSeenStorage().readDate(), isNull);
+      });
     });
   });
 

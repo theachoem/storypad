@@ -10,6 +10,7 @@ import 'package:storypad/core/services/logger/app_logger.dart';
 import 'package:storypad/core/services/retry/retry_executor.dart';
 import 'package:storypad/core/services/retry/retry_policy.dart';
 import 'package:storypad/core/storages/backup_import_history_storage.dart';
+import 'package:storypad/core/storages/older_app_last_seen_storage.dart';
 
 class BackupLatestCheckerResponse {
   final bool hasError;
@@ -122,6 +123,10 @@ class BackupLatestCheckerService {
     final legacyToImport = remoteYearlyBackupFiles.legacyOnly;
     final olderAppDeviceModels = olderAppDeviceModelsOf(remoteYearlyBackupFiles);
 
+    // TODO: remove once no device runs an app before 2.34.0 (v3 backups) -- see OlderAppLastSeenStorage.
+    final olderAppUploadedAt = olderAppUploadedAtOf(remoteYearlyBackupFiles);
+    if (olderAppUploadedAt != null) await OlderAppLastSeenStorage().recordSeen(olderAppUploadedAt);
+
     if (remoteYearlyBackupFiles.current.isEmpty && legacyToImport.isEmpty) {
       AppLogger.d('No backups found in ${cloudService.serviceType.displayName}');
       _messenger.report(
@@ -226,10 +231,24 @@ class BackupLatestCheckerService {
   /// Devices (by model) that wrote a legacy file newer than the current file for the same year: an app from before
   /// the current format is still in use there (this app never writes legacy files).
   static Set<String> olderAppDeviceModelsOf(YearlyBackupFilesObject files) {
-    return {
-      for (final MapEntry(key: year, value: legacy) in files.legacy.entries)
-        if (files.current[year]?.lastUpdatedAt case final currentAt?)
-          if (legacy.lastUpdatedAt?.isAfter(currentAt) == true) ?legacy.getFileInfo()?.device.model,
-    };
+    return {for (final legacy in _olderAppFilesOf(files)) ?legacy.getFileInfo()?.device.model};
+  }
+
+  // TODO: remove once no device runs an app before 2.34.0 (v3 backups) -- see OlderAppLastSeenStorage.
+  /// When an older app last uploaded one of those legacy files, by the server's clock where the service gives one.
+  static DateTime? olderAppUploadedAtOf(YearlyBackupFilesObject files) {
+    DateTime? newest;
+    for (final legacy in _olderAppFilesOf(files)) {
+      final uploadedAt = legacy.modifiedAt ?? legacy.lastUpdatedAt;
+      if (uploadedAt != null && (newest == null || uploadedAt.isAfter(newest))) newest = uploadedAt;
+    }
+    return newest;
+  }
+
+  static Iterable<CloudFileObject> _olderAppFilesOf(YearlyBackupFilesObject files) sync* {
+    for (final MapEntry(key: year, value: legacy) in files.legacy.entries) {
+      final currentAt = files.current[year]?.lastUpdatedAt;
+      if (currentAt != null && legacy.lastUpdatedAt?.isAfter(currentAt) == true) yield legacy;
+    }
   }
 }
