@@ -72,6 +72,7 @@ function main(){
   echo "Building appbundle for $FLAVOR flavor..."
   echo ""
 
+  use_system_rsync
   setup_signing_certificates
   copy_provisioning_profile_to_xcode_home $FLAVOR "ios"
   install_provisioning_profile $FLAVOR "ios" "ios/Runner.xcodeproj"
