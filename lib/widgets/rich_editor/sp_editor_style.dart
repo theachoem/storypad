@@ -13,9 +13,9 @@ class SpEditorStyle {
   // ── Spacing: tune here ──────────────────────────────────────────────────────────────────────────────────────────
 
   /// The space around the page and each block:
-  /// - Paragraphs: none, so a new line sits exactly where a wrapped one would -- as in Quill. Blank lines are how a
-  ///   writer spaces text out.
-  /// - List items and tasks: 6 below each, as in Quill, so their markers and checkboxes don't touch.
+  /// - Lines of text -- paragraphs, list items and tasks: none. Their room comes from [textLineHeight] alone, so a new
+  ///   line, a wrapped one and the next task all sit the same distance apart. Blank lines are how a writer spaces text
+  ///   out.
   /// - Headings: set apart from the text above, a little closer to what they head. A page title (the first block) only
   ///   gets the space below, before the body.
   /// - Quotes, code blocks, audio and date blocks: set apart from the text around. Photos and videos a little more, so
@@ -28,12 +28,12 @@ class SpEditorStyle {
     text: BlockSpacing.zero,
     heading: BlockSpacing.only(top: 12, bottom: 8),
     block: BlockSpacing.all(8),
-    byType: {
-      'listItem': BlockSpacing.only(bottom: 6),
-      'task': BlockSpacing.only(bottom: 6),
-      'media': BlockSpacing.all(12),
-    },
+    byType: {'media': BlockSpacing.all(12)},
   );
+
+  /// The line height of body text (paragraphs, lists, tasks, quotes and code): room enough between lines for a checkbox
+  /// or list marker, the same whether a line wraps or starts a new block.
+  static const textLineHeight = 1.5;
 
   /// [spacing] on a page shown as a card (the list and grid layouts): as much space below the content as above it
   /// (the page's 8 above the editor plus its 4) and beside it, rather than the extra room a full page leaves below its
@@ -78,7 +78,7 @@ class SpEditorStyle {
 
   TextStyle get placeholderStyle => baseTextStyle.copyWith(
     fontSize: 16,
-    height: 1.15,
+    height: textLineHeight,
     color: _colorScheme.onSurface.withValues(alpha: 0.5),
   );
 
@@ -86,7 +86,7 @@ class SpEditorStyle {
     for (final selector in const ['paragraph', 'listItem', 'task', 'blockquote'])
       StyleRule(
         BlockSelector(selector),
-        (document, node) => {Styles.textStyle: const TextStyle(fontSize: 16, height: 1.15)},
+        (document, node) => {Styles.textStyle: const TextStyle(fontSize: 16, height: textLineHeight)},
       ),
     for (final (index, (fontSize, fontWeight, height, letterSpacing)) in headings.indexed)
       StyleRule(
@@ -111,7 +111,11 @@ class SpEditorStyle {
     StyleRule(
       const BlockSelector('code'),
       (document, node) => {
-        Styles.textStyle: TextStyle(fontSize: 13, height: 1.15, fontFamily: _isCupertino ? 'Menlo' : 'Roboto Mono'),
+        Styles.textStyle: TextStyle(
+          fontSize: 13,
+          height: textLineHeight,
+          fontFamily: _isCupertino ? 'Menlo' : 'Roboto Mono',
+        ),
       },
     ),
   ];
