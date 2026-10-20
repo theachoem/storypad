@@ -4,10 +4,13 @@ PODS:
   - objectbox_flutter_libs (0.0.1):
     - Flutter
     - ObjectBox (= 5.3.0)
+  - super_keyboard (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - objectbox_flutter_libs (from `.symlinks/plugins/objectbox_flutter_libs/ios`)
+  - super_keyboard (from `.symlinks/plugins/super_keyboard/ios`)
 
 SPEC REPOS:
   trunk:
@@ -18,11 +21,14 @@ EXTERNAL SOURCES:
     :path: Flutter
   objectbox_flutter_libs:
     :path: ".symlinks/plugins/objectbox_flutter_libs/ios"
+  super_keyboard:
+    :path: ".symlinks/plugins/super_keyboard/ios"
 
 SPEC CHECKSUMS:
   Flutter: 71a624a5bc0c04062bf19101d501e466baf2fb47
   ObjectBox: 2aae8ad350012cb53c6e7848064307cf68617f73
   objectbox_flutter_libs: 42b57158b8c4869b731487f220e07d6edc6616e0
+  super_keyboard: 016de6ce9ab826f9a0b185608209d6a3b556d577
 
 PODFILE CHECKSUM: 605c32f2fdd50c4f52b7b468d638bf62f371d321
 

@@ -27,17 +27,16 @@ class _ShowChangeContent extends StatelessWidget {
     if (pages.isEmpty) return const Center(child: CircularProgressIndicator.adaptive());
 
     return StoryPagesBuilder(
-      viewInsets: MediaQuery.viewInsetsOf(context),
       headerBuilder: null,
       preferences: viewModel.params.preferences,
       pageController: viewModel.pageController,
       pages: pages,
       storyContent: viewModel.content,
       padding: EdgeInsets.only(
-        left: MediaQuery.of(context).padding.left,
-        right: MediaQuery.of(context).padding.right,
-        bottom: MediaQuery.of(context).padding.bottom + 12,
+        left: MediaQuery.viewPaddingOf(context).left,
+        right: MediaQuery.viewPaddingOf(context).right,
       ),
+      bottomSpacing: 12,
       pageScrollController: null,
     );
   }

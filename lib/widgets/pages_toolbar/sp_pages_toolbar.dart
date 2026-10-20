@@ -1,34 +1,19 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:storypad/app_theme.dart';
-import 'package:storypad/core/constants/app_constants.dart';
-import 'package:storypad/core/databases/models/story_preferences_db_model.dart';
-import 'package:storypad/core/extensions/font_weight_extension.dart';
 import 'package:storypad/core/objects/story_page_object.dart';
-import 'package:storypad/core/rich_text/rich_text.dart';
-import 'package:storypad/providers/device_preferences_provider.dart';
-import 'package:storypad/views/settings/local_widgets/font_weight_tile.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_font_weight_sheet.dart';
-import 'package:storypad/widgets/bottom_sheets/sp_fonts_sheet.dart';
-import 'package:storypad/widgets/sp_icons.dart';
+import 'package:storypad/widgets/rich_editor/sp_editor_toolbar.dart';
 
-part './title_toolbar.dart';
-
+/// The formatting toolbar of whichever page is being edited. One toolbar for the whole page: the page title is the
+/// page's leading heading, formatted like any other line.
 class SpPagesToolbar extends StatefulWidget {
   const SpPagesToolbar({
     super.key,
     required this.pages,
-    required this.preferences,
-    required this.onThemeChanged,
     required this.backgroundColor,
     required this.managingPage,
   });
 
   final bool managingPage;
   final List<StoryPageObject> pages;
-  final StoryPreferencesDbModel preferences;
-  final void Function(StoryPreferencesDbModel) onThemeChanged;
   final Color? backgroundColor;
 
   @override
@@ -36,10 +21,8 @@ class SpPagesToolbar extends StatefulWidget {
 }
 
 class SpPagesToolbarState extends State<SpPagesToolbar> {
-  Map<int, void Function()> titleFocusListenters = {};
   Map<int, void Function()> bodyFocusListenters = {};
 
-  bool titleFocused = false;
   int? bodyFocusedIndex;
 
   @override
@@ -50,10 +33,7 @@ class SpPagesToolbarState extends State<SpPagesToolbar> {
 
   void setupListeners() {
     for (int index = 0; index < widget.pages.length; index++) {
-      titleFocusListenters[index] = () => titleFocusListener(index);
       bodyFocusListenters[index] = () => bodyFocusListener(index);
-
-      widget.pages[index].titleFocusNode.addListener(titleFocusListenters[index]!);
       widget.pages[index].bodyFocusNode.addListener(bodyFocusListenters[index]!);
     }
   }
@@ -62,21 +42,17 @@ class SpPagesToolbarState extends State<SpPagesToolbar> {
   void didUpdateWidget(covariant SpPagesToolbar oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    clearPreviousListeners();
+    clearPreviousListeners(oldWidget.pages);
     setupListeners();
   }
 
-  void clearPreviousListeners() {
-    for (int index = 0; index < widget.pages.length; index++) {
-      if (titleFocusListenters[index] != null) {
-        widget.pages[index].titleFocusNode.removeListener(titleFocusListenters[index]!);
-      }
+  void clearPreviousListeners(List<StoryPageObject> pages) {
+    for (int index = 0; index < pages.length; index++) {
       if (bodyFocusListenters[index] != null) {
-        widget.pages[index].bodyFocusNode.removeListener(bodyFocusListenters[index]!);
+        pages[index].bodyFocusNode.removeListener(bodyFocusListenters[index]!);
       }
     }
 
-    titleFocusListenters.clear();
     bodyFocusListenters.clear();
   }
 
@@ -84,87 +60,73 @@ class SpPagesToolbarState extends State<SpPagesToolbar> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    clearPreviousListeners();
+    clearPreviousListeners(widget.pages);
     setupListeners();
-  }
-
-  void titleFocusListener(int index) {
-    if (index >= widget.pages.length) return;
-    if (widget.pages[index].titleFocusNode.hasFocus) {
-      titleFocused = true;
-    } else {
-      bool everyBodyNoFocus = widget.pages.every((e) => !e.bodyFocusNode.hasFocus);
-      if (everyBodyNoFocus && titleFocused) {
-        titleFocused = true;
-      } else {
-        titleFocused = false;
-      }
-    }
-
-    if (mounted) setState(() {});
   }
 
   void bodyFocusListener(int index) {
     if (index >= widget.pages.length) return;
-    if (widget.pages[index].bodyFocusNode.hasFocus) {
-      bodyFocusedIndex = index;
-      titleFocused = false;
-    }
-
+    if (widget.pages[index].bodyFocusNode.hasFocus) bodyFocusedIndex = index;
     if (mounted) setState(() {});
   }
 
   @override
   void dispose() {
-    clearPreviousListeners();
+    clearPreviousListeners(widget.pages);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final focusedIndex = bodyFocusedIndex;
+    final showsToolbar = !widget.managingPage && focusedIndex != null && focusedIndex < widget.pages.length;
+    // The Scaffold takes the bottom safe area off its body for its bottom bar -- this one, even with no toolbar shown
+    // -- so the bar keeps that space then too.
+    if (!showsToolbar) return const _BottomSafeArea();
+
     return Visibility(
       visible: !widget.managingPage,
       child: Stack(
         fit: StackFit.loose,
-        children: [
-          if (titleFocused) buildTitleToolbar(context),
-          if (!titleFocused)
-            ...List.generate(
-              widget.pages.length,
-              (index) {
-                return Visibility(
-                  visible: index == bodyFocusedIndex,
-                  child: Container(
-                    color: widget.backgroundColor,
-                    padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
-                    ),
-                    child: editorAdapter.buildToolbar(
-                      context: context,
-                      controller: widget.pages[index].bodyController,
-                      backgroundColor: widget.backgroundColor,
-                    ),
-                  ),
-                );
-              },
-            ),
-        ],
+        children: List.generate(
+          widget.pages.length,
+          (index) {
+            return Visibility(
+              visible: index == bodyFocusedIndex,
+              child: _AboveKeyboard(
+                color: widget.backgroundColor,
+                child: SpEditorToolbar(controller: widget.pages[index].bodyController),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
+}
 
-  Widget buildTitleToolbar(BuildContext context) {
+/// The bottom safe area (the home indicator's inset), on its own.
+class _BottomSafeArea extends StatelessWidget {
+  const _BottomSafeArea();
+
+  @override
+  Widget build(BuildContext context) => SizedBox(height: MediaQuery.paddingOf(context).bottom);
+}
+
+/// Sits [child] above the keyboard (and the home indicator without one). The keyboard's animation changes that space on
+/// every frame: read here alone, it rebuilds this padding only -- not the toolbar, whose ~30 buttons are a frame's work.
+class _AboveKeyboard extends StatelessWidget {
+  const _AboveKeyboard({required this.color, required this.child});
+
+  final Color? color;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      color: widget.backgroundColor,
-      padding: EdgeInsets.only(
-        left: MediaQuery.of(context).padding.left,
-        right: MediaQuery.of(context).padding.right,
-        bottom: MediaQuery.of(context).padding.bottom + MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: _TitleToolbar(
-        preferences: widget.preferences,
-        onThemeChanged: (preferences) => widget.onThemeChanged(preferences),
-      ),
+      color: color,
+      padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom + MediaQuery.viewInsetsOf(context).bottom),
+      child: child,
     );
   }
 }

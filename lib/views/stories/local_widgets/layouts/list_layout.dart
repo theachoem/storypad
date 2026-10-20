@@ -32,6 +32,7 @@ class _ListLayout extends StatelessWidget {
             if (index == itemCount - 1) ...[
               SizedBox(height: builder.spacing),
               builder._buildAddButton(),
+              builder._buildBottomSafeArea(),
             ],
           ],
         );

@@ -135,7 +135,7 @@ StoryDbModel _story({
       plainText: "Entry",
       createdAt: now,
       richPages: [
-        StoryPageDbModel(id: id + 2, title: null, body: body),
+        StoryPageDbModel.legacy(id: id + 2, title: null, body: body),
       ],
     ),
     draftContent: null,

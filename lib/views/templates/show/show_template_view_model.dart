@@ -10,6 +10,7 @@ import 'package:storypad/core/objects/story_page_objects_map.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/messenger_service.dart';
 import 'package:storypad/core/services/gallery_template_usage_service.dart';
+import 'package:storypad/core/services/stories/story_convert_legacy_pages_service.dart';
 import 'package:storypad/views/home/home_view.dart';
 import 'package:storypad/views/stories/edit/edit_story_view.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
@@ -44,6 +45,10 @@ class ShowTemplateViewModel extends ChangeNotifier with DisposeAwareMixin, Debou
   final DateTime openedOn = DateTime.now();
 
   Future<void> load() async {
+    if (template.content?.hasLegacyPages == true) {
+      _setTemplate(await StoryConvertLegacyPagesService.template(template));
+    }
+
     pagesManager.pagesMap = await StoryPageObjectsMap.fromContent(
       content: draftContent!,
       readOnly: true,

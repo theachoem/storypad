@@ -27,8 +27,6 @@ class _EditStoryContent extends StatelessWidget {
               managingPage: viewModel.pagesManager.managingPage,
               pages: pages,
               backgroundColor: ColorScheme.of(context).readOnly.surface1,
-              preferences: viewModel.story!.preferences,
-              onThemeChanged: (preferences) => viewModel.changePreferences(preferences),
             ),
     );
   }
@@ -44,7 +42,6 @@ class _EditStoryContent extends StatelessWidget {
         buildPageEditors(context, pages),
         StoryPagesManager(
           viewModel: viewModel,
-          mediaQueryPadding: MediaQuery.paddingOf(context),
           actions: getPageActions(context),
         ),
       ],
@@ -53,15 +50,14 @@ class _EditStoryContent extends StatelessWidget {
 
   Widget buildPageEditors(BuildContext context, List<StoryPageObject> pages) {
     return StoryPagesBuilder(
-      viewInsets: MediaQuery.viewInsetsOf(context),
       headerBuilder: (page) => StoryHeader.fromEditStory(page: page, viewModel: viewModel, context: context),
       pageScrollController: viewModel.pagesManager.pageScrollController,
-      padding: MediaQuery.paddingOf(context).copyWith(top: 0.0),
+      padding: MediaQuery.viewPaddingOf(context).copyWith(top: 0.0, bottom: 0.0),
       pages: pages,
       preferences: viewModel.story!.preferences,
       storyContent: viewModel.draftContent!,
       pageController: viewModel.pagesManager.pageController,
-      onPageChanged: (newRichPage) => viewModel.onPageChanged(newRichPage),
+      onPageChanged: viewModel.onPageChanged,
       actions: getPageActions(context),
     );
   }
@@ -72,13 +68,6 @@ class _EditStoryContent extends StatelessWidget {
       onSwapPages: (oldIndex, newIndex) => viewModel.reorderPages(oldIndex: oldIndex, newIndex: newIndex),
       onDelete: (page) => viewModel.deleteAPage(context, page.page),
       canDeletePage: viewModel.pagesManager.canDeletePage,
-      onFocusChange: (pageIndex, page, titleFocused, bodyFocused) {
-        if (titleFocused) {
-          if (viewModel.pagesManager.pageScrollController.hasClients) {
-            viewModel.pagesManager.scrollToPage(page.id);
-          }
-        }
-      },
     );
   }
 
@@ -86,6 +75,7 @@ class _EditStoryContent extends StatelessWidget {
     return AppBar(
       forceMaterialTransparency: true,
       titleSpacing: 0.0,
+      flexibleSpace: const StoryAppBarUnfocusArea(),
       // On large screens, its side padding prevents the divider
       // from spanning the full width of the screen. To avoid this visual
       // inconsistency, we hide the divider when the window is large.

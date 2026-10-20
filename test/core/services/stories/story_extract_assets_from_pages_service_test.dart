@@ -266,7 +266,7 @@ void main() {
       });
 
       test('handles page with null body', () {
-        final page = StoryPageDbModel(
+        final page = StoryPageDbModel.legacy(
           id: 1,
           title: 'page1',
           body: null,
@@ -367,7 +367,7 @@ void main() {
 
 /// Helper to create a StoryPageDbModel with body content
 StoryPageDbModel _createPageWithBody(List<dynamic> body) {
-  return StoryPageDbModel(
+  return StoryPageDbModel.legacy(
     id: DateTime.now().millisecondsSinceEpoch,
     title: 'page-test',
     body: body,

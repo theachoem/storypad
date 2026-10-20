@@ -1,13 +1,19 @@
 import 'dart:convert';
-import 'package:flutter_quill/flutter_quill.dart';
-import 'package:flutter_quill/quill_delta.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:storypad/core/services/quill/quill_delta_to_plain_text_service.dart';
 
-// Helper function to create a Document from a JSON string (Delta format)
-Document _docFromJson(String jsonString) {
-  return Document.fromDelta(Delta.fromJson(json.decode(jsonString) as List));
+// Stored Delta ops from a JSON string, as a page stores them.
+_Doc _docFromJson(String jsonString) => _Doc(json.decode(jsonString) as List);
+
+class _Doc {
+  _Doc(this._ops);
+
+  final List<dynamic> _ops;
+
+  _Doc get root => this;
+  _Doc toDelta() => this;
+  List<dynamic> toJson() => _ops;
 }
 
 void main() {

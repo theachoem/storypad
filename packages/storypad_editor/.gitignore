@@ -1,0 +1,14 @@
+.dart_tool/
+.packages
+build/
+
+# This is a library, not an app -- don't pin transitive resolutions for
+# consumers.
+pubspec.lock
+
+*.iml
+.idea/
+.DS_Store
+
+# Swift Package Manager state (macos/storypad_editor).
+.swiftpm/

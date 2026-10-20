@@ -58,8 +58,8 @@ class _SpStoryPreferenceThemeState extends State<SpStoryPreferenceTheme> {
       rootProvider.setSideBarColorScheme(themeConstructor.colorScheme);
     });
 
-    return MediaQuery(
-      data: MediaQuery.of(context).copyWith(textScaler: textScaler),
+    return _TextScaling(
+      textScaler: textScaler,
       child: Theme(
         data: themeConstructor.theme,
         child: Stack(
@@ -280,5 +280,22 @@ class SpStoryPreferenceThemeConstructor {
         _ => colorScheme.surface,
       };
     }
+  }
+}
+
+/// The story's text scale, applied over the surrounding MediaQuery. On its own, so the MediaQuery changing (e.g. on
+/// every frame of the keyboard's animation) rebuilds only this, not the story's theme and pages.
+class _TextScaling extends StatelessWidget {
+  const _TextScaling({required this.textScaler, required this.child});
+
+  final TextScaler textScaler;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaler: textScaler),
+      child: child,
+    );
   }
 }

@@ -45,13 +45,13 @@ class StoryPlainTextExporter {
   String _pageContent(StoryPageObject page) {
     final parts = <String>[];
 
-    final title = page.titleController.text.trim().trim();
+    // The page as it is in the editor now: its title (leading heading) and the body after it.
+    final current = page.page.withMarkdown(page.bodyController.serialize());
+
+    final title = current.title?.trim() ?? '';
     if (title.isNotEmpty) parts.add(title);
 
-    String plainTexts = QuillDeltaToPlainTextService.call(
-      page.bodyController.serialize(),
-      markdown: markdown,
-    );
+    String plainTexts = QuillDeltaToPlainTextService.call(current.quillBody, markdown: markdown);
 
     if (plainTexts.isNotEmpty) parts.add(plainTexts);
 

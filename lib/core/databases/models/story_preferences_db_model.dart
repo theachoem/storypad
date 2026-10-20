@@ -31,6 +31,8 @@ class StoryPreferencesDbModel extends BaseDbModel {
   final FontSizeOption? fontSize;
   final int? fontWeightIndex;
 
+  // The title's own font, from before the title was the page's first heading. Unused now; kept so older app versions
+  // (e.g. on another device) keep theirs when this version saves the story.
   final String? titleFontFamily;
   final int? titleFontWeightIndex;
   final bool? titleExpanded;
@@ -40,11 +42,8 @@ class StoryPreferencesDbModel extends BaseDbModel {
 
   Color? get colorSeed => colorSeedValue != null ? Color(colorSeedValue!) : null;
   FontWeight? get fontWeight => fontWeightIndex != null ? FontWeight.values[fontWeightIndex!] : null;
-  FontWeight? get titleFontWeight => titleFontWeightIndex != null ? FontWeight.values[titleFontWeightIndex!] : null;
 
   int get colorToneFallback => colorTone ?? 0;
-  double get titleFontSize => titleExpandedFallback ? 18.0 : 16.0;
-  bool get titleExpandedFallback => titleExpanded ?? true;
 
   StoryPreferencesDbModel({
     required this.showDayCount,
@@ -74,17 +73,8 @@ class StoryPreferencesDbModel extends BaseDbModel {
         fontFamily,
         fontSize,
         fontWeightIndex,
-        titleFontFamily,
-        titleFontWeightIndex,
-        titleExpanded,
       ].every((e) => e == null) &&
       layoutType == PageLayoutType.list;
-
-  bool get titleReseted => [
-    titleFontFamily,
-    titleFontWeightIndex,
-    titleExpanded,
-  ].every((e) => e == null);
 
   StoryPreferencesDbModel resetTheme() {
     return copyWith(

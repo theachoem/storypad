@@ -2,7 +2,7 @@ import 'package:storypad/core/databases/models/story_content_db_model.dart';
 
 class StoryHasDataWrittenService {
   static bool callByContent(StoryContentDbModel content) {
-    List<List<dynamic>> pagesClone = content.richPages?.map((e) => e.body ?? []).toList() ?? [];
+    List<List<dynamic>> pagesClone = content.richPages?.map((e) => e.quillBody).toList() ?? [];
     List<List<dynamic>> pages = [...pagesClone];
 
     pages.removeWhere((items) {

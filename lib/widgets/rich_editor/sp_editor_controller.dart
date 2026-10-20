@@ -1,0 +1,179 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:storypad/widgets/rich_editor/embeds/sp_audio_embed.dart';
+import 'package:storypad/widgets/rich_editor/embeds/sp_media_embed.dart';
+import 'package:storypad/widgets/rich_editor/sp_embeds.dart';
+import 'package:storypad_editor/storypad_editor.dart';
+import 'package:storypad_editor/super_editor.dart';
+
+/// A page in the storypad_editor editor, stored as Markdown (title included, as its leading heading).
+///
+/// A page the user didn't change serializes to the Markdown it was opened with, untouched: change detection (drafts,
+/// "revert if nothing changed") compares the stored pages.
+///
+/// [selection] is in flat text offsets (each block's characters, 1 for an embed, plus one for its line break), which
+/// survive reopening the page in a new controller (e.g. from the view screen into edit), unlike node ids.
+class SpEditorController {
+  SpEditorController({
+    required String markdown,
+    required TextSelection selection,
+    required bool readOnly,
+  }) : _originalMarkdown = markdown,
+       editor = StoryEditorController(
+         markdown: markdown.trim().isEmpty && !readOnly ? _emptyPageMarkdown : markdown,
+         embeds: SpEmbeds.all,
+         readOnly: readOnly,
+         unknownBuilder: SpEmbeds.buildUnknown,
+       ) {
+    if (!selection.isCollapsed || selection.baseOffset > 0) this.selection = selection;
+  }
+
+  /// An empty page opens for editing on an empty title line (the title's heading level), so the first line typed is
+  /// its title; Enter starts the body as a plain line. Left as is, the page is still saved empty (see [serialize]).
+  static const _emptyPageMarkdown = '###';
+
+  /// The editor itself, for the editor widget and toolbar.
+  final StoryEditorController editor;
+
+  final String _originalMarkdown;
+
+  /// Whether [node] is the page title: a heading that's the page's first block.
+  bool _isTitle(DocumentNode? node) {
+    if (node is! ParagraphNode || editor.document.getNodeIndexById(node.id) != 0) return false;
+    final Object? blockType = node.getMetadataValue(NodeMetadata.blockType);
+    return blockType is NamedAttribution && blockType.id.startsWith('header');
+  }
+
+  /// The page title the caret is in (the last one while the editor has none), or `null`. With no caret at all, an
+  /// empty page's empty title line (where it opens, see [_emptyPageMarkdown]) counts.
+  ParagraphNode? _titleAtCaret() {
+    final selection = editor.selection.value ?? editor.lastSelection;
+    final node = selection == null
+        ? (editor.document.length == 1 ? editor.document.first : null)
+        : editor.document.getNodeById(selection.extent.nodeId);
+    return _isTitle(node) ? node as ParagraphNode : null;
+  }
+
+  /// Embeds never go into (or before) a page title: with the caret there, it moves to the title's end, so the embed
+  /// goes right after the title (see `StoryEditorController.insertEmbed`) -- no empty line is added for it.
+  void _moveCaretBelowTitle(ParagraphNode title) {
+    editor.composer.setSelectionWithReason(
+      DocumentSelection.collapsed(
+        position: DocumentPosition(nodeId: title.id, nodePosition: title.endPosition),
+      ),
+      SelectionReason.contentChange,
+    );
+  }
+
+  /// The page as Markdown for storage, title included. The editor caches its Markdown per edit, so this is cheap to call
+  /// on every change.
+  String serialize() => editor.isDirty ? editor.toMarkdown() : _originalMarkdown;
+
+  /// The plain text after the page title (see `StoryCodec.pageBodyOf`).
+  String bodyPlainText() => StoryCodec.plainTextOf(StoryCodec.pageBodyOf(editor.document));
+
+  // ==========================================================================
+  // Selection, in flat text offsets
+  // ==========================================================================
+
+  TextSelection get selection {
+    final selection = editor.selection.value ?? editor.lastSelection;
+    if (selection == null) return const TextSelection.collapsed(offset: 0);
+    return TextSelection(baseOffset: _offsetOf(selection.base), extentOffset: _offsetOf(selection.extent));
+  }
+
+  set selection(TextSelection value) {
+    editor.composer.setSelectionWithReason(
+      DocumentSelection(base: _positionAt(value.baseOffset), extent: _positionAt(value.extentOffset)),
+      SelectionReason.contentChange,
+    );
+  }
+
+  /// A block's length in offsets, not counting its line break.
+  static int _lengthOf(DocumentNode node) => node is TextNode ? node.text.length : 1;
+
+  int _offsetOf(DocumentPosition position) {
+    var offset = 0;
+    for (final node in editor.document) {
+      if (node.id == position.nodeId) {
+        final nodePosition = position.nodePosition;
+        return offset +
+            switch (nodePosition) {
+              TextNodePosition() => nodePosition.offset,
+              UpstreamDownstreamNodePosition() => nodePosition.affinity == TextAffinity.upstream ? 0 : 1,
+              _ => 0,
+            };
+      }
+      offset += _lengthOf(node) + 1;
+    }
+    return offset;
+  }
+
+  DocumentPosition _positionAt(int offset) {
+    var start = 0;
+    for (final node in editor.document) {
+      final length = _lengthOf(node);
+      if (offset <= start + length) {
+        final local = (offset - start).clamp(0, length);
+        return DocumentPosition(
+          nodeId: node.id,
+          nodePosition: node is TextNode
+              ? TextNodePosition(offset: local)
+              : (local == 0
+                    ? const UpstreamDownstreamNodePosition.upstream()
+                    : const UpstreamDownstreamNodePosition.downstream()),
+        );
+      }
+      start += length + 1;
+    }
+    final last = editor.document.last;
+    return DocumentPosition(nodeId: last.id, nodePosition: last.endPosition);
+  }
+
+  // ==========================================================================
+  // Editing
+  // ==========================================================================
+
+  /// Inserts photos/videos (an album when there's more than one) at the caret (the last one while the editor has none,
+  /// else the end), full width.
+  void insertMedia(List<String> paths) =>
+      _insertBelowTitle(const SpMediaEmbed(), SpMediaValue(paths, size: SpEmbedSize.max));
+
+  /// Inserts a voice note at the caret (the last one while the editor has none, else the end).
+  void insertAudio(String path) => _insertBelowTitle(const SpAudioEmbed(), path);
+
+  /// An empty title line is only where the caret was (a new page opens on one): the embed takes its place, as an
+  /// embed takes an empty line's, rather than leaving an empty title above it. A title with text keeps it, the embed
+  /// going below.
+  void _insertBelowTitle<T extends Object>(StoryEmbed<T> embed, T value) {
+    final title = _titleAtCaret();
+    if (title != null && title.text.isEmpty) {
+      final node = embed.createNode(value);
+      editor.editor.execute([
+        ReplaceNodeRequest(existingNodeId: title.id, newNode: node),
+        ChangeSelectionRequest(
+          DocumentSelection.collapsed(
+            position: DocumentPosition(
+              nodeId: node.id,
+              nodePosition: const UpstreamDownstreamNodePosition.downstream(),
+            ),
+          ),
+          SelectionChangeType.insertContent,
+          SelectionReason.contentChange,
+        ),
+        ChangeComposingRegionRequest(null),
+      ]);
+      return;
+    }
+    if (title != null) _moveCaretBelowTitle(title);
+    editor.insertEmbed(embed, value);
+  }
+
+  void dispose() {
+    // Pages are disposed (e.g. a deleted page) while their editor widget may still be mounted for this frame; the
+    // editor controller must outlive it.
+    final editorToDispose = editor;
+    SchedulerBinding.instance.addPostFrameCallback((_) => editorToDispose.dispose());
+    SchedulerBinding.instance.ensureVisualUpdate();
+  }
+}

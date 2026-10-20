@@ -1,0 +1,31 @@
+[
+  { "insert": "A placeholder heading line with " },
+  { "insert": "some underlined text", "attributes": { "underline": true } },
+  {
+    "insert": " followed by more placeholder sentence content that continues for a while, mirroring how a real paragraph in this dataset ran on before the next styled run appeared.\n"
+  },
+  { "insert": "an emphasized and underlined phrase", "attributes": { "bold": true, "underline": true } },
+  {
+    "insert": " then another long placeholder run of plain text representing a typical paragraph body, again just standing in for real prose length and shape rather than content.\n"
+  },
+  { "insert": "a final bold-underlined phrase", "attributes": { "bold": true, "underline": true } },
+  { "insert": " and a shorter closing placeholder sentence.\nFirst task" },
+  { "insert": "\n", "attributes": { "list": "unchecked" } },
+  { "insert": "Second task, already done" },
+  { "insert": "\n", "attributes": { "list": "checked" } },
+  { "insert": "Indented sub-task" },
+  { "insert": "\n", "attributes": { "list": "checked", "indent": 1 } },
+  { "insert": "First bullet point" },
+  { "insert": "\n", "attributes": { "list": "bullet" } },
+  { "insert": "Second bullet point" },
+  { "insert": "\n", "attributes": { "list": "bullet" } },
+  { "insert": "First numbered step" },
+  { "insert": "\n", "attributes": { "list": "ordered" } },
+  { "insert": "Second numbered step" },
+  { "insert": "\n", "attributes": { "list": "ordered" } },
+  { "insert": "Indented follow-up point" },
+  { "insert": "\n", "attributes": { "list": "bullet", "indent": 1 } },
+  { "insert": "A link to a placeholder site: " },
+  { "insert": "example link text", "attributes": { "link": "https://example.com/placeholder" } },
+  { "insert": "\n" }
+]
