@@ -30,7 +30,7 @@ class GenerateBodyPlainTextService {
 
     // Compute text once per page and reuse results
     final pageTexts = newRichPages.map((page) {
-      return QuillDeltaToPlainTextService.call(page.body ?? [], markdown: true, includeMarkdownEmbeds: false);
+      return QuillDeltaToPlainTextService.call(page.quillBody, markdown: true, includeMarkdownEmbeds: false);
     }).toList();
 
     // Build plainText from computed texts
@@ -51,6 +51,9 @@ class GenerateBodyPlainTextService {
           final filteredTitle = MarkdownContentFilterService.call(newRichPages[i].title ?? '');
           final filteredBody = MarkdownContentFilterService.call(pageTexts[i]);
           final filteredCombined = '$filteredTitle $filteredBody';
+
+          // A page from a newer app version is kept exactly as stored, counts included.
+          if (newRichPages[i].isUnsupported) return newRichPages[i];
 
           return newRichPages[i].copyWith(
             characterCount: filteredTitle.length + filteredBody.length,

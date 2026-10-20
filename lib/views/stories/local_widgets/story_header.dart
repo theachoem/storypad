@@ -64,7 +64,7 @@ class StoryHeader extends StatelessWidget {
           ? viewModel.pagesManager.currentPageIndexNotifier
           : null,
       onSizeChange: (size) =>
-          viewModel.pagesManager.setHeaderHeight(size.height + MediaQuery.of(context).padding.top + kToolbarHeight),
+          viewModel.pagesManager.setHeaderHeight(size.height + MediaQuery.viewPaddingOf(context).top + kToolbarHeight),
       story: viewModel.story!,
       draftContent: viewModel.draftContent!,
       setFeeling: viewModel.setFeeling,
@@ -92,7 +92,7 @@ class StoryHeader extends StatelessWidget {
           ? viewModel.pagesManager.currentPageIndexNotifier
           : null,
       onSizeChange: (size) =>
-          viewModel.pagesManager.setHeaderHeight(size.height + MediaQuery.of(context).padding.top + kToolbarHeight),
+          viewModel.pagesManager.setHeaderHeight(size.height + MediaQuery.viewPaddingOf(context).top + kToolbarHeight),
       story: viewModel.story!,
       draftContent: viewModel.draftContent!,
       setFeeling: viewModel.setFeeling,

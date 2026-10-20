@@ -30,7 +30,7 @@ class StoryContentEmbedExtractor {
   ///
   /// Also reads the legacy `image` key: every embed saved before the
   /// image->media rename is still stored as `image` and stays that way until
-  /// it's next edited (see `_QuillMediaBlockEmbed`'s doc) — both keys mean
+  /// it's next edited (the media embed reads both) — both keys mean
   /// exactly the same thing, so every caller must see them as one list.
   ///
   /// Use [photos]/[videos] when you mean one kind specifically (counts,
@@ -59,8 +59,8 @@ class StoryContentEmbedExtractor {
   static Set<int> assetIds(StoryContentDbModel? content) {
     final ids = <int>{};
     for (final page in content?.richPages ?? []) {
-      if (page.body == null || page.body!.isEmpty) continue;
-      ids.addAll(AssetLinkParser.extractIds(page.body));
+      if (page.quillBody.isEmpty) continue;
+      ids.addAll(AssetLinkParser.extractIds(page.quillBody));
     }
     return ids;
   }
@@ -85,8 +85,8 @@ class StoryContentEmbedExtractor {
     final pages = content?.richPages ?? [];
 
     for (final page in pages) {
-      if (page.body == null || page.body!.isEmpty) continue;
-      links.addAll(AssetLinkParser.extractEmbedSourcesAny(page.body, embedTypes));
+      if (page.quillBody.isEmpty) continue;
+      links.addAll(AssetLinkParser.extractEmbedSourcesAny(page.quillBody, embedTypes));
     }
 
     return links;

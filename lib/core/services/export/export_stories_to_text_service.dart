@@ -137,9 +137,9 @@ class ExportStoriesToTextService {
         }
 
         // Add page content (convert from Quill Delta to plain text)
-        if (page.body != null) {
+        if (page.quillBody.isNotEmpty) {
           final plainText = QuillDeltaToPlainTextService.call(
-            page.body!,
+            page.quillBody,
             markdown: false,
             includeMarkdownEmbeds: true,
           ).trim();

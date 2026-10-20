@@ -16,9 +16,6 @@ import 'package:storypad/core/types/path_type.dart';
 // ignore: depend_on_referenced_packages
 import 'package:sqflite/sqflite.dart' as sqlite;
 
-// ignore: implementation_imports
-import 'package:flutter_quill/src/document/document.dart';
-
 class StorypadLegacyDatabase {
   sqlite.Database? _database;
   bool get exist => _database != null;
@@ -78,21 +75,22 @@ class StorypadLegacyDatabase {
 
       List<StoryDbModel> stories = [];
       for (StorypadLegacyStoryModel storypadStory in storypadStories) {
-        Document? document;
+        // The old app stored Quill Delta ops; kept as a legacy page, converted to Markdown when opened.
+        List<dynamic>? ops;
 
         if (storypadStory.paragraph != null) {
           dynamic quill = jsonDecode(storypadStory.paragraph!);
-          document = Document.fromJson(quill);
+          if (quill is List) ops = quill;
         }
 
         final content = StoryContentDbModel.create(createdAt: storypadStory.createOn).copyWith(
           title: storypadStory.title,
-          plainText: document != null ? QuillDeltaToPlainTextService.call(document.root.toDelta().toJson()) : null,
+          plainText: ops != null ? QuillDeltaToPlainTextService.call(ops) : null,
           richPages: [
-            StoryPageDbModel(
+            StoryPageDbModel.legacy(
               id: DateTime.now().millisecondsSinceEpoch,
               title: storypadStory.title,
-              body: document?.toDelta().toJson(),
+              body: ops,
             ),
           ],
         );

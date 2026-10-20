@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:dart_quill_delta/dart_quill_delta.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -156,18 +155,23 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
         "from years ago. These small moments remind me how beautiful life truly is. "
         "Tomorrow I plan to wake up early, journal, and enjoy a slow morning "
         "with a warm cup of coffee before diving into work.";
-    final delta = Delta()
-      ..insert(body)
-      ..insert("\n");
-    if (_previewImagePaths.isNotEmpty) {
-      delta
-        ..insert({"media": _previewImagePaths.join('|')})
-        ..insert("\n");
-    }
-    delta
-      ..insert({"audio": "audio/mock_voice_1.m4a"})
-      ..insert("\n")
-      ..insert({"audio": "audio/mock_voice_2.m4a"});
+    final ops = [
+      {"insert": "$body\n"},
+      if (_previewImagePaths.isNotEmpty) ...[
+        {
+          "insert": {"media": _previewImagePaths.join('|')},
+        },
+        {"insert": "\n"},
+      ],
+      {
+        "insert": {"audio": "audio/mock_voice_1.m4a"},
+      },
+      {"insert": "\n"},
+      {
+        "insert": {"audio": "audio/mock_voice_2.m4a"},
+      },
+      {"insert": "\n"},
+    ];
     final now = DateTime.now();
     final story = StoryDbModel.fromDate(now);
 
@@ -190,20 +194,22 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
         title: "My Journal Entry ✨",
         plainText: body,
         richPages: [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: now.millisecondsSinceEpoch,
             title: "My Journal Entry ✨",
-            body: delta.toJson(),
+            body: ops,
             characterCount: body.length,
             wordCount: null,
-          ),
-          StoryPageDbModel(
+          ).toMarkdownPage(),
+          StoryPageDbModel.legacy(
             id: now.millisecondsSinceEpoch + 1,
             title: null,
-            body: (Delta()..insert("Page two content.")).toJson(),
+            body: const [
+              {"insert": "Page two content.\n"},
+            ],
             characterCount: null,
             wordCount: null,
-          ),
+          ).toMarkdownPage(),
         ],
       ),
     );
@@ -224,13 +230,15 @@ class _StoryTilePreferencesSheetContentState extends State<_StoryTilePreferences
         title: null,
         plainText: body,
         richPages: [
-          StoryPageDbModel(
+          StoryPageDbModel.legacy(
             id: now.millisecondsSinceEpoch + 10,
             title: null,
-            body: (Delta()..insert(body)).toJson(),
+            body: const [
+              {"insert": "$body\n"},
+            ],
             characterCount: body.length,
             wordCount: null,
-          ),
+          ).toMarkdownPage(),
         ],
       ),
     );

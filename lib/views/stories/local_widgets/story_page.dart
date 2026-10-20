@@ -6,7 +6,6 @@ class _StoryPage extends StatelessWidget {
     required this.preferences,
     required this.storyContent,
     required this.page,
-    required this.onFocusChange,
     required this.onTitleVisibilityChanged,
     required this.onSwap,
     required this.canMoveUp,
@@ -23,7 +22,6 @@ class _StoryPage extends StatelessWidget {
   final StoryPreferencesDbModel? preferences;
   final StoryContentDbModel storyContent;
   final StoryPageObject page;
-  final void Function(bool titleFocused, bool bodyFocused)? onFocusChange;
   final void Function(VisibilityInfo info)? onTitleVisibilityChanged;
 
   final int pageIndex;
@@ -34,25 +32,40 @@ class _StoryPage extends StatelessWidget {
 
   final void Function(int oldIndex, int newIndex)? onSwap;
   final void Function()? onDelete;
-  final void Function(StoryPageDbModel newRichPage)? onChanged;
+  final VoidCallback? onChanged;
   final void Function()? onGoToEdit;
 
   final bool readOnly;
   final bool smallPage;
 
-  void onChange() {
-    StoryPageDbModel richPage = page.page.copyWith(
-      title: page.titleController.text.trim().isNotEmpty == true ? page.titleController.text.trim() : null,
-      body: page.bodyController.serialize(),
-    );
+  /// A story with a page from a newer app version is shown read-only and never saved (e.g. by a checkbox toggle) --
+  /// wherever it's shown, including the edit views (a template holding such a page, a story made from one).
+  bool get _locked => page.isUnsupported || storyContent.hasUnsupportedPages;
 
-    onChanged?.call(richPage);
+  void onChange() {
+    if (_locked) return;
+    // Only marked: the page's Markdown is read from its editor when the story next reads the page (see
+    // StoryPageObject.page), never per keystroke.
+    page.markEdited();
+    onChanged?.call();
+  }
+
+  /// The least a page card (list/grid) is tall: an empty page's card, as when the title and body were separate fields.
+  static const double _cardMinHeight = 64;
+
+  bool get _editable => !readOnly && !_locked && onChanged != null;
+
+  /// A tap on the page's empty space below its text puts the caret at the end.
+  void _focusAtEnd() {
+    page.bodyController.editor.actions.placeCaretAtEnd();
+    page.bodyFocusNode.requestFocus();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.zero,
+      constraints: smallPage ? BoxConstraints(minHeight: MediaQuery.textScalerOf(context).scale(_cardMinHeight)) : null,
       decoration: smallPage
           ? BoxDecoration(
               borderRadius: BorderRadius.circular(8.0),
@@ -62,9 +75,14 @@ class _StoryPage extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
+          if (_editable)
+            Positioned.fill(
+              child: GestureDetector(behavior: HitTestBehavior.opaque, onTap: _focusAtEnd),
+            ),
           buildEditor(context),
           if (canMoveUp || canMoveDown || canDeletePage) ...[
             if (!readOnly &&
+                !_locked &&
                 (preferences?.layoutType == PageLayoutType.list || preferences?.layoutType == PageLayoutType.grid))
               buildMoreVertButton(context),
           ],
@@ -74,46 +92,38 @@ class _StoryPage extends StatelessWidget {
   }
 
   Widget buildEditor(BuildContext context) {
-    bool showHideTitle = readOnly && page.titleController.text.trim().isEmpty == true;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.max,
       spacing: 0.0,
       children: [
-        if (showHideTitle) ...[
-          const SizedBox(height: 12),
-        ] else ...[
-          VisibilityDetector(
-            key: ValueKey('page-title-${page.id}'),
-            onVisibilityChanged: onTitleVisibilityChanged,
-            child: Padding(
-              padding: smallPage ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 4.0),
-              child: _TitleField(
-                titleFocusNode: page.titleFocusNode,
-                bodyFocusNode: page.bodyFocusNode,
-                titleController: page.titleController,
-                preferences: preferences,
-                readOnly: readOnly,
-                largerTitle: !smallPage,
-                onChanged: (_) => onChange(),
-              ),
+        // Marks the page's top (where its title is), for finding the page to open when going to edit.
+        VisibilityDetector(
+          key: ValueKey('page-title-${page.id}'),
+          onVisibilityChanged: onTitleVisibilityChanged,
+          child: const SizedBox(height: 8, width: double.infinity),
+        ),
+        if (page.isUnsupported)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+            child: Text(
+              tr('page.newer_version_notice'),
+              style: TextTheme.of(context).bodySmall?.copyWith(color: ColorScheme.of(context).error),
             ),
           ),
-        ],
         Padding(
           padding: smallPage ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 4.0),
-          child: editorAdapter.buildEditor(
-            context: context,
+          child: SpEditor(
             controller: page.bodyController,
             focusNode: page.bodyFocusNode,
-            scrollController: page.bodyScrollController,
-            readOnly: readOnly,
+            readOnly: readOnly || _locked,
             storyContent: storyContent,
             layoutType: preferences?.layoutType,
-            onChanged: onChanged != null ? () => onChange() : null,
+            // None on a locked page, so its checkboxes don't toggle either: they'd tick but never be saved.
+            onChanged: onChanged != null && !_locked ? () => onChange() : null,
             onGoToEdit: onGoToEdit,
+            card: smallPage,
           ),
         ),
       ],
@@ -124,10 +134,8 @@ class _StoryPage extends StatelessWidget {
     return Positioned(
       top: -16.0,
       right: -16.0,
-      child: SpFocusNodeBuilder2(
-        focusNode1: page.titleFocusNode,
-        focusNode2: page.bodyFocusNode,
-        onFucusChangeAfterInitialized: onFocusChange,
+      child: SpFocusNodeBuilder(
+        focusNode: page.bodyFocusNode,
         child: MoreVertActionButtons(
           pageIndex: pageIndex,
           canMoveUp: canMoveUp,
@@ -136,10 +144,10 @@ class _StoryPage extends StatelessWidget {
           onSwap: onSwap!,
           onDelete: onDelete!,
         ),
-        builder: (context, titleFocused, bodyFocused, child) {
+        builder: (context, focused, child) {
           return SpAnimatedIcons.fadeScale(
             duration: Durations.medium3,
-            showFirst: titleFocused || bodyFocused,
+            showFirst: focused,
             firstChild: child!,
             secondChild: const SizedBox.shrink(),
           );

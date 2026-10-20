@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/helpers/path_helper.dart';
-import 'package:storypad/core/rich_text/rich_text.dart';
+import 'package:storypad/widgets/rich_editor/sp_editor_controller.dart';
 import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/services/duration_format_service.dart';
@@ -41,9 +41,9 @@ class SpVoiceRecordingSheet extends BaseBottomSheet {
   @override
   double get cupertinoPaddingTop => 0.0; // we have custom padding here instead.
 
-  static Future<void> showQuillRecorder({
+  static Future<void> showForEditor({
     required BuildContext context,
-    required RichTextController controller,
+    required SpEditorController controller,
   }) async {
     final result = await const SpVoiceRecordingSheet().show(context: context);
 
@@ -65,10 +65,7 @@ class SpVoiceRecordingSheet extends BaseBottomSheet {
       final savedAsset = await asset.save();
 
       if (savedAsset != null && context.mounted) {
-        editorAdapter.insertAudio(
-          controller: controller,
-          audioPath: savedAsset.relativeLocalFilePath,
-        );
+        controller.insertAudio(savedAsset.relativeLocalFilePath);
       }
     }
   }

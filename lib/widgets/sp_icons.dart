@@ -138,6 +138,33 @@ class SpIcons {
   static const IconData zoomInMap = kIsCupertino ? CupertinoIcons.rectangle_expand_vertical : Icons.zoom_in_map;
   static const IconData zoomIn = kIsCupertino ? CupertinoIcons.zoom_in : Icons.zoom_in_outlined;
   static const IconData zoomOut = kIsCupertino ? CupertinoIcons.zoom_out : Icons.zoom_out_outlined;
+
+  // Rich text formatting (editor toolbar and embed menus).
+  static const IconData alignLeft = kIsCupertino ? CupertinoIcons.text_alignleft : Icons.format_align_left;
+  static const IconData alignCenter = kIsCupertino ? CupertinoIcons.text_aligncenter : Icons.format_align_center;
+  static const IconData alignRight = kIsCupertino ? CupertinoIcons.text_alignright : Icons.format_align_right;
+  static const IconData alignJustify = kIsCupertino ? CupertinoIcons.text_justify : Icons.format_align_justify;
+  static const IconData formatBold = kIsCupertino ? CupertinoIcons.bold : Icons.format_bold;
+  static const IconData formatItalic = kIsCupertino ? CupertinoIcons.italic : Icons.format_italic;
+  static const IconData formatUnderline = kIsCupertino ? CupertinoIcons.underline : Icons.format_underline;
+  static const IconData formatStrikethrough = kIsCupertino ? CupertinoIcons.strikethrough : Icons.format_strikethrough;
+  static const IconData formatColor = Icons.format_color_text;
+  static const IconData formatHighlight = Icons.format_color_fill;
+  static const IconData formatClear = Icons.format_clear;
+  static const IconData heading1 = MdiIcons.formatHeader1;
+  static const IconData heading2 = MdiIcons.formatHeader2;
+  static const IconData heading3 = MdiIcons.formatHeader3;
+  static const IconData listBulleted = kIsCupertino ? CupertinoIcons.list_bullet : Icons.format_list_bulleted;
+  static const IconData listNumbered = kIsCupertino ? CupertinoIcons.list_number : Icons.format_list_numbered;
+  static const IconData checklist = kIsCupertino ? CupertinoIcons.checkmark_square : Icons.checklist;
+  static const IconData quote = kIsCupertino ? CupertinoIcons.text_quote : Icons.format_quote;
+  static const IconData indentIncrease = kIsCupertino ? CupertinoIcons.increase_indent : Icons.format_indent_increase;
+  static const IconData indentDecrease = kIsCupertino ? CupertinoIcons.decrease_indent : Icons.format_indent_decrease;
+  static const IconData link = kIsCupertino ? CupertinoIcons.link : Icons.link;
+  static const IconData moveUp = kIsCupertino ? CupertinoIcons.arrow_up : Icons.arrow_upward;
+  static const IconData moveDown = kIsCupertino ? CupertinoIcons.arrow_down : Icons.arrow_downward;
+  static const IconData undo = kIsCupertino ? CupertinoIcons.arrow_uturn_left : Icons.undo;
+  static const IconData redo = kIsCupertino ? CupertinoIcons.arrow_uturn_right : Icons.redo;
   static const IconData addOns = kIsCupertino ? CupertinoIcons.square_grid_2x2 : Icons.grid_view_rounded;
   static const IconData verifiedFilled = !kIsCupertino ? CupertinoIcons.checkmark_seal_fill : Icons.verified;
   static const IconData gift = kIsCupertino ? CupertinoIcons.gift : Icons.card_giftcard_outlined;

@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/app_theme.dart';
 import 'package:storypad/core/constants/locale_constants.dart';
-import 'package:storypad/core/rich_text/rich_text.dart';
 import 'package:storypad/core/services/windowed_detector_service.dart';
 import 'package:storypad/core/types/font_size_option.dart';
 import 'package:storypad/core/types/time_format_option.dart';
@@ -69,7 +68,6 @@ class App extends StatelessWidget {
                 DefaultCupertinoLocalizations.delegate,
                 DefaultMaterialLocalizations.delegate,
                 DefaultWidgetsLocalizations.delegate,
-                ...editorAdapter.localizationsDelegates,
               ],
               supportedLocales: context.supportedLocales,
               locale: context.locale,

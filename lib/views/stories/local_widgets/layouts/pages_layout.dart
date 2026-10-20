@@ -38,48 +38,49 @@ class _PagesLayoutState extends State<_PagesLayout> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return PageView.builder(
-          controller: widget.builder.pageController,
-          itemCount: widget.builder.pages.length,
-          itemBuilder: (context, index) {
-            return Stack(
-              children: [
-                SingleChildScrollView(
-                  clipBehavior: Clip.none,
-                  padding: EdgeInsets.only(top: widget.builder.padding.top, bottom: widget.builder.padding.bottom),
-                  child: Column(
-                    children: [
-                      if (widget.builder.headerBuilder != null)
-                        buildHeader(
-                          pageIndex: index,
-                          screenWidth: constraints.maxWidth,
-                          padding: EdgeInsets.only(
-                            left: widget.builder.padding.left,
-                            right: widget.builder.padding.right,
-                          ),
-                        ),
-                      Container(
+    return PageView.builder(
+      controller: widget.builder.pageController,
+      itemCount: widget.builder.pages.length,
+      itemBuilder: (context, index) {
+        return Stack(
+          children: [
+            SingleChildScrollView(
+              clipBehavior: Clip.none,
+              padding: EdgeInsets.only(top: widget.builder.padding.top),
+              child: Column(
+                children: [
+                  if (widget.builder.headerBuilder != null)
+                    // The width only, here in the scroll view: around the whole page view, the keyboard resizing
+                    // it would rebuild every page on each frame of its animation.
+                    LayoutBuilder(
+                      builder: (context, constraints) => buildHeader(
+                        pageIndex: index,
+                        screenWidth: constraints.maxWidth,
                         padding: EdgeInsets.only(
                           left: widget.builder.padding.left,
                           right: widget.builder.padding.right,
                         ),
-                        constraints: const BoxConstraints(minHeight: 200),
-                        child: widget.builder.buildPage(
-                          widget.builder.pages[index],
-                          context,
-                          smallPage: false,
-                        ),
                       ),
-                      widget.builder._buildAddButton(),
-                    ],
+                    ),
+                  Container(
+                    padding: EdgeInsets.only(
+                      left: widget.builder.padding.left,
+                      right: widget.builder.padding.right,
+                    ),
+                    constraints: const BoxConstraints(minHeight: 180),
+                    child: widget.builder.buildPage(
+                      widget.builder.pages[index],
+                      context,
+                      smallPage: false,
+                    ),
                   ),
-                ),
-                buildPageNumber(index, context),
-              ],
-            );
-          },
+                  widget.builder._buildAddButton(),
+                  widget.builder._buildBottomSafeArea(),
+                ],
+              ),
+            ),
+            buildPageNumber(index, context),
+          ],
         );
       },
     );
@@ -131,21 +132,24 @@ class _PagesLayoutState extends State<_PagesLayout> {
   }
 
   Widget buildPageNumber(int index, BuildContext context) {
-    return Positioned(
-      right: 16.0,
-      bottom: MediaQuery.of(context).padding.bottom + 16.0,
-      child: Text.rich(
-        TextSpan(
-          text: "${index + 1}",
-          style: TextTheme.of(context).bodySmall,
-          children: [
-            TextSpan(
-              text: " / ${widget.builder.storyContent.richPages?.length}",
-              style: TextTheme.of(
-                context,
-              ).bodySmall?.copyWith(color: ColorScheme.of(context).onSurface.withValues(alpha: 0.5)),
-            ),
-          ],
+    // Its own context for the padding, so the keyboard's animation rebuilds the number, not the pages.
+    return Builder(
+      builder: (context) => Positioned(
+        right: 16.0,
+        bottom: MediaQuery.paddingOf(context).bottom + 16.0,
+        child: Text.rich(
+          TextSpan(
+            text: "${index + 1}",
+            style: TextTheme.of(context).bodySmall,
+            children: [
+              TextSpan(
+                text: " / ${widget.builder.storyContent.richPages?.length}",
+                style: TextTheme.of(
+                  context,
+                ).bodySmall?.copyWith(color: ColorScheme.of(context).onSurface.withValues(alpha: 0.5)),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -34,7 +34,7 @@ class SpMediaTile extends StatelessWidget {
   Widget build(BuildContext context) {
     if (height != null) return _buildChild(width, height);
 
-    // No fixed height (e.g. the quill "max size" single-embed layout) -- try
+    // No fixed height (e.g. the "max size" single-embed layout) -- try
     // to resolve a persisted aspect ratio synchronously (no `Future`, no
     // reflow -- see `AssetsBox.findAspectRatioSync`), captured once at insert
     // time for both images and videos, so either kind of tile can size
