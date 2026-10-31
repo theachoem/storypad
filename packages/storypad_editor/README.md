@@ -92,7 +92,7 @@ Presentation, on either editor widget:
 - `baseTextStyle`, `styleRules`; `caretColor` (caret, and mobile handles/magnifier) and `selectionColor` (both
   default to the theme's `TextSelectionTheme`, else its primary color); `placeholder`; `checkboxesEnabled: false` for a
   view that won't keep its changes; `contextMenuActions` — extra selection-menu items (e.g. Uppercase via
-  `actions.transformSelectedText`).
+  `actions.transformSelectedText`; `leading: true` puts one before Copy in the read-only menus).
 - Spacing, all in one `spacing: StoryEditorSpacing(...)`: `page` (around the document), and space above/below each
   block by kind (`text`: paragraphs, list items, tasks; `heading`; `block`: quotes, code, dividers, embeds), with
   `byType` overrides (e.g. `{'media': BlockSpacing.zero}`). The first block never gets space above it, nor the last
@@ -105,7 +105,7 @@ Presentation, on either editor widget:
 The package has no toolbar; build one from the controller (see `storypad_editor_example/lib/toolbar/`):
 
 - `controller.actions` — every command, and the state a button shows (`isBold`, `headingLevel`, `canIndent`, …),
-  including caret moves for arrow buttons (`moveCaret`, `canMoveCaret`, `placeCaretAtEnd`).
+  including caret moves for arrow buttons (`moveCaret`, `canMoveCaret`, `placeCaretAtStart`, `placeCaretAtEnd`).
 - `ListenableBuilder(listenable: controller, …)` — rebuild on selection/document/style changes.
 - `controller.isToolbarActive` — show a touch toolbar while editing.
 - `TapRegion(groupId: controller.tapRegionGroupId, …)` — so tapping the toolbar doesn't unfocus the editor.

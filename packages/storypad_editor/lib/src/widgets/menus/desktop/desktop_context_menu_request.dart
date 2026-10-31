@@ -28,6 +28,18 @@ final class DesktopContextMenuRequest {
   final bool readOnly;
 
   /// The app's extra items for this state (`RawEditor.contextMenuActions`, already filtered). Show them after the
-  /// standard items; choosing one calls its `onPressed` (return `null` from the handler).
+  /// standard items -- [leadingActions] before them; choosing one calls its `onPressed` (return `null` from the handler).
   final List<StoryContextMenuAction> extraActions;
+
+  /// The extra items that come before the standard ones: read-only, the [StoryContextMenuAction.leading] ones.
+  List<StoryContextMenuAction> get leadingActions => [
+    for (final action in extraActions)
+      if (readOnly && action.leading) action,
+  ];
+
+  /// The extra items that come after the standard ones.
+  List<StoryContextMenuAction> get trailingActions => [
+    for (final action in extraActions)
+      if (!(readOnly && action.leading)) action,
+  ];
 }

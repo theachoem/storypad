@@ -31,6 +31,7 @@ void main() {
       whenEditing: false,
       whenReadOnly: true,
       needsSelection: false,
+      leading: true,
     ),
   ];
 
@@ -60,7 +61,7 @@ void main() {
       expect(controller.toMarkdown(), 'HELLO WORLD');
     }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
 
-    testWidgets('read-only: offers the read-only items', (tester) async {
+    testWidgets('read-only: offers the read-only items, a leading one first', (tester) async {
       final controller = controllerFor('Hello world', readOnly: true);
       final log = <String>[];
       await StoryEditorTester.pump(
@@ -76,6 +77,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Upper'), findsNothing);
+      expect(tester.getTopLeft(find.text('Open editor')).dy, lessThan(tester.getTopLeft(find.text('Cut')).dy));
       await tester.tap(find.text('Open editor'));
       await tester.pumpAndSettle();
       expect(log, ['edit']);

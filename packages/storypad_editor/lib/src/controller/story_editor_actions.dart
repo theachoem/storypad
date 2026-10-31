@@ -143,7 +143,11 @@ class StoryEditorActions {
     _editor.execute(MoveBlocks.requests(_document, ids, up ? first - 1 : first + 1));
   }
 
-  /// Puts the caret at the end of the document -- e.g. when focusing an editor that has no selection yet.
+  /// Puts the caret at the start of the document -- e.g. when focusing an editor that has no selection yet.
+  void placeCaretAtStart() =>
+      _placeCaret(DocumentPosition(nodeId: _document.first.id, nodePosition: _document.first.beginningPosition));
+
+  /// Puts the caret at the end of the document -- e.g. after a tap below its last line.
   void placeCaretAtEnd() =>
       _placeCaret(DocumentPosition(nodeId: _document.last.id, nodePosition: _document.last.endPosition));
 

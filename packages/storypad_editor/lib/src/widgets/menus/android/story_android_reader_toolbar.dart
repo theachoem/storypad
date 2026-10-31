@@ -3,11 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:super_editor/super_editor.dart';
 
 import '../reader_menu.dart';
+import '../story_context_menu_action.dart';
 import 'story_process_text.dart';
 import 'vendor/android_popover_toolbar.dart';
 
-/// The Android read-only toolbar, with the editing toolbar's look: Copy, Select All, the OS's "Process Text" actions
-/// (Translate, …; given the text, never replacing it), then the app's extra items. super_editor positions it.
+/// The Android read-only toolbar, with the editing toolbar's look: the app's leading items, Copy, Select All, the OS's
+/// "Process Text" actions (Translate, …; given the text, never replacing it), then the app's other items. super_editor positions it.
 class StoryAndroidReaderToolbar extends StatelessWidget {
   const StoryAndroidReaderToolbar({
     super.key,
@@ -36,7 +37,15 @@ class StoryAndroidReaderToolbar extends StatelessWidget {
         valueListenable: menu.composer.selectionNotifier,
         builder: (context, selection, _) {
           final localizations = MaterialLocalizations.of(context);
+          (String, VoidCallback) extra(StoryContextMenuAction action) => (
+            action.label,
+            () {
+              menu.composer.clearSelection();
+              action.onPressed();
+            },
+          );
           final buttons = <(String, VoidCallback)>[
+            for (final action in menu.leadingActions) extra(action),
             if (menu.hasSelection)
               (
                 localizations.copyButtonLabel,
@@ -57,14 +66,7 @@ class StoryAndroidReaderToolbar extends StatelessWidget {
                     StoryProcessText.processTextAction(action.id, text, true);
                   },
                 ),
-            for (final action in menu.shownExtraActions)
-              (
-                action.label,
-                () {
-                  menu.composer.clearSelection();
-                  action.onPressed();
-                },
-              ),
+            for (final action in menu.trailingActions) extra(action),
           ];
 
           return ConstrainedBox(
