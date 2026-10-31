@@ -55,7 +55,7 @@ void main() {
     return (controller: controller, focusNode: focusNode, changes: changes);
   }
 
-  testWidgets('focusing the page focuses the editor, with the caret at the end', (tester) async {
+  testWidgets('focusing the page focuses the editor, with the caret at the start', (tester) async {
     final page = await pumpPage(
       tester,
       markdown: 'Hello',
@@ -66,7 +66,7 @@ void main() {
 
     expect(page.controller.editor.focusNode.hasFocus, isTrue);
     expect(page.focusNode.hasFocus, isTrue, reason: 'the page and its toolbar track this node');
-    expect(page.controller.selection, const TextSelection.collapsed(offset: 5));
+    expect(page.controller.selection, const TextSelection.collapsed(offset: 0));
   });
 
   testWidgets('edits are reported right away (so Done never misses the last keystrokes)', (tester) async {
@@ -80,7 +80,7 @@ void main() {
     page.controller.editor.editor.execute([
       InsertTextRequest(
         documentPosition: page.controller.editor.selection.value!.extent,
-        textToInsert: ' world',
+        textToInsert: 'Oh, ',
         attributions: {},
       ),
     ]);
@@ -88,7 +88,7 @@ void main() {
     await Future<void>.value();
 
     expect(page.changes, isNotEmpty);
-    expect(page.controller.serialize(), 'Hello world');
+    expect(page.controller.serialize(), 'Oh, Hello');
   });
 
   testWidgets('the toolbar formats the selection', (tester) async {

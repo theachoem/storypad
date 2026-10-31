@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 
 import 'desktop_context_menu_request.dart';
 import 'desktop_context_menu_action.dart';
+import '../story_context_menu_action.dart';
 
 /// The editor's right-click menu on desktop: native on macOS, Material elsewhere.
 class DesktopContextMenu {
@@ -35,12 +36,17 @@ class DesktopContextMenu {
       'enabled': enabled,
       'keyEquivalent': ?keyEquivalent,
     };
+    // Identified by their place in [DesktopContextMenuRequest.extraActions], whatever their place in the menu.
+    Map<String, Object> extra(StoryContextMenuAction action) =>
+        item('$_extraPrefix${request.extraActions.indexOf(action)}', action.label);
 
     final id = await _macosChannel.invokeMethod<String>('show', {
       'x': request.globalPosition.dx,
       'y': request.globalPosition.dy,
       'selectedText': ?(request.hasSelection ? request.selectedText : null),
       'items': [
+        for (final action in request.leadingActions) extra(action),
+        if (request.leadingActions.isNotEmpty) const {'divider': true},
         item(
           DesktopContextMenuAction.cut.name,
           localizations.cutButtonLabel,
@@ -61,8 +67,8 @@ class DesktopContextMenu {
         ),
         const {'divider': true},
         item(DesktopContextMenuAction.selectAll.name, localizations.selectAllButtonLabel, keyEquivalent: 'a'),
-        if (request.extraActions.isNotEmpty) const {'divider': true},
-        for (final (index, action) in request.extraActions.indexed) item('$_extraPrefix$index', action.label),
+        if (request.trailingActions.isNotEmpty) const {'divider': true},
+        for (final action in request.trailingActions) extra(action),
         const {'divider': true},
         const {'servicesMenu': true},
       ],
@@ -93,6 +99,8 @@ class DesktopContextMenu {
         overlay.size.height - position.dy,
       ),
       items: [
+        for (final action in request.leadingActions) PopupMenuItem(onTap: action.onPressed, child: Text(action.label)),
+        if (request.leadingActions.isNotEmpty) const PopupMenuDivider(),
         PopupMenuItem(
           value: DesktopContextMenuAction.cut,
           enabled: request.hasSelection && !request.readOnly,
@@ -110,8 +118,8 @@ class DesktopContextMenu {
         ),
         const PopupMenuDivider(),
         PopupMenuItem(value: DesktopContextMenuAction.selectAll, child: Text(localizations.selectAllButtonLabel)),
-        if (request.extraActions.isNotEmpty) const PopupMenuDivider(),
-        for (final action in request.extraActions) PopupMenuItem(onTap: action.onPressed, child: Text(action.label)),
+        if (request.trailingActions.isNotEmpty) const PopupMenuDivider(),
+        for (final action in request.trailingActions) PopupMenuItem(onTap: action.onPressed, child: Text(action.label)),
       ],
     );
   }

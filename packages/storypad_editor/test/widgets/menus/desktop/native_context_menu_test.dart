@@ -63,7 +63,9 @@ void main() {
     expect(find.text('Copy'), findsNothing, reason: 'no Flutter-painted menu');
   }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
 
-  testWidgets('read-only: Cut and Paste disabled; an extra item runs its action', (tester) async {
+  testWidgets('read-only: Cut and Paste disabled; a leading extra item comes first and runs its action', (
+    tester,
+  ) async {
     final calls = mockNativeMenu(tester, 'extra:0');
     var edits = 0;
     final controller = controllerFor('Hello world', readOnly: true);
@@ -79,6 +81,7 @@ void main() {
             whenEditing: false,
             whenReadOnly: true,
             needsSelection: false,
+            leading: true,
           ),
         ],
       ),
@@ -89,6 +92,9 @@ void main() {
     final items = itemsOf(calls.single);
     expect(items.firstWhere((item) => item['id'] == 'cut')['enabled'], isFalse);
     expect(items.firstWhere((item) => item['id'] == 'paste')['enabled'], isFalse);
+    expect(items[0]['title'], 'Edit');
+    expect(items[1]['divider'], isTrue);
+    expect(items[2]['id'], 'cut');
     expect(edits, 1);
   }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
 

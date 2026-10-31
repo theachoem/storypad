@@ -46,7 +46,7 @@ mixin DragSnapshotPreviewMixin<T extends StatefulWidget> on State<T> {
   /// (silently does nothing, and the drag shows no preview).
   Future<void> captureDragSnapshot(Rect region) async {
     final boundary = _repaintBoundaryKey.currentContext?.findRenderObject();
-    if (boundary is! _RenderSnapshotBoundary || !boundary.hasSize || boundary.debugNeedsPaint) {
+    if (boundary is! _RenderSnapshotBoundary || !boundary.hasSize || !boundary.hasPainted) {
       return;
     }
 
@@ -167,6 +167,9 @@ class _SnapshotBoundary extends RepaintBoundary {
 }
 
 class _RenderSnapshotBoundary extends RenderRepaintBoundary {
+  /// Whether there's a painted layer to capture. (Not `debugNeedsPaint`: it's debug-only, and throws in a release build.)
+  bool get hasPainted => layer != null;
+
   /// [bounds] (in this render object's coordinates) of what was last painted, as an image.
   Future<ui.Image> toImageOf(Rect bounds, {required double pixelRatio}) {
     final offsetLayer = layer! as OffsetLayer;

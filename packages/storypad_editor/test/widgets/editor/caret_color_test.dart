@@ -39,6 +39,22 @@ void main() {
     expect(scope.controller.handleColor, primary);
   }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
+  testWidgets('iOS, read-only: the handles layer itself, and no caret for a collapsed selection', (tester) async {
+    final controller = controllerFor('Hello world', readOnly: true);
+    await pump(tester, controller);
+
+    IosHandlesDocumentLayer layer() => tester.widget<IosHandlesDocumentLayer>(find.byType(IosHandlesDocumentLayer));
+    expect(layer().handleColor, primary);
+
+    placeCaret(controller, 0, 2);
+    await tester.pump();
+    expect(layer().selection.value, isNull, reason: 'a reader shows no caret');
+
+    selectText(controller, 0, 0, 0, 5);
+    await tester.pump();
+    expect(layer().selection.value, controller.composer.selection);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+
   testWidgets('Android: the primary color', (tester) async {
     await pump(tester, controllerFor('Hello'));
     final scope = tester.widget<SuperEditorAndroidControlsScope>(find.byType(SuperEditorAndroidControlsScope).first);

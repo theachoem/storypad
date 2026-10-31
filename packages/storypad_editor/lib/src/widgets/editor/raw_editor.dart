@@ -21,6 +21,7 @@ import '../components/story_embed_component_builder.dart';
 import '../components/compact_task_component_builder.dart';
 import '../menus/reader_menu.dart';
 import '../menus/ios/story_ios_reader_toolbar.dart';
+import '../menus/ios/story_ios_reader_handles_layer_builder.dart';
 import '../menus/android/story_android_reader_toolbar.dart';
 import '../menus/desktop/desktop_context_menu_region.dart';
 import '../menus/desktop/desktop_context_menu.dart';
@@ -542,6 +543,24 @@ class _RawEditorState extends State<RawEditor> {
   Color? _overlayBuildersColor;
   List<SuperEditorLayerBuilder>? _overlayBuildersCache;
 
+  /// super_reader's default overlays, with the iOS handles in [_caretColor] (see [StoryIosReaderHandlesLayerBuilder]).
+  /// Cached per color, as [_overlayBuilders].
+  List<SuperReaderDocumentLayerBuilder> _readerOverlayBuilders(BuildContext context) {
+    final color = _caretColor(context);
+    if (_readerOverlayBuildersCache?.$1 != color) {
+      _readerOverlayBuildersCache = (
+        color,
+        [
+          const SuperReaderIosToolbarFocalPointDocumentLayerBuilder(),
+          StoryIosReaderHandlesLayerBuilder(handleColor: color),
+        ],
+      );
+    }
+    return _readerOverlayBuildersCache!.$2;
+  }
+
+  (Color, List<SuperReaderDocumentLayerBuilder>)? _readerOverlayBuildersCache;
+
   bool get _ownsScrolling => widget.layout == StoryEditorLayout.scrolling;
 
   ReaderMenu get _readerMenu => ReaderMenu(
@@ -585,6 +604,7 @@ class _RawEditorState extends State<RawEditor> {
         componentBuilders: _componentBuilders(context),
         stylesheet: _stylesheet(),
         selectionStyle: _selectionStyle(context),
+        documentOverlayBuilders: _readerOverlayBuilders(context),
       ),
     );
   }

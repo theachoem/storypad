@@ -105,14 +105,14 @@ void main() {
     await tester.pumpAndSettle();
 
     final editor = page.bodyController.editor;
-    for (final character in [' ', 'y', 'o', 'u']) {
+    for (final character in ['M', 'y', ' ']) {
       editor.editor.execute([InsertCharacterAtCaretRequest(character: character)]);
       await tester.pump();
     }
-    expect(changes, 4, reason: 'every edit is reported');
+    expect(changes, 3, reason: 'every edit is reported');
     expect(editor.debugMarkdownWrites, 0, reason: 'not per keystroke');
 
-    expect(page.page.markdown, '### Trip\n\nHello you');
+    expect(page.page.markdown, '### My Trip\n\nHello', reason: 'typed at the start, where the caret opens');
     expect(editor.debugMarkdownWrites, 1);
   });
 }
