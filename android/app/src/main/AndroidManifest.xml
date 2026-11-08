@@ -11,9 +11,12 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <!-- No advertising ID: StoryPad has no ads, and Firebase Analytics would otherwise
-         merge this permission back in from its own manifest. See also the
-         google_analytics_adid_collection_enabled meta-data below. -->
+         merge these permissions back in from its own manifests (AD_ID, plus the Privacy
+         Sandbox AdServices ones). See also the google_analytics_adid_collection_enabled
+         meta-data below. -->
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_AD_ID" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_ATTRIBUTION" tools:node="remove" />
     <uses-permission android:name="com.android.vending.BILLING" />
 
     <!-- https://pub.dev/packages/geolocator -->
