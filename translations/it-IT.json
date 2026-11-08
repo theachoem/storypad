@@ -152,6 +152,8 @@
   "dialog.connect_nextcloud.reconnect_message": "La password della tua app non funziona più. Inseriscine una nuova per riconnetterti.",
   "dialog.connect_nextcloud.reconnect_title": "Riconnettiti a Nextcloud",
   "dialog.connect_nextcloud.title": "Connettiti a Nextcloud",
+  "dialog.nextcloud_insecure_connection.message": "Questo indirizzo del server inizia con http://, quindi la password per app e i backup viaggerebbero senza crittografia e chiunque sulla stessa rete potrebbe leggerli. Usa https://, a meno che il server non si trovi sulla tua rete domestica.",
+  "dialog.nextcloud_insecure_connection.title": "Connettersi senza crittografia?",
   "dialog.editor_link.add_title": "Aggiungi link",
   "dialog.editor_link.edit_title": "Modifica link",
   "dialog.icloud_settings.navigation_steps": "Impostazioni → iCloud → Vedi tutto → {SP_APP_NAME}",

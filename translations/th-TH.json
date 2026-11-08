@@ -152,6 +152,8 @@
   "dialog.connect_nextcloud.reconnect_message": "รหัสผ่านแอปของคุณใช้การไม่ได้แล้ว โปรดป้อนรหัสผ่านใหม่เพื่อเชื่อมต่ออีกครั้ง",
   "dialog.connect_nextcloud.reconnect_title": "เชื่อมต่อกับ Nextcloud อีกครั้ง",
   "dialog.connect_nextcloud.title": "เชื่อมต่อกับ Nextcloud",
+  "dialog.nextcloud_insecure_connection.message": "ที่อยู่เซิร์ฟเวอร์นี้ขึ้นต้นด้วย http:// รหัสผ่านแอปและข้อมูลสำรองของคุณจึงจะถูกส่งโดยไม่เข้ารหัส และใครก็ตามที่อยู่ในเครือข่ายเดียวกันสามารถอ่านได้ ให้ใช้ https:// เว้นแต่เซิร์ฟเวอร์นี้อยู่ในเครือข่ายภายในบ้านของคุณเอง",
+  "dialog.nextcloud_insecure_connection.title": "เชื่อมต่อโดยไม่เข้ารหัสใช่ไหม",
   "dialog.editor_link.add_title": "เพิ่มลิงก์",
   "dialog.editor_link.edit_title": "แก้ไขลิงก์",
   "dialog.icloud_settings.navigation_steps": "การตั้งค่า → iCloud → ดูทั้งหมด → {SP_APP_NAME}",

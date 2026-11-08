@@ -152,6 +152,8 @@
   "dialog.connect_nextcloud.reconnect_message": "Mật khẩu ứng dụng của bạn không còn hoạt động. Vui lòng nhập mật khẩu mới để kết nối lại.",
   "dialog.connect_nextcloud.reconnect_title": "Kết nối lại với Nextcloud",
   "dialog.connect_nextcloud.title": "Kết nối với Nextcloud",
+  "dialog.nextcloud_insecure_connection.message": "Địa chỉ máy chủ này bắt đầu bằng http://, nên mật khẩu ứng dụng và bản sao lưu của bạn sẽ được gửi đi mà không mã hóa, và bất kỳ ai trên cùng mạng đều có thể đọc được. Hãy dùng https:// trừ khi máy chủ này nằm trong mạng gia đình của bạn.",
+  "dialog.nextcloud_insecure_connection.title": "Kết nối không mã hóa?",
   "dialog.editor_link.add_title": "Thêm liên kết",
   "dialog.editor_link.edit_title": "Sửa liên kết",
   "dialog.icloud_settings.navigation_steps": "Cài đặt → iCloud → Xem tất cả → {SP_APP_NAME}",

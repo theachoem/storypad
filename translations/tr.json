@@ -152,6 +152,8 @@
   "dialog.connect_nextcloud.reconnect_message": "Uygulama parolan artık çalışmıyor. Yeniden bağlanmak için yeni bir parola gir.",
   "dialog.connect_nextcloud.reconnect_title": "Nextcloud'a yeniden bağlanın",
   "dialog.connect_nextcloud.title": "Nextcloud'a bağlanın",
+  "dialog.nextcloud_insecure_connection.message": "Bu sunucu adresi http:// ile başlıyor; bu nedenle uygulama şifreniz ve yedekleriniz şifrelenmeden gönderilir ve aynı ağdaki herkes bunları okuyabilir. Sunucu kendi ev ağınızda değilse https:// kullanın.",
+  "dialog.nextcloud_insecure_connection.title": "Şifreleme olmadan bağlanılsın mı?",
   "dialog.editor_link.add_title": "Bağlantı ekle",
   "dialog.editor_link.edit_title": "Bağlantıyı düzenle",
   "dialog.icloud_settings.navigation_steps": "Ayarlar → iCloud → Tümünü Gör → {SP_APP_NAME}",

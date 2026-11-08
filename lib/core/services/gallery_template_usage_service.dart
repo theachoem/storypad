@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/services/avoid_dublicated_call_service.dart';
+import 'package:storypad/core/storages/template_usage_install_id_storage.dart';
 
-// Tracks how often each template is used by a device.
-// Note: A malicious user could fake usage by spoofing device IDs,
+// Tracks how often each template is used per install, keyed by a random install ID
+// ([TemplateUsageInstallIdStorage]) — not a hardware or advertising ID.
+// Note: A malicious user could fake usage by spoofing install IDs,
 // but this is acceptable since the data is only used for analytics.
 class GalleryTemplateUsageService {
   GalleryTemplateUsageService._();
@@ -20,7 +22,8 @@ class GalleryTemplateUsageService {
 
     try {
       return await avoidDublicatedCallService.run(() async {
-        final docRef = firestore.collection('templates').doc(templateId).collection('devices').doc(kDeviceInfo.id);
+        final installId = await TemplateUsageInstallIdStorage().readOrCreate();
+        final docRef = firestore.collection('templates').doc(templateId).collection('devices').doc(installId);
 
         bool exist = await docRef.get().then((e) => e.exists);
         if (exist) {
@@ -30,7 +33,7 @@ class GalleryTemplateUsageService {
           });
         } else {
           Map<String, Object> data = {
-            'device_id': kDeviceInfo.id,
+            'device_id': installId,
             'last_used_at': FieldValue.serverTimestamp(),
             'usage_count': 1,
             'first_used_at': FieldValue.serverTimestamp(),

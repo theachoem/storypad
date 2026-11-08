@@ -152,6 +152,8 @@
   "dialog.connect_nextcloud.reconnect_message": "앱 비밀번호가 더 이상 작동하지 않습니다. 새 비밀번호를 입력하여 다시 연결하세요.",
   "dialog.connect_nextcloud.reconnect_title": "Nextcloud에 다시 연결하세요",
   "dialog.connect_nextcloud.title": "Nextcloud에 연결",
+  "dialog.nextcloud_insecure_connection.message": "이 서버 주소는 http://로 시작하므로 앱 비밀번호와 백업이 암호화되지 않은 채 전송되며, 같은 네트워크에 있는 누구나 읽을 수 있습니다. 서버가 집 네트워크 안에 있는 경우가 아니라면 https://를 사용하세요.",
+  "dialog.nextcloud_insecure_connection.title": "암호화 없이 연결할까요?",
   "dialog.editor_link.add_title": "링크 추가",
   "dialog.editor_link.edit_title": "링크 편집",
   "dialog.icloud_settings.navigation_steps": "설정 → iCloud → 모두 보기 → {SP_APP_NAME}",

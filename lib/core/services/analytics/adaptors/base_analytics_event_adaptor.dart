@@ -31,8 +31,6 @@ abstract class BaseAnalyticsEventAdaptor {
 
   Future<void> logLogin({required String loginMethod});
 
-  Future<void> logSearchEvent({required String searchTerm});
-
   // ---------------------------------------------------------------------------
   // High-level methods — implemented once here, shared by all adaptors
   // ---------------------------------------------------------------------------
@@ -75,9 +73,8 @@ abstract class BaseAnalyticsEventAdaptor {
     return logScreenView(screenClass: 'LicensePage', screenName: 'License');
   }
 
-  Future<void> logSearch({required String searchTerm}) {
-    return logSearchEvent(searchTerm: searchTerm);
-  }
+  // Never send the query: in a journal it's words from the user's own entries.
+  Future<void> logSearch() => logEvent(sanitizeEventName('search_used'));
 
   Future<void> logSyncBackup() => logEvent(sanitizeEventName('sync_backup'));
 
@@ -92,11 +89,11 @@ abstract class BaseAnalyticsEventAdaptor {
   Future<void> logSignInWithGoogle() => logLogin(loginMethod: 'google');
 
   Future<void> logOpenLinkInCustomTab({required String url}) {
-    return logEvent(sanitizeEventName('open_custom_tab'), parameters: sanitizeParameters({'url': url}));
+    return logEvent(sanitizeEventName('open_custom_tab'), parameters: urlAnalyticParameters(url));
   }
 
   Future<void> logLaunchUrl({required String url}) {
-    return logEvent(sanitizeEventName('launch_url'), parameters: sanitizeParameters({'url': url}));
+    return logEvent(sanitizeEventName('launch_url'), parameters: urlAnalyticParameters(url));
   }
 
   Future<void> logSubmitRedditPost({required String target}) {
@@ -391,6 +388,18 @@ abstract class BaseAnalyticsEventAdaptor {
     'category': tagCategoryLabel(tag),
     'has_emoji': (tag.emoji != null).toString(),
   });
+
+  // Links mostly come from the user's own entries, so even a site name or an app's URL
+  // scheme can be personal (a clinic, a dating app, someone's blog). Only our own
+  // domain — links the app itself shows — is named; for every other link the event
+  // is counted with no parameters at all. Never path, query or fragment.
+  Map<String, Object>? urlAnalyticParameters(String url) {
+    final host = Uri.tryParse(url)?.host.toLowerCase();
+    if (host == null) return null;
+
+    final isStoryPadDomain = host == 'storypad.me' || host.endsWith('.storypad.me');
+    return isStoryPadDomain ? sanitizeParameters({'host': host}) : null;
+  }
 
   // 'emoji' (Feeling/Activity/Weather), 'people', or 'topic' (regular tags).
   String tagCategoryLabel(TagDbModel tag) => tag.emoji != null ? 'emoji' : (tag.isPerson ? 'people' : 'topic');

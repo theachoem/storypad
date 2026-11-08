@@ -152,6 +152,8 @@
   "dialog.connect_nextcloud.reconnect_message": "アプリのパスワードが無効になりました。新しいパスワードを入力して再接続してください。",
   "dialog.connect_nextcloud.reconnect_title": "Nextcloudに再接続する",
   "dialog.connect_nextcloud.title": "Nextcloudに接続",
+  "dialog.nextcloud_insecure_connection.message": "このサーバーのアドレスは http:// で始まるため、アプリパスワードとバックアップが暗号化されずに送信され、同じネットワーク上の誰でも読み取れる状態になります。自宅のネットワーク内のサーバーでない限り、https:// を使用してください。",
+  "dialog.nextcloud_insecure_connection.title": "暗号化せずに接続しますか？",
   "dialog.editor_link.add_title": "リンクを追加",
   "dialog.editor_link.edit_title": "リンクを編集",
   "dialog.icloud_settings.navigation_steps": "設定 → iCloud → すべて表示 → {SP_APP_NAME}",

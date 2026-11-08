@@ -152,6 +152,8 @@
   "dialog.connect_nextcloud.reconnect_message": "كلمة مرور التطبيق الخاصة بك لم تعد تعمل. أدخل كلمة مرور جديدة لإعادة الاتصال.",
   "dialog.connect_nextcloud.reconnect_title": "أعد الاتصال بـ Nextcloud",
   "dialog.connect_nextcloud.title": "اتصل بـ Nextcloud",
+  "dialog.nextcloud_insecure_connection.message": "يبدأ عنوان هذا الخادم بـ http://، لذا ستُرسَل كلمة مرور التطبيق والنسخ الاحتياطية بدون تشفير، ويمكن لأي شخص على الشبكة نفسها قراءتها. استخدم https:// ما لم يكن هذا الخادم على شبكتك المنزلية.",
+  "dialog.nextcloud_insecure_connection.title": "الاتصال بدون تشفير؟",
   "dialog.editor_link.add_title": "إضافة رابط",
   "dialog.editor_link.edit_title": "تعديل الرابط",
   "dialog.icloud_settings.navigation_steps": "الإعدادات ← iCloud ← عرض الكل ← {SP_APP_NAME}",

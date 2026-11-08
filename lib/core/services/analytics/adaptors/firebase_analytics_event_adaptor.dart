@@ -24,9 +24,4 @@ class FirebaseAnalyticsEventAdaptor extends BaseAnalyticsEventAdaptor {
   Future<void> logLogin({required String loginMethod}) {
     return FirebaseAnalytics.instance.logLogin(loginMethod: loginMethod);
   }
-
-  @override
-  Future<void> logSearchEvent({required String searchTerm}) {
-    return FirebaseAnalytics.instance.logSearch(searchTerm: searchTerm);
-  }
 }

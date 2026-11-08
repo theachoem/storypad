@@ -152,6 +152,8 @@
   "dialog.connect_nextcloud.reconnect_message": "您的应用密码已失效。请输入新密码重新连接。",
   "dialog.connect_nextcloud.reconnect_title": "重新连接到 Nextcloud",
   "dialog.connect_nextcloud.title": "连接到 Nextcloud",
+  "dialog.nextcloud_insecure_connection.message": "此服务器地址以 http:// 开头，因此你的应用密码和备份将以未加密的方式传输，同一网络中的任何人都能读取。除非该服务器位于你自己的家庭网络中，否则请使用 https://。",
+  "dialog.nextcloud_insecure_connection.title": "要在不加密的情况下连接吗？",
   "dialog.editor_link.add_title": "添加链接",
   "dialog.editor_link.edit_title": "编辑链接",
   "dialog.icloud_settings.navigation_steps": "设置 → iCloud → 查看全部 → {SP_APP_NAME}",
