@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
-/// An extra item for the editor's selection menus, after the platform's own (cut/copy/paste/…):
+/// An extra item for the editor's selection menus, after the platform's own (cut/copy/paste/…) -- or, [leading], before
+/// them in the read-only menus:
 ///
 /// - the Android floating toolbar,
 /// - the iOS system context menu (iOS 16+; earlier versions keep the plain Flutter toolbar),
@@ -18,6 +19,7 @@ final class StoryContextMenuAction {
     this.whenEditing = true,
     this.whenReadOnly = false,
     this.needsSelection = true,
+    this.leading = false,
   });
 
   final String label;
@@ -31,6 +33,10 @@ final class StoryContextMenuAction {
 
   /// Whether it's only offered with some text selected (not just a caret).
   final bool needsSelection;
+
+  /// Whether it comes before the platform's items in the read-only menus (e.g. the page's main action, which a narrow
+  /// toolbar would otherwise put in its overflow). The editing menus always list it after them.
+  final bool leading;
 
   /// Whether to offer it in the given state.
   bool isShown({required bool readOnly, required bool hasSelection}) =>

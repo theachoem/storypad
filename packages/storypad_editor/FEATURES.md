@@ -162,16 +162,20 @@ The mirror of the importer, in the shapes StoryPad's Quill editor wrote: for rea
   its primary color): the desktop caret is a replaced `DefaultCaretOverlayBuilder` in the default overlay list (cached
   per color; super_editor rebuilds layers on a new list). The mobile caret, handles and magnifier get the color through
   their controls controllers, made again when it changes (super_editor only takes it then); its own fallback,
-  `ThemeData.primaryColor`, is near-black in a dark theme.
+  `ThemeData.primaryColor`, is near-black in a dark theme. The read-only iOS handles are a layer of ours
+  (`widgets/menus/ios/story_ios_reader_handles_layer_builder.dart`): super_reader's default layer reads only that
+  fallback, and draws a still caret for a collapsed selection -- ours shows handles for an expanded one only.
 - **iOS caret follow** happens on edits, not on programmatic caret moves (any layout); Android follows both.
 - **Context-menu extras** (`RawEditor.contextMenuActions`, `widgets/menus/story_context_menu_action.dart`): on the
   Android toolbar (after process-text, often in its overflow), the iOS system menu
   (`widgets/menus/ios/story_ios_system_context_menu.dart`, iOS 16+: super_editor's own can't take custom items, so ours
   rebuilds the standard list via `showWithItems`), and the desktop menu. Read-only
   (`widgets/menus/ios/story_ios_reader_toolbar.dart`, `widgets/menus/android/story_android_reader_toolbar.dart`;
-  super_editor's reader shows no Android toolbar and only a bare "Copy" bubble on iOS): Copy, Select All and the
-  read-only extras, on Android in the editing toolbar's look, on iOS in Flutter's iOS-style toolbar -- iOS's own menu is
-  bound to text input (a no-op without a connection), so a read-only page can't show it.
+  super_editor's reader shows no Android toolbar and only a bare "Copy" bubble on iOS): the `leading` extras (e.g.
+  the read view's Edit, so it's never in Android's overflow), Copy, Select All and the other read-only extras, on
+  Android in the editing toolbar's look, on iOS in Flutter's iOS-style toolbar -- iOS's own menu is bound to text input
+  (a no-op without a connection), so a read-only page can't show it. The desktop read-only menu lists `leading` extras
+  first too.
 - **Links** open through `RawEditor.onTapLink` (`widgets/input/story_link_tap_handler.dart`): on tap when read-only, on
   Cmd/Ctrl-click while editing (a plain tap places the caret); without a callback, `url_launcher` opens them. Either way
   a link without a scheme gets one (`StoryLinkTapHandler.launchableUrl`: `https://`, or `mailto:` for an address), as

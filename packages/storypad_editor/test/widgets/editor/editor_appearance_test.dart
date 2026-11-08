@@ -26,6 +26,47 @@ void main() {
     expect(find.text('Write…', findRichText: true), findsNothing);
   });
 
+  testWidgets('an empty heading line shows its level\'s placeholder, anywhere and only while editing', (tester) async {
+    final controller = controllerFor('Intro\n\n## Sub');
+    final editor = RawEditor(controller: controller, headingPlaceholder: (level) => 'Heading $level');
+    await StoryEditorTester.pump(tester, controller, editor: editor);
+    expect(find.text('Heading 2', findRichText: true), findsNothing);
+
+    selectText(controller, 1, 0, 1, 3);
+    controller.editor.execute([DeleteContentRequest(documentRange: controller.selection.value!)]);
+    await tester.pumpAndSettle();
+    expect(find.text('Heading 2', findRichText: true), findsOneWidget);
+
+    final reader = controllerFor('Intro\n\n## Sub', readOnly: true);
+    selectText(reader, 1, 0, 1, 3);
+    reader.editor.execute([DeleteContentRequest(documentRange: reader.selection.value!)]);
+    await StoryEditorTester.pump(
+      tester,
+      reader,
+      editor: RawEditor(controller: reader, headingPlaceholder: (level) => 'Heading $level'),
+    );
+    expect(find.text('Heading 2', findRichText: true), findsNothing);
+  });
+
+  testWidgets('an empty heading on the first line (the title) shows the title placeholder instead', (tester) async {
+    final controller = controllerFor('## Sub\n\nbody');
+    await StoryEditorTester.pump(
+      tester,
+      controller,
+      editor: RawEditor(
+        controller: controller,
+        headingPlaceholder: (level) => 'Heading $level',
+        titlePlaceholder: 'Title',
+      ),
+    );
+
+    selectText(controller, 0, 0, 0, 3);
+    controller.editor.execute([DeleteContentRequest(documentRange: controller.selection.value!)]);
+    await tester.pumpAndSettle();
+    expect(find.text('Title', findRichText: true), findsOneWidget);
+    expect(find.text('Heading 2', findRichText: true), findsNothing);
+  });
+
   testWidgets('headings line up with paragraphs: no default side padding on any block type', (tester) async {
     final controller = controllerFor('# Title\n\n### Sub\n\nbody\n\n```\ncode\n```');
     // An app setting paragraphs' side padding but not headings' (as StoryPad does) must still get aligned blocks.

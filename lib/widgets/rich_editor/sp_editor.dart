@@ -133,8 +133,9 @@ class _SpEditorState extends State<SpEditor> {
 
   void _onEditorFocusChanged() {
     if (!_editor.focusNode.hasFocus) return;
-    // Focused without a caret (e.g. the page was just opened): put it at the end, like the old editor.
-    if (_editor.selection.value == null && !widget.readOnly) _editor.actions.placeCaretAtEnd();
+    // Focused without a caret (e.g. the page was just opened): put it at the start. A selection made in the read view
+    // is kept instead.
+    if (_editor.selection.value == null && !widget.readOnly) _editor.actions.placeCaretAtStart();
   }
 
   List<StoryContextMenuAction> _buildContextMenuActions() {
@@ -154,6 +155,8 @@ class _SpEditorState extends State<SpEditor> {
           whenEditing: false,
           whenReadOnly: true,
           needsSelection: false,
+          // The read view's main action: first, not in the Android toolbar's overflow.
+          leading: true,
         ),
     ];
   }
@@ -187,6 +190,8 @@ class _SpEditorState extends State<SpEditor> {
           blockStyles: style.blockStyles,
           placeholder: '...',
           placeholderStyle: style.placeholderStyle,
+          headingPlaceholder: (level) => tr('input.story_headline.hint', args: ['$level']),
+          titlePlaceholder: tr('input.story_title.hint'),
           checkboxesEnabled: widget.onChanged != null,
           onTapLink: (url) => UrlOpenerService.openForRichContent(context: context, url: url),
           contextMenuActions: _buildContextMenuActions(),

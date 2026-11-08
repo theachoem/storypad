@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:storypad_editor/storypad_editor.dart';
 import 'package:storypad_editor/testing.dart';
+import 'package:super_editor/super_editor.dart';
 
 import '../../support/controller_helpers.dart';
 import '../../support/test_embeds.dart';
@@ -31,6 +33,26 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(controller.embedsOf(const StickerEmbedCodec()).single.$2, 'cat!!');
+  });
+
+  testWidgets('an embed can put the caret before or after itself, focusing the editor', (tester) async {
+    final controller = controllerFor('<img src="a.png">\n\nhello');
+    await StoryEditorTester.pump(tester, controller);
+    final embed = StoryEmbedContext<GalleryValue>(
+      nodeId: nodeAt(controller, 0).id,
+      value: const GalleryValue(['a.png']),
+      isSelected: false,
+      controller: controller,
+      embed: const GalleryEmbedCodec(),
+    );
+
+    embed.placeCaret(before: true);
+    await tester.pumpAndSettle();
+    expect(controller.focusNode.hasFocus, isTrue);
+    expect(controller.selection.value!.extent.nodePosition, const UpstreamDownstreamNodePosition.upstream());
+
+    embed.placeCaret(before: false);
+    expect(controller.selection.value!.extent.nodePosition, const UpstreamDownstreamNodePosition.downstream());
   });
 
   testWidgets('the default unknown placeholder can remove itself', (tester) async {

@@ -17,6 +17,15 @@ void main() {
     );
   });
 
+  test('placeCaretAtStart puts the caret before the first character', () {
+    final controller = controllerFor('One\n\nTwo');
+    controller.actions.placeCaretAtStart();
+    expect(
+      caret(controller),
+      DocumentPosition(nodeId: nodeAt(controller, 0).id, nodePosition: const TextNodePosition(offset: 0)),
+    );
+  });
+
   test('moves one character, across blocks at their edges', () {
     final controller = controllerFor('ab\n\ncd');
     placeCaret(controller, 0, 1);

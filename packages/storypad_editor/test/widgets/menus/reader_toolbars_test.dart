@@ -44,6 +44,7 @@ void main() {
             whenEditing: false,
             whenReadOnly: true,
             needsSelection: false,
+            leading: true,
           ),
           for (var i = 1; i <= moreActions; i++)
             StoryContextMenuAction(label: 'Action $i', onPressed: () => log.add('action $i'), whenReadOnly: true),
@@ -58,10 +59,12 @@ void main() {
     return controller;
   }
 
-  testWidgets('Android: Copy, Select all and the extra items show, and run', (tester) async {
-    await pumpReader(tester);
+  testWidgets('Android: the leading item, Copy, Select all and the other extra items show, and run', (tester) async {
+    await pumpReader(tester, moreActions: 1);
 
     expect(find.text('Copy'), findsOneWidget);
+    expect(find.text('Edit'), findsOneWidget, reason: 'leading: never in the overflow');
+    expect(tester.getTopLeft(find.text('Edit')).dx, lessThan(tester.getTopLeft(find.text('Copy')).dx));
     // The rest past the platform's narrow width, in the overflow menu.
     Future<bool> shown(String label) async {
       if (find.text(label).evaluate().isNotEmpty) return true;
@@ -72,7 +75,14 @@ void main() {
     }
 
     expect(await shown('Select all'), isTrue);
-    expect(await shown('Edit'), isTrue);
+    expect(await shown('Action 1'), isTrue);
+    await tester.tap(find.text('Action 1'));
+    await tester.pumpAndSettle();
+    expect(log, ['action 1']);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+
+  testWidgets('Android: the leading item runs', (tester) async {
+    await pumpReader(tester);
     await tester.tap(find.text('Edit'));
     await tester.pumpAndSettle();
     expect(log, ['edit']);
@@ -244,12 +254,15 @@ void main() {
     expect(controller.selection.value, isNull, reason: 'copied, the selection and toolbar go');
   }, variant: TargetPlatformVariant.only(TargetPlatform.android));
 
-  testWidgets('iOS: the iOS-style menu, with Copy, Select All and the extra items', (tester) async {
-    final controller = await pumpReader(tester);
+  testWidgets('iOS: the iOS-style menu, with the leading item, Copy, Select All and the other extra items', (
+    tester,
+  ) async {
+    final controller = await pumpReader(tester, moreActions: 1);
 
     expect(find.byType(CupertinoTextSelectionToolbar), findsOneWidget);
-    expect(find.text('Copy'), findsOneWidget);
-    expect(find.text('Edit'), findsOneWidget);
+    double x(String label) => tester.getTopLeft(find.text(label)).dx;
+    expect(x('Edit'), lessThan(x('Copy')));
+    expect(x('Copy'), lessThan(x('Select All')));
 
     await tester.tap(find.text('Select All'));
     await tester.pumpAndSettle();

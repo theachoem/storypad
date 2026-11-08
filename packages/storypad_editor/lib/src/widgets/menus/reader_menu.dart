@@ -8,8 +8,8 @@ import '../../document/selected_text.dart';
 // on iOS. iOS's own menu can't be used here: it's bound to text input, and a read-only document has none -- so iOS
 // gets Flutter's iOS-style menu, as a read-only `SelectableText` does.
 
-/// What a read-only selection menu offers: Copy (with a selection), Select All, then the app's extra items shown
-/// while read-only.
+/// What a read-only selection menu offers: the app's leading items, Copy (with a selection), Select All, then the app's
+/// other items shown while read-only.
 final class ReaderMenu {
   ReaderMenu({required this.document, required this.composer, required this.extraActions});
 
@@ -41,5 +41,17 @@ final class ReaderMenu {
   List<StoryContextMenuAction> get shownExtraActions => [
     for (final action in extraActions)
       if (action.isShown(readOnly: true, hasSelection: hasSelection)) action,
+  ];
+
+  /// The shown extra items that come before Copy and Select All ([StoryContextMenuAction.leading]).
+  List<StoryContextMenuAction> get leadingActions => [
+    for (final action in shownExtraActions)
+      if (action.leading) action,
+  ];
+
+  /// The shown extra items that come after the platform's.
+  List<StoryContextMenuAction> get trailingActions => [
+    for (final action in shownExtraActions)
+      if (!action.leading) action,
   ];
 }

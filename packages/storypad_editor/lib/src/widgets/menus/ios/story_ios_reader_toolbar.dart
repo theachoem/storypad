@@ -3,6 +3,7 @@ import 'package:follow_the_leader/follow_the_leader.dart';
 import 'package:super_editor/super_editor.dart';
 
 import '../reader_menu.dart';
+import '../story_context_menu_action.dart';
 
 /// The iOS read-only menu: Flutter's iOS-style toolbar at the selection ([focalPoint]).
 class StoryIosReaderToolbar extends StatelessWidget {
@@ -27,7 +28,15 @@ class StoryIosReaderToolbar extends StatelessWidget {
         if (offset == null || size == null) return const SizedBox.shrink();
 
         final localizations = CupertinoLocalizations.of(context);
+        (String, VoidCallback) extra(StoryContextMenuAction action) => (
+          action.label,
+          () {
+            controlsController.hideToolbar();
+            action.onPressed();
+          },
+        );
         final buttons = <(String, VoidCallback)>[
+          for (final action in menu.leadingActions) extra(action),
           if (menu.hasSelection)
             (
               localizations.copyButtonLabel,
@@ -37,14 +46,7 @@ class StoryIosReaderToolbar extends StatelessWidget {
               },
             ),
           (localizations.selectAllButtonLabel, menu.selectAll),
-          for (final action in menu.shownExtraActions)
-            (
-              action.label,
-              () {
-                controlsController.hideToolbar();
-                action.onPressed();
-              },
-            ),
+          for (final action in menu.trailingActions) extra(action),
         ];
 
         final rect = offset & size;

@@ -1,3 +1,5 @@
+import 'package:super_editor/super_editor.dart';
+
 import '../controller/story_editor_controller.dart';
 import 'story_embed.dart';
 import 'story_embed_codec.dart';
@@ -36,4 +38,24 @@ final class StoryEmbedContext<T extends Object> {
 
   /// Removes the embed from the document, as an undoable edit. Returns `false` if it no longer exists.
   bool remove() => controller.removeEmbed(nodeId);
+
+  /// Puts the caret just [before] or after the embed and focuses the editor. For a tap on the embed's own content,
+  /// which super_editor's tap handling (under the content) never sees.
+  void placeCaret({required bool before}) {
+    controller.editor.execute([
+      ChangeSelectionRequest(
+        DocumentSelection.collapsed(
+          position: DocumentPosition(
+            nodeId: nodeId,
+            nodePosition: before
+                ? const UpstreamDownstreamNodePosition.upstream()
+                : const UpstreamDownstreamNodePosition.downstream(),
+          ),
+        ),
+        SelectionChangeType.placeCaret,
+        SelectionReason.userInteraction,
+      ),
+    ]);
+    controller.focusNode.requestFocus();
+  }
 }

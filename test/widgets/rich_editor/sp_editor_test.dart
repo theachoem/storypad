@@ -55,7 +55,7 @@ void main() {
     return (controller: controller, focusNode: focusNode, changes: changes);
   }
 
-  testWidgets('focusing the page focuses the editor, with the caret at the end', (tester) async {
+  testWidgets('focusing the page focuses the editor, with the caret at the start', (tester) async {
     final page = await pumpPage(
       tester,
       markdown: 'Hello',
@@ -66,7 +66,7 @@ void main() {
 
     expect(page.controller.editor.focusNode.hasFocus, isTrue);
     expect(page.focusNode.hasFocus, isTrue, reason: 'the page and its toolbar track this node');
-    expect(page.controller.selection, const TextSelection.collapsed(offset: 5));
+    expect(page.controller.selection, const TextSelection.collapsed(offset: 0));
   });
 
   testWidgets('edits are reported right away (so Done never misses the last keystrokes)', (tester) async {
@@ -80,7 +80,7 @@ void main() {
     page.controller.editor.editor.execute([
       InsertTextRequest(
         documentPosition: page.controller.editor.selection.value!.extent,
-        textToInsert: ' world',
+        textToInsert: 'Oh, ',
         attributions: {},
       ),
     ]);
@@ -88,7 +88,7 @@ void main() {
     await Future<void>.value();
 
     expect(page.changes, isNotEmpty);
-    expect(page.controller.serialize(), 'Hello world');
+    expect(page.controller.serialize(), 'Oh, Hello');
   });
 
   testWidgets('the toolbar formats the selection', (tester) async {
@@ -105,7 +105,7 @@ void main() {
     expect(page.controller.serialize(), '**Hello**');
   });
 
-  testWidgets('each heading button sets its level in one tap, and makes the line a paragraph again', (tester) async {
+  testWidgets('the heading button makes the line an H3 in one tap, and a paragraph again', (tester) async {
     final page = await pumpPage(tester, markdown: 'Hello');
     page.controller.selection = const TextSelection.collapsed(offset: 2);
     await tester.pump();
@@ -126,30 +126,25 @@ void main() {
       return selected;
     }
 
-    await tap(SpIcons.heading3);
+    await tap(SpIcons.heading);
     expect(page.controller.serialize(), '### Hello');
-    expect([isLit(SpIcons.heading1), isLit(SpIcons.heading2), isLit(SpIcons.heading3)], [false, false, true]);
-    await tap(SpIcons.heading1);
-    expect(page.controller.serialize(), '# Hello');
-    await tap(SpIcons.heading1);
+    expect(isLit(SpIcons.heading), isTrue);
+    await tap(SpIcons.heading);
     expect(page.controller.serialize(), 'Hello');
-    expect([isLit(SpIcons.heading1), isLit(SpIcons.heading2), isLit(SpIcons.heading3)], [false, false, false]);
+    expect(isLit(SpIcons.heading), isFalse);
   });
 
-  testWidgets('an older story\'s smaller heading lights no heading button, and any of them replaces it', (
-    tester,
-  ) async {
-    final page = await pumpPage(tester, markdown: '#### Hello');
+  testWidgets('a heading of another level (typed as Markdown, or an older story\'s) lights the heading button, and a '
+      'tap makes it a paragraph', (tester) async {
+    final page = await pumpPage(tester, markdown: '# Hello');
     page.controller.selection = const TextSelection.collapsed(offset: 2);
     await tester.pump();
 
-    for (final icon in [SpIcons.heading1, SpIcons.heading2, SpIcons.heading3]) {
-      expect(tester.widget<IconButton>(find.widgetWithIcon(IconButton, icon)).isSelected, isFalse);
-    }
-    await tester.ensureVisible(find.byIcon(SpIcons.heading2));
-    await tester.tap(find.byIcon(SpIcons.heading2));
+    expect(tester.widget<IconButton>(find.widgetWithIcon(IconButton, SpIcons.heading)).isSelected, isTrue);
+    await tester.ensureVisible(find.byIcon(SpIcons.heading));
+    await tester.tap(find.byIcon(SpIcons.heading));
     await tester.pumpAndSettle();
-    expect(page.controller.serialize(), '## Hello');
+    expect(page.controller.serialize(), 'Hello');
   });
 
   testWidgets('a view whose changes aren\'t kept has no live checkboxes', (tester) async {
