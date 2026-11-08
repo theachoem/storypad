@@ -40,7 +40,6 @@ import 'package:storypad/widgets/sp_fade_in.dart';
 import 'package:storypad/widgets/sp_filled_button.dart';
 import 'package:storypad/widgets/sp_icons.dart';
 import 'package:storypad/widgets/sp_pop_up_menu_button.dart';
-import 'package:storypad/widgets/sp_section_title.dart';
 import 'package:storypad/widgets/sp_single_state_widget.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 

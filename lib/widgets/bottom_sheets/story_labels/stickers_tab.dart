@@ -97,7 +97,7 @@ class _StickersTabState extends State<_StickersTab> with DebounchedCallback {
         child: Column(
           mainAxisSize: .min,
           crossAxisAlignment: .start,
-          spacing: 12.0,
+          spacing: 24.0,
           children: [
             for (final entry in emojisByCategory!.entries)
               _EmojiSection(
@@ -134,19 +134,19 @@ class _EmojiSection extends StatelessWidget {
     // Each row keeps clear of the sheet's side insets; the scroll view and its scrollbar span the full width.
     return Column(
       crossAxisAlignment: .start,
-      spacing: 6.0,
+      spacing: 8.0,
       children: [
         _SideInset(
-          minimum: 17.0,
-          child: SpSectionTitle(title: category.title, padding: EdgeInsets.zero),
+          minimum: 16.0,
+          child: _buildTitle(context),
         ),
         _SideInset(
           minimum: 16.0,
           child: LayoutBuilder(
             builder: (context, constraints) {
-              // As many cells as fit at 45pt or more (6–7 per row on phones).
-              const gap = 6.0;
-              const minItemWidth = 45.0;
+              // As many cells as fit at 44pt or more (6–7 per row on phones).
+              const gap = 8.0;
+              const minItemWidth = 44.0;
               final itemCount = (constraints.maxWidth + gap) ~/ (minItemWidth + gap);
               final itemWidth = (constraints.maxWidth - gap * (itemCount - 1)) / itemCount;
 
@@ -179,6 +179,15 @@ class _EmojiSection extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  // A plain heading in the text color, sized for a full-height sheet (the small primary-colored
+  // section title was made for the old floating picker).
+  Widget _buildTitle(BuildContext context) {
+    return Text(
+      category.title,
+      style: TextTheme.of(context).titleMedium?.copyWith(fontWeight: .w600),
     );
   }
 
