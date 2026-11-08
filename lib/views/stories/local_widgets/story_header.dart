@@ -156,6 +156,7 @@ class StoryHeader extends StatelessWidget {
           onToggleTags: onToggleTags,
           onToggleManagingPage: onToggleManagingPage,
           draftActions: draftActions,
+          editing: !readOnly,
           preferences: StoryTilePreferencesObject.editing(),
         ),
       ],

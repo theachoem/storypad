@@ -44,6 +44,7 @@ class SpStoryLabels extends StatelessWidget {
     required this.onToggleShowDayCount,
     required this.onChangeDate,
     required this.onToggleManagingPage,
+    required this.editing,
     this.setFeeling,
     this.onToggleTags,
     this.onSetPlace,
@@ -69,6 +70,9 @@ class SpStoryLabels extends StatelessWidget {
 
   final EdgeInsets margin;
   final bool fromStoryTile;
+
+  // True in the edit view: the labels sheet then focuses its tag search field on open.
+  final bool editing;
   final SpStoryLabelsDraftActions? draftActions;
   final Future<void> Function()? onToggleShowDayCount;
   final Future<void> Function(String? feeling)? setFeeling;
@@ -393,6 +397,7 @@ class SpStoryLabels extends StatelessWidget {
       initialPlace: story.place,
       onUpdateTags: onToggleTags,
       onSetPlace: onSetPlace,
+      autofocusSearch: editing,
     ).show(context: context);
   }
 

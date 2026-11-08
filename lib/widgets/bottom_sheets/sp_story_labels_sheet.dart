@@ -65,6 +65,7 @@ class SpStoryLabelsSheet extends BaseBottomSheet {
     required this.initialPlace,
     required this.onUpdateTags,
     required this.onSetPlace,
+    required this.autofocusSearch,
   });
 
   final SpStoryLabelsTab initialTab;
@@ -72,6 +73,9 @@ class SpStoryLabelsSheet extends BaseBottomSheet {
   final PlaceDbModel? initialPlace;
   final Future<bool> Function(List<int> tags)? onUpdateTags;
   final Future<void> Function(PlaceDbModel? place)? onSetPlace;
+
+  /// Focus the Tags/People search field on open — only while editing a story, not when viewing one.
+  final bool autofocusSearch;
 
   @override
   bool get fullScreen => false;
@@ -233,6 +237,7 @@ class _StoryLabelsBodyState extends State<_StoryLabelsBody> {
         selectedTags: selectedTags,
         storyCountByTagId: storyCountByTagId,
         onToggle: _toggleTag,
+        autofocusSearch: widget.sheet.autofocusSearch,
       ),
       .stickers => _StickersTab(
         selectedTags: selectedTags,

@@ -5,12 +5,14 @@ class _TagsTab extends StatefulWidget {
   const _TagsTab({
     super.key,
     required this.peopleMode,
+    required this.autofocusSearch,
     required this.selectedTags,
     required this.storyCountByTagId,
     required this.onToggle,
   });
 
   final bool peopleMode;
+  final bool autofocusSearch;
   final Set<int> selectedTags;
   final Map<int, int> storyCountByTagId;
   final Future<void> Function(int id) onToggle;
@@ -91,7 +93,7 @@ class _TagsTabState extends State<_TagsTab> {
     return _SideInset(
       minimum: 16.0,
       child: TextField(
-        autofocus: FocusManager.instance.primaryFocus?.hasFocus ?? false,
+        autofocus: widget.autofocusSearch,
         controller: _searchController,
         onChanged: (text) => setState(() => _query = text),
         decoration: InputDecoration(
