@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:storypad/core/databases/models/place_db_model.dart';
@@ -31,8 +32,6 @@ abstract class SpGeocodingService {
       ? SpSystemGeocodingService()
       : const SpNullGeocodingService();
 
-  static const onlineInstance = SpNullGeocodingService();
-
   /// Convert coordinates to a human-readable place.
   ///
   /// Returns `null` when the platform does not support geocoding or the
@@ -51,11 +50,13 @@ abstract class SpGeocodingService {
   ///
   /// Uses a local coordinate window only (no meter distance calculation).
   /// Returns the first place found within the window, otherwise `null`.
+  /// With [namedOnly], only a place the user has a name for counts (looks at up to 20 nearby stories).
   static Future<PlaceDbModel?> reverseGeocodeViaDb(
     SpLatLng latLng, {
     double latitudeDelta = 0.00027,
     double longitudeDelta = 0.00027,
     int fetchLimit = 1,
+    bool namedOnly = false,
   }) async {
     final bounds = SpLatLngBounds(
       south: (latLng.latitude - latitudeDelta).clamp(-90.0, 90.0),
@@ -64,10 +65,16 @@ abstract class SpGeocodingService {
       east: (latLng.longitude + longitudeDelta).clamp(-180.0, 180.0),
     );
 
-    final nearbyStories = await StoryDbModel.db.getStoriesWithLocation(bounds: bounds, limit: fetchLimit);
-    if (nearbyStories.isEmpty) return null;
+    final nearbyStories = await StoryDbModel.db.getStoriesWithLocation(
+      bounds: bounds,
+      limit: namedOnly ? max(fetchLimit, 20) : fetchLimit,
+    );
 
-    final firstMatch = nearbyStories.first;
+    final firstMatch = namedOnly
+        ? nearbyStories.where((story) => story.placeName?.trim().isNotEmpty == true).firstOrNull
+        : nearbyStories.firstOrNull;
+    if (firstMatch == null) return null;
+
     return PlaceDbModel(
       latitude: firstMatch.location.latitude,
       longitude: firstMatch.location.longitude,

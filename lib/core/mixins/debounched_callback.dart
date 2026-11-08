@@ -5,10 +5,8 @@ mixin DebounchedCallback {
   final Map<String, Timer?> _timers = {};
   Timer? _singleTimer;
 
-  Timer? _timer(String? key) {
-    if (_timers.containsKey(key)) return _timers[key];
-    return _singleTimer;
-  }
+  // With a key: only that key's timer (a key not used yet has none). Without: the last one started.
+  Timer? _timer(String? key) => key == null ? _singleTimer : _timers[key];
 
   void debouncedCallback(
     VoidCallback callback, {

@@ -8,6 +8,7 @@ import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/objects/default_story_preferences_object.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
+import 'package:storypad/core/services/location/sp_location_service.dart';
 import 'package:storypad/core/services/stories/story_convert_legacy_pages_service.dart';
 import 'package:storypad/core/services/stories/story_should_revert_change_service.dart';
 import 'package:storypad/core/types/asset_type.dart';
@@ -108,6 +109,12 @@ class EditStoryViewModel extends BaseStoryViewModel {
     if (params.autoRequestLocation) {
       await addCurrentLocation();
     }
+  }
+
+  // A new story opened to record where it's written (e.g. from the stories map).
+  Future<void> addCurrentLocation() async {
+    final result = await SpLocationService.fetchCurrentPlace();
+    if (result.isSuccess) await setPlace(result.place);
   }
 
   Future<void> done(BuildContext context) async {

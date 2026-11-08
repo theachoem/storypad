@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:animated_clipper/animated_clipper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,13 +16,9 @@ import 'package:storypad/core/services/story_time_picker_service.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/calendar/calendar_view.dart';
-import 'package:storypad/views/map/picker/map_picker_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_days_count_bottom_sheet.dart';
-import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_story_labels_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
-import 'package:storypad/widgets/sp_emoji_tag_picker.dart';
-import 'package:storypad/widgets/sp_floating_tag_picker.dart';
-import 'package:storypad/widgets/sp_single_state_widget.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
 class SpStoryLabelsDraftActions {
@@ -51,7 +46,6 @@ class SpStoryLabels extends StatelessWidget {
     this.setFeeling,
     this.onToggleTags,
     this.onSetPlace,
-    this.onAddCurrentLocation,
     this.currentPagesCount,
     this.voicesCount,
     this.draftActions,
@@ -79,7 +73,6 @@ class SpStoryLabels extends StatelessWidget {
   final Future<void> Function(String? feeling)? setFeeling;
   final Future<bool> Function(List<int> tags)? onToggleTags;
   final Future<void> Function(PlaceDbModel? place)? onSetPlace;
-  final Future<void> Function()? onAddCurrentLocation;
   final Future<void> Function(DateTime dateTime)? onChangeDate;
   final void Function()? onToggleManagingPage;
 
@@ -231,13 +224,34 @@ class SpStoryLabels extends StatelessWidget {
       );
     }
 
-    if (onAddCurrentLocation != null && !story.hasLocation) {
+    // Tags labels including its add button. Topics (#) and people (@) are toggled independently.
+    bool showTagLabels = preferences.showTagLabels || !fromStoryTile;
+    bool showPeopleLabels = preferences.showPeopleLabels || !fromStoryTile;
+    final topicLabels = buildTags(tagProvider, context, people: false);
+    final peopleLabels = buildTags(tagProvider, context, people: true);
+
+    if (showTagLabels) children.addAll(topicLabels);
+    if (showPeopleLabels) children.addAll(peopleLabels);
+
+    // Add button (opens the picker covering both tags & people) only when the story has neither.
+    if (onToggleTags != null && topicLabels.isEmpty && peopleLabels.isEmpty) {
+      children.add(
+        _buildIconButton(
+          context: context,
+          icon: SpIcons.tag,
+          tooltip: tr('page.tags.title'),
+          onTap: () => _showLabelsSheet(context, .tags),
+        ),
+      );
+    }
+
+    if (onSetPlace != null && !story.hasLocation) {
       children.add(
         _buildIconButton(
           context: context,
           icon: SpIcons.locationPin,
-          tooltip: tr("button.add_current_location"),
-          onTap: () async => onAddCurrentLocation!(),
+          tooltip: tr("page.map.title"),
+          onTap: () => _showLabelsSheet(context, .place),
         ),
       );
     }
@@ -249,59 +263,7 @@ class SpStoryLabels extends StatelessWidget {
           context: context,
           title: story.place!.displayLabel,
           leadingIconData: SpIcons.map,
-          onTap: onSetPlace != null
-              ? () async {
-                  final result = await MapPickerRoute(
-                    initialSelectedPlace: story.place,
-                  ).push(context);
-
-                  if (result is MapPickerResult) {
-                    switch (result.action) {
-                      case MapPickerFinalAction.confirm:
-                        final selected = result.place;
-                        if (selected != null) {
-                          await onSetPlace?.call(selected);
-                        }
-                        break;
-                      case MapPickerFinalAction.remove:
-                        await onSetPlace?.call(null);
-                        break;
-                      case MapPickerFinalAction.cancel:
-                        break;
-                    }
-                  }
-                }
-              : null,
-        ),
-      );
-    }
-
-    // Tags labels including its add button. Topics (#) and people (@) are toggled independently.
-    bool showTagLabels = preferences.showTagLabels || !fromStoryTile;
-    bool showPeopleLabels = preferences.showPeopleLabels || !fromStoryTile;
-    final topicLabels = buildTags(tagProvider, context, people: false);
-    final peopleLabels = buildTags(tagProvider, context, people: true);
-    if (showTagLabels) children.addAll(topicLabels);
-    if (showPeopleLabels) children.addAll(peopleLabels);
-    // Add button (opens the picker covering both tags & people) only when the story has neither.
-    if (onToggleTags != null && topicLabels.isEmpty && peopleLabels.isEmpty) {
-      children.add(
-        SpFloatingPopUpButton(
-          estimatedFloatingWidth: 288,
-          bottomToTop: false,
-          dyGetter: (dy) => dy + 24,
-          pathBuilder: PathBuilders.slideDown,
-          floatingBuilder: (close) => SpFloatingTagPicker(
-            initialTags: story.validTags ?? [],
-            onUpdated: onToggleTags!,
-            close: close,
-          ),
-          builder: (open) => _buildIconButton(
-            context: context,
-            icon: SpIcons.tag,
-            tooltip: tr('page.tags.title'),
-            onTap: open,
-          ),
+          onTap: onSetPlace != null ? () => _showLabelsSheet(context, .place) : null,
         ),
       );
     }
@@ -335,45 +297,23 @@ class SpStoryLabels extends StatelessWidget {
 
     if (onToggleTags != null && emojis.isEmpty) {
       children.add(
-        SpFloatingPopUpButton(
-          estimatedFloatingWidth: 288,
-          bottomToTop: false,
-          dyGetter: (dy) => dy + 24,
-          pathBuilder: PathBuilders.slideDown,
-          floatingBuilder: (close) => SpEmojiTagPicker(
-            initialTags: story.validTags ?? [],
-            onUpdated: onToggleTags!,
-            close: close,
-          ),
-          builder: (open) => _buildIconButton(
-            context: context,
-            icon: SpIcons.addFeeling,
-            tooltip: tr('general.stickers'),
-            onTap: open,
-          ),
+        _buildIconButton(
+          context: context,
+          icon: SpIcons.addFeeling,
+          tooltip: tr('general.stickers'),
+          onTap: () => _showLabelsSheet(context, .stickers),
         ),
       );
     }
 
     if (emojis.isNotEmpty) {
       children.add(
-        SpFloatingPopUpButton(
-          estimatedFloatingWidth: 288,
-          bottomToTop: false,
-          dyGetter: (dy) => dy + 24,
-          pathBuilder: PathBuilders.slideDown,
-          floatingBuilder: (close) => SpEmojiTagPicker(
-            initialTags: story.validTags ?? [],
-            onUpdated: onToggleTags!,
-            close: close,
-          ),
-          builder: (open) => SpTapEffect(
-            duration: Durations.medium3,
-            curve: Curves.easeInOutCubicEmphasized,
-            behavior: .translucent,
-            onTap: onToggleTags != null ? open : null,
-            child: emojiRow,
-          ),
+        SpTapEffect(
+          duration: Durations.medium3,
+          curve: Curves.easeInOutCubicEmphasized,
+          behavior: .translucent,
+          onTap: onToggleTags != null ? () => _showLabelsSheet(context, .stickers) : null,
+          child: emojiRow,
         ),
       );
     }
@@ -445,6 +385,16 @@ class SpStoryLabels extends StatelessWidget {
     );
   }
 
+  Future<void> _showLabelsSheet(BuildContext context, SpStoryLabelsTab tab) {
+    return SpStoryLabelsSheet(
+      initialTab: tab,
+      initialTags: story.validTags ?? [],
+      initialPlace: story.place,
+      onUpdateTags: onToggleTags,
+      onSetPlace: onSetPlace,
+    ).show(context: context);
+  }
+
   Future<void> showTimePicker(BuildContext context) async {
     final newTime = await StoryTimePickerService(
       context: context,
@@ -472,25 +422,13 @@ class SpStoryLabels extends StatelessWidget {
   }
 
   Widget buildTag(BuildContext context, TagsProvider provider, TagDbModel tag, {required String prefix}) {
-    final title = "$prefix ${tag.title.sanitizeUtf16}";
+    final title = "$prefix${tag.title.sanitizeUtf16}";
 
     if (onToggleTags != null) {
-      return SpFloatingPopUpButton(
-        estimatedFloatingWidth: 288,
-        bottomToTop: false,
-        dyGetter: (dy) => dy + 24,
-        pathBuilder: PathBuilders.slideDown,
-        floatingBuilder: (close) => SpFloatingTagPicker(
-          initialTags: story.validTags ?? [],
-          onUpdated: onToggleTags!,
-          close: close,
-          initialPeopleMode: tag.isPerson,
-        ),
-        builder: (open) => buildPin(
-          context: context,
-          title: title,
-          onTap: open,
-        ),
+      return buildPin(
+        context: context,
+        title: title,
+        onTap: () => _showLabelsSheet(context, tag.isPerson ? .people : .tags),
       );
     }
 
@@ -505,47 +443,27 @@ class SpStoryLabels extends StatelessWidget {
     required BuildContext context,
     required IconData icon,
     required String tooltip,
-    required FutureOr<void> Function() onTap,
+    required void Function() onTap,
   }) {
-    return SpSingleStateWidget.listen(
-      initialValue: false,
-      builder: (context, loading, notifier) {
-        return Tooltip(
-          message: tooltip,
-          child: Material(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-            color: (AppTheme.isDarkMode(context) ? Colors.white : Colors.black).withValues(alpha: 0.06),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(4.0),
-              onTap: onTap is Future<void> Function()
-                  ? () async {
-                      notifier.value = true;
-                      await onTap();
-                      notifier.value = false;
-                    }
-                  : onTap,
-              child: loading
-                  ? Container(
-                      padding: EdgeInsets.all(MediaQuery.textScalerOf(context).scale(4)),
-                      height: MediaQuery.textScalerOf(context).scale(20),
-                      width: MediaQuery.textScalerOf(context).scale(20),
-                      child: CircularProgressIndicator.adaptive(
-                        strokeWidth: MediaQuery.textScalerOf(context).scale(3.0),
-                      ),
-                    )
-                  : Container(
-                      padding: EdgeInsets.symmetric(horizontal: MediaQuery.textScalerOf(context).scale(8.0)),
-                      height: MediaQuery.textScalerOf(context).scale(20),
-                      child: Icon(
-                        icon,
-                        size: MediaQuery.textScalerOf(context).scale(14.0),
-                        color: ColorScheme.of(context).onSurface.withValues(alpha: 0.6),
-                      ),
-                    ),
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+        color: (AppTheme.isDarkMode(context) ? Colors.white : Colors.black).withValues(alpha: 0.06),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(4.0),
+          onTap: onTap,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: MediaQuery.textScalerOf(context).scale(8.0)),
+            height: MediaQuery.textScalerOf(context).scale(20),
+            child: Icon(
+              icon,
+              size: MediaQuery.textScalerOf(context).scale(14.0),
+              color: ColorScheme.of(context).onSurface.withValues(alpha: 0.6),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 

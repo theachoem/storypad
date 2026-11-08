@@ -40,13 +40,13 @@ class SpLocationFetchResult {
 ///   2. **Reverse geocoding is best-effort** — it runs after coordinates are
 ///      captured and is bounded by [geocodeTimeout]. On timeout/failure the
 ///      entry is saved with coords only; no data is lost.
-///   3. **Label can be filled later** — the map editor auto-retries geocoding
+///   3. **Label can be filled later** — the Map tab auto-retries geocoding
 ///      when opened and the user can always type a custom name via the edit-
 ///      label flow, regardless of connectivity.
 ///
-/// The same [geocodeTimeout] is reused in [MapPickerViewModel.buildConfirmResult]
-/// to bound the confirm action, but NOT during interactive resolve (while the
-/// user is viewing the map picker with a visible spinner).
+/// The same [geocodeTimeout] bounds the story labels sheet's Map tab on Save. While the
+/// user is on the tab (a visible spinner), its lookup gets a longer bound of its own,
+/// so a hung geocoder can't keep Save disabled.
 class SpLocationService {
   const SpLocationService._();
 
@@ -55,7 +55,7 @@ class SpLocationService {
   static const Duration gpsTimeout = Duration(seconds: 5);
 
   /// Max time to wait for reverse geocoding before saving coordinates only.
-  /// The user can fill the label later via the map editor.
+  /// The user can fill the label later via the Map tab.
   static const Duration geocodeTimeout = Duration(seconds: 2);
 
   /// Requests permission (if needed), gets the device GPS position,
@@ -106,10 +106,10 @@ class SpLocationService {
 
       if (!skipReverseGeocoding) {
         // Always prefer DB reverse geocoding first to avoid unnecessary API calls and latency.
-        // User can still use reverseGeocode on map picker.
+        // User can still use reverseGeocode on Map tab.
         place = await SpGeocodingService.reverseGeocodeViaDb(latLng);
         // Bound the network geocode: on timeout/failure we save coordinates
-        // only, and the label can be filled later from the map editor.
+        // only, and the label can be filled later from the Map tab.
         if (place == null) {
           try {
             place = await SpGeocodingService.systemInstance.reverseGeocode(latLng).timeout(geocodeTimeout);
