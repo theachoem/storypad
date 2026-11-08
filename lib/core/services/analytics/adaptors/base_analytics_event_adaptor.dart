@@ -389,15 +389,16 @@ abstract class BaseAnalyticsEventAdaptor {
     'has_emoji': (tag.emoji != null).toString(),
   });
 
-  // Scheme + host only — never path, query or fragment. Links come from the user's
-  // entries, and map links carry the story's coordinates in the query.
+  // Links mostly come from the user's own entries, so even a site name or an app's URL
+  // scheme can be personal (a clinic, a dating app, someone's blog). Only our own
+  // domain — links the app itself shows — is named; for every other link the event
+  // is counted with no parameters at all. Never path, query or fragment.
   Map<String, Object>? urlAnalyticParameters(String url) {
-    final uri = Uri.tryParse(url);
-    if (uri == null) return null;
-    return sanitizeParameters({
-      'scheme': uri.scheme.isEmpty ? null : uri.scheme,
-      'host': uri.host.isEmpty ? null : uri.host,
-    });
+    final host = Uri.tryParse(url)?.host.toLowerCase();
+    if (host == null) return null;
+
+    final isStoryPadDomain = host == 'storypad.me' || host.endsWith('.storypad.me');
+    return isStoryPadDomain ? sanitizeParameters({'host': host}) : null;
   }
 
   // 'emoji' (Feeling/Activity/Weather), 'people', or 'topic' (regular tags).

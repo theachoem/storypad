@@ -71,31 +71,40 @@ void main() {
   });
 
   group('urlAnalyticParameters', () {
-    test('keeps only scheme and host, dropping path, query and fragment', () {
-      final result = adaptor.urlAnalyticParameters('https://example.com/private/path?q=secret#frag');
-      expect(result, equals({'scheme': 'https', 'host': 'example.com'}));
-    });
-
-    test('drops map coordinates', () {
+    test('names only our own domain, never path, query or fragment', () {
       expect(
-        adaptor.urlAnalyticParameters('https://maps.apple.com/?ll=11.5564,104.9282'),
-        equals({'scheme': 'https', 'host': 'maps.apple.com'}),
+        adaptor.urlAnalyticParameters('https://storypad.me/privacy-policy?x=1#top'),
+        equals({'host': 'storypad.me'}),
       );
       expect(
-        adaptor.urlAnalyticParameters('https://www.google.com/maps/search/?api=1&query=11.5564,104.9282'),
-        equals({'scheme': 'https', 'host': 'www.google.com'}),
+        adaptor.urlAnalyticParameters('https://static.storypad.me/a.json'),
+        equals({'host': 'static.storypad.me'}),
       );
     });
 
-    test('drops story text from a Reddit share link', () {
-      final result = adaptor.urlAnalyticParameters(
-        'https://www.reddit.com/submit?title=My%20day&text=Dear%20diary%2C%20today%20I...',
-      );
-      expect(result, equals({'scheme': 'https', 'host': 'www.reddit.com'}));
+    test('sends nothing for any other site', () {
+      expect(adaptor.urlAnalyticParameters('https://example.com/private/path?q=secret#frag'), isNull);
+      expect(adaptor.urlAnalyticParameters('https://notstorypad.me/'), isNull);
+      expect(adaptor.urlAnalyticParameters('https://storypad.me.evil.com/'), isNull);
     });
 
-    test('keeps only the scheme for mailto links', () {
-      expect(adaptor.urlAnalyticParameters('mailto:someone@example.com'), equals({'scheme': 'mailto'}));
+    test('sends nothing for map links, so no coordinates', () {
+      expect(adaptor.urlAnalyticParameters('https://maps.apple.com/?ll=11.5564,104.9282'), isNull);
+      expect(adaptor.urlAnalyticParameters('https://www.google.com/maps/search/?api=1&query=11.5564,104.9282'), isNull);
+    });
+
+    test('sends nothing for a Reddit share link, so no story text', () {
+      expect(
+        adaptor.urlAnalyticParameters(
+          'https://www.reddit.com/submit?title=My%20day&text=Dear%20diary%2C%20today%20I...',
+        ),
+        isNull,
+      );
+    });
+
+    test('sends nothing for mailto or app links, not even the scheme', () {
+      expect(adaptor.urlAnalyticParameters('mailto:someone@example.com'), isNull);
+      expect(adaptor.urlAnalyticParameters('someapp://open/profile/123'), isNull);
     });
 
     test('returns null for an unparseable url', () {
