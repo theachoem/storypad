@@ -16,6 +16,7 @@ import '../components/text_selection_highlight_component_builder.dart';
 import '../style/framed_component_builder.dart';
 import '../components/no_padding_blockquote_component_builder.dart';
 import '../components/compact_paragraph_component_builder.dart';
+import '../components/heading_hint_component_builder.dart';
 import '../components/compact_list_item_component_builder.dart';
 import '../components/story_embed_component_builder.dart';
 import '../components/compact_task_component_builder.dart';
@@ -70,6 +71,8 @@ class RawEditor extends StatefulWidget {
     this.selectionColor,
     this.placeholder,
     this.placeholderStyle,
+    this.headingPlaceholder,
+    this.titlePlaceholder,
     this.checkboxesEnabled = true,
     this.contextMenuActions = const [],
     this.blockStyles,
@@ -120,6 +123,14 @@ class RawEditor extends StatefulWidget {
 
   /// The [placeholder]'s style. Defaults to [baseTextStyle] in the theme's hint color.
   final TextStyle? placeholderStyle;
+
+  /// Shown on an empty heading line, for its level (1-6) -- e.g. "Headline 1" -- in the heading's style and the
+  /// [placeholderStyle]'s color. Not while read-only.
+  final String Function(int level)? headingPlaceholder;
+
+  /// Shown instead of [headingPlaceholder] on an empty heading that's the first line -- the page's title (e.g.
+  /// "Title...").
+  final String? titlePlaceholder;
 
   /// Whether task checkboxes toggle -- also while read-only, where it's the only edit (reported like any other).
   /// Turn off for a view whose changes wouldn't be kept.
@@ -207,6 +218,7 @@ class _RawEditorState extends State<RawEditor> {
       _componentBuildersCache = null;
     }
     if (oldWidget.placeholder != widget.placeholder ||
+        oldWidget.titlePlaceholder != widget.titlePlaceholder ||
         oldWidget.placeholderStyle != widget.placeholderStyle ||
         oldWidget.baseTextStyle != widget.baseTextStyle ||
         oldWidget.checkboxesEnabled != widget.checkboxesEnabled) {
@@ -452,6 +464,13 @@ class _RawEditorState extends State<RawEditor> {
   }
 
   List<ComponentBuilder> _createComponentBuilders() => [
+    // Reads the widget's callback when used, so a new closure each build doesn't need new builders.
+    HeadingHintComponentBuilder(
+      _controller,
+      hint: (level, firstLine) =>
+          (firstLine ? widget.titlePlaceholder : null) ?? widget.headingPlaceholder?.call(level),
+      hintColor: (context) => _placeholderStyle(context).color,
+    ),
     if (widget.placeholder case final placeholder?) HintComponentBuilder(placeholder, _placeholderStyle),
     const NoPaddingBlockquoteComponentBuilder(),
     const CompactParagraphComponentBuilder(),

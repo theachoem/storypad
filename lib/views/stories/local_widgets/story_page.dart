@@ -51,7 +51,7 @@ class _StoryPage extends StatelessWidget {
   }
 
   /// The least a page card (list/grid) is tall: an empty page's card, as when the title and body were separate fields.
-  static const double _cardMinHeight = 64;
+  static const double _cardMinHeight = 96;
 
   bool get _editable => !readOnly && !_locked && onChanged != null;
 

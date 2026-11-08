@@ -190,6 +190,8 @@ class _SpEditorState extends State<SpEditor> {
           blockStyles: style.blockStyles,
           placeholder: '...',
           placeholderStyle: style.placeholderStyle,
+          headingPlaceholder: (level) => tr('input.story_headline.hint', args: ['$level']),
+          titlePlaceholder: tr('input.story_title.hint'),
           checkboxesEnabled: widget.onChanged != null,
           onTapLink: (url) => UrlOpenerService.openForRichContent(context: context, url: url),
           contextMenuActions: _buildContextMenuActions(),

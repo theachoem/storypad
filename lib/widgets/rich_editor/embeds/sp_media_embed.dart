@@ -146,6 +146,11 @@ class _MediaEmbedView extends StatelessWidget {
   bool get readOnly => embed.readOnly;
   bool get isMaxSize => value.size == .max;
 
+  /// While editing, a tap on the photo's (or album's) left half puts the caret before it, on its right half after it:
+  /// where typing then starts a new line.
+  void _placeCaret(TapUpDetails details, double width) =>
+      embed.placeCaret(before: details.localPosition.dx < width / 2);
+
   void _remove() {
     if (!readOnly) embed.remove();
   }
@@ -189,7 +194,7 @@ class _MediaEmbedView extends StatelessWidget {
   Widget _buildSingle(BuildContext context, String link, PageLayoutType? layoutType) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        double? width;
+        final double width;
         double? height;
 
         if (isMaxSize) {
@@ -207,6 +212,7 @@ class _MediaEmbedView extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: readOnly ? () => _viewMedia(context, link) : null,
+                onTapUp: readOnly ? null : (details) => _placeCaret(details, width),
                 onLongPress: () async {
                   Feedback.forLongPress(context);
                   final asset = await AssetDbModel.findBy(relativePath: link);
@@ -243,7 +249,17 @@ class _MediaEmbedView extends StatelessWidget {
         children: [
           ConstrainedBox(
             constraints: BoxConstraints(maxWidth: maxWidth),
-            child: SpAlbumGrid(paths: paths, onTap: readOnly ? (index) => _viewMediaAt(context, paths, index) : null),
+            child: LayoutBuilder(
+              builder: (context, constraints) => GestureDetector(
+                // The gaps between tiles too.
+                behavior: .opaque,
+                onTapUp: readOnly ? null : (details) => _placeCaret(details, constraints.maxWidth),
+                child: SpAlbumGrid(
+                  paths: paths,
+                  onTap: readOnly ? (index) => _viewMediaAt(context, paths, index) : null,
+                ),
+              ),
+            ),
           ),
           if (!readOnly) Positioned(top: 0, right: 0, child: _buildMoreVertButton(context)),
         ],

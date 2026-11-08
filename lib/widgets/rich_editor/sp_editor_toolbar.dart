@@ -61,7 +61,7 @@ class SpEditorToolbar extends StatelessWidget {
         actions.canUndo,
         actions.canRedo,
       ],
-      actions.headingLevel,
+      actions.headingLevel != null,
       actions.isBold,
       actions.isItalic,
       actions.isUnderline,
@@ -134,15 +134,14 @@ class SpEditorToolbar extends StatelessWidget {
             ),
           ],
           _buildDivider(context),
-          // One button per heading level: tapping the line's own level makes it a paragraph again. A heading on the
-          // first line is the page's title; an older story's smaller heading lights none, and any of these replaces it.
-          for (final (level, icon) in [(1, SpIcons.heading1), (2, SpIcons.heading2), (3, SpIcons.heading3)])
-            toggle(
-              tr('button.editor.heading', args: ['$level']),
-              icon,
-              actions.headingLevel == level,
-              () => actions.setHeading(actions.headingLevel == level ? null : level),
-            ),
+          // One heading button: a paragraph becomes an H3 (a title's level, on the first line), any heading a paragraph
+          // again. Other levels are typed as Markdown ("# " to "###### ") and light it too.
+          toggle(
+            tr('button.editor.heading'),
+            SpIcons.heading,
+            actions.headingLevel != null,
+            () => actions.setHeading(actions.headingLevel != null ? null : 3),
+          ),
           _buildDivider(context),
           toggle(tr('button.editor.bold'), SpIcons.formatBold, actions.isBold, actions.toggleBold),
           toggle(tr('button.editor.italic'), SpIcons.formatItalic, actions.isItalic, actions.toggleItalic),
@@ -161,14 +160,6 @@ class SpEditorToolbar extends StatelessWidget {
             onPressed: actions.clearFormatting,
           ),
           _buildDivider(context),
-          for (final (align, icon, label) in [
-            (TextAlign.left, SpIcons.alignLeft, 'button.editor.align_left'),
-            (TextAlign.center, SpIcons.alignCenter, 'button.editor.align_center'),
-            (TextAlign.right, SpIcons.alignRight, 'button.editor.align_right'),
-            (TextAlign.justify, SpIcons.alignJustify, 'button.editor.align_justify'),
-          ])
-            toggle(tr(label), icon, actions.alignment == align, () => actions.setAlignment(align)),
-          _buildDivider(context),
           toggle(
             tr('button.editor.numbered_list'),
             SpIcons.listNumbered,
@@ -182,7 +173,6 @@ class SpEditorToolbar extends StatelessWidget {
             actions.toggleBulletList,
           ),
           toggle(tr('button.editor.checklist'), SpIcons.checklist, actions.isTaskList, actions.toggleTaskList),
-          toggle(tr('button.editor.quote'), SpIcons.quote, actions.isBlockquote, actions.toggleBlockquote),
           IconButton(
             tooltip: tr('button.editor.indent'),
             icon: const Icon(SpIcons.indentIncrease),
@@ -193,12 +183,22 @@ class SpEditorToolbar extends StatelessWidget {
             icon: const Icon(SpIcons.indentDecrease),
             onPressed: actions.canOutdent ? actions.outdent : null,
           ),
+          _buildDivider(context),
+          toggle(tr('button.editor.quote'), SpIcons.quote, actions.isBlockquote, actions.toggleBlockquote),
           toggle(
             tr('button.editor.link'),
             SpIcons.link,
             actions.linkUrl != null,
             actions.hasSelection || actions.linkUrl != null ? () => _editLink(context) : null,
           ),
+          _buildDivider(context),
+          for (final (align, icon, label) in [
+            (TextAlign.left, SpIcons.alignLeft, 'button.editor.align_left'),
+            (TextAlign.center, SpIcons.alignCenter, 'button.editor.align_center'),
+            (TextAlign.right, SpIcons.alignRight, 'button.editor.align_right'),
+            (TextAlign.justify, SpIcons.alignJustify, 'button.editor.align_justify'),
+          ])
+            toggle(tr(label), icon, actions.alignment == align, () => actions.setAlignment(align)),
           _buildDivider(context),
           IconButton(
             tooltip: tr('button.cursor_left'),

@@ -90,7 +90,8 @@ Presentation, on either editor widget:
   scroll view, which scrolls it and follows the caret), or `.sliver` (several
   editors in one `CustomScrollView`).
 - `baseTextStyle`, `styleRules`; `caretColor` (caret, and mobile handles/magnifier) and `selectionColor` (both
-  default to the theme's `TextSelectionTheme`, else its primary color); `placeholder`; `checkboxesEnabled: false` for a
+  default to the theme's `TextSelectionTheme`, else its primary color); `placeholder`, `headingPlaceholder` (per level) and
+  `titlePlaceholder` (an empty first-line heading); `checkboxesEnabled: false` for a
   view that won't keep its changes; `contextMenuActions` — extra selection-menu items (e.g. Uppercase via
   `actions.transformSelectedText`; `leading: true` puts one before Copy in the read-only menus).
 - Spacing, all in one `spacing: StoryEditorSpacing(...)`: `page` (around the document), and space above/below each
