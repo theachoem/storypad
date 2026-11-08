@@ -25,8 +25,13 @@ class _EditTagContent extends StatelessWidget {
         ],
       ),
       header: buildCategorySelector(context),
-      onSubmitted: (values) =>
-          Navigator.of(context).pop(EditTagResult(title: values.first, categoryId: viewModel.selectedCategoryId)),
+      onSubmitted: (values) => Navigator.of(context).pop(
+        EditTagResult(
+          title: values.first,
+          categoryId: viewModel.selectedCategoryId,
+          colorSeedValue: viewModel.selectedColorSeedValue,
+        ),
+      ),
       fields: [
         SpTextInputField(
           initialText: viewModel.tag?.title,
@@ -41,6 +46,7 @@ class _EditTagContent extends StatelessWidget {
 
             return null;
           },
+          trailing: buildColorBox(context),
         ),
       ],
     );
@@ -64,6 +70,48 @@ class _EditTagContent extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  // Beside the title, as tall as the field. The same picker as the theme's Color Seed: picking the
+  // current color again, or black/white, clears it.
+  Widget buildColorBox(BuildContext context) {
+    final value = viewModel.selectedColorSeedValue;
+    final color = value != null ? TagColorService.resolve(Color(value), Theme.of(context).brightness).dot : null;
+
+    return SpAdaptivePopUpButton(
+      // At the field's end: line up the ends so the picker stays on screen.
+      horizontalAnchor: Directionality.of(context) == .rtl ? -1.0 : 1.0,
+      floatingBuilder: (close, openAbove) {
+        return SpColorPicker(
+          isDarkMode: AppTheme.isDarkMode(context),
+          position: openAbove ? .bottom : .top,
+          currentColor: value != null ? Color(value) : null,
+          level: .one,
+          onPickedColor: (color) async {
+            await close();
+            viewModel.setColor(color);
+          },
+        );
+      },
+      builder: (open) {
+        return Tooltip(
+          message: tr("general.color"),
+          child: SpTapEffect(
+            onTap: open,
+            child: Container(
+              padding: const EdgeInsets.all(4.0),
+              decoration: BoxDecoration(
+                border: Border.all(color: color?.withValues(alpha: 0.5) ?? ColorScheme.of(context).outlineVariant),
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Container(
+                decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4.0)),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

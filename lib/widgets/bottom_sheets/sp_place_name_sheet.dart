@@ -197,12 +197,12 @@ class _PlaceNameBodyState extends State<_PlaceNameBody> with DebounchedCallback 
     return Column(
       crossAxisAlignment: .start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            crossAxisAlignment: .start,
-            children: [
-              Row(
+        Column(
+          crossAxisAlignment: .start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 16.0, right: 8.0),
+              child: Row(
                 children: [
                   Expanded(
                     child: Text(
@@ -219,8 +219,11 @@ class _PlaceNameBodyState extends State<_PlaceNameBody> with DebounchedCallback 
                   ),
                 ],
               ),
-              const SizedBox(height: 8.0),
-              TextField(
+            ),
+            const SizedBox(height: 8.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: TextField(
                 controller: controller,
                 autofocus: true,
                 textInputAction: .done,
@@ -228,8 +231,8 @@ class _PlaceNameBodyState extends State<_PlaceNameBody> with DebounchedCallback 
                 onSubmitted: (_) => _rename(),
                 decoration: InputDecoration(hintText: tr("input.place_name.hint")),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
         const SizedBox(height: 12.0),
         if (places.isNotEmpty || coordinates != null) SpSectionTitle(title: tr("general.places")),

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:storypad/core/databases/adapters/objectbox/tags_box.dart';
@@ -21,6 +23,10 @@ class TagDbModel extends BaseDbModel {
   final DateTime createdAt;
   final int? categoryId;
 
+  /// The picked color, as ARGB. Its chip and dot colors are derived per brightness by
+  /// `TagColorService`, so only the seed is stored.
+  final int? colorSeedValue;
+
   @override
   final DateTime updatedAt;
   final String? lastSavedDeviceId;
@@ -40,16 +46,19 @@ class TagDbModel extends BaseDbModel {
     required this.updatedAt,
     required this.lastSavedDeviceId,
     required this.permanentlyDeletedAt,
+    this.colorSeedValue,
     int? index,
   }) : index = index ?? 0;
 
   bool get feeling => categoryId == TagCategoryDbModel.feeling().id;
   bool get isPerson => categoryId == TagCategoryDbModel.peopleId;
+  Color? get colorSeed => colorSeedValue != null ? Color(colorSeedValue!) : null;
 
   TagDbModel.fromIDTitle(this.id, this.title)
     : version = 0,
       emoji = null,
       categoryId = null,
+      colorSeedValue = null,
       index = 0,
       createdAt = DateTime.now(),
       updatedAt = DateTime.now(),

@@ -188,6 +188,7 @@
   "general.biometrics_lock": "Blocco biometrico",
   "general.character_count_args": "Caratteri: {CHAR_COUNT}",
   "general.cloud_backup": "Backup su cloud",
+  "general.color": "Colore",
   "general.custom": "Personalizzato",
   "general.customization": "Personalizzazione",
   "general.data_backup": "Dati e backup",

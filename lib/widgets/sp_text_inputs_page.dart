@@ -12,6 +12,7 @@ class SpTextInputField {
     this.maxLines,
     this.keyboardType,
     this.validator,
+    this.trailing,
   });
 
   final String? initialText;
@@ -20,6 +21,10 @@ class SpTextInputField {
   final int? maxLines;
   final TextInputType? keyboardType;
   final FormFieldValidator<String>? validator;
+
+  // Optional widget beside the field (e.g. a color box): a square as tall as the field, up to
+  // [SpTextInputsPage.trailingMaxSize], centered on it.
+  final Widget? trailing;
 }
 
 class SpTextInputsPage extends StatefulWidget {
@@ -32,6 +37,10 @@ class SpTextInputsPage extends StatefulWidget {
     this.header,
     this.onSubmitted,
   });
+
+  // A field with a trailing widget is compact on Material too (iOS fields already are), and the
+  // square matches it: 40 = a list tile's leading.
+  static const double trailingMaxSize = 40.0;
 
   final PreferredSizeWidget? appBar;
   final List<SpTextInputField> fields;
@@ -127,21 +136,26 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
 
     if (kIsCupertino) {
       textField = FormField(
+        // Validate the prefilled text too, not only what's typed.
+        initialValue: controllers[index].text,
         validator: widget.fields[index].validator,
         builder: (state) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 4.0,
             children: [
-              CupertinoTextField(
-                autofocus: index == 0,
-                maxLines: widget.fields[index].maxLines,
-                textInputAction: lastIndex ? TextInputAction.done : TextInputAction.next,
-                controller: controllers[index],
-                keyboardType: widget.fields[index].keyboardType,
-                placeholder: widget.fields[index].hintText,
-                onSubmitted: (text) => submit(context),
-                onChanged: (value) => state.didChange(value),
+              buildWithTrailing(
+                index,
+                CupertinoTextField(
+                  autofocus: index == 0,
+                  maxLines: widget.fields[index].maxLines,
+                  textInputAction: lastIndex ? TextInputAction.done : TextInputAction.next,
+                  controller: controllers[index],
+                  keyboardType: widget.fields[index].keyboardType,
+                  placeholder: widget.fields[index].hintText,
+                  onSubmitted: (text) => submit(context),
+                  onChanged: (value) => state.didChange(value),
+                ),
               ),
               if (state.errorText != null)
                 Padding(
@@ -149,6 +163,46 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
                   child: Text(
                     state.errorText!,
                     style: TextTheme.of(context).bodyMedium?.copyWith(color: ColorScheme.of(context).error),
+                  ),
+                ),
+            ],
+          );
+        },
+      );
+    } else if (widget.fields[index].trailing != null) {
+      // The error goes below the row, not inside the field: the trailing widget keeps the field's height.
+      textField = FormField(
+        initialValue: controllers[index].text,
+        validator: widget.fields[index].validator,
+        builder: (state) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 4.0,
+            children: [
+              buildWithTrailing(
+                index,
+                TextField(
+                  autofocus: index == 0,
+                  textInputAction: lastIndex ? TextInputAction.done : TextInputAction.next,
+                  controller: controllers[index],
+                  keyboardType: widget.fields[index].keyboardType,
+                  // Dense: 8 + a 24 line + 8 = 40, the trailing square's size.
+                  decoration: InputDecoration(
+                    hintText: widget.fields[index].hintText,
+                    labelText: widget.fields[index].labelText,
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                  ),
+                  onSubmitted: (text) => submit(context),
+                  onChanged: (value) => state.didChange(value),
+                ),
+              ),
+              if (state.errorText != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: Text(
+                    state.errorText!,
+                    style: TextTheme.of(context).bodySmall?.copyWith(color: ColorScheme.of(context).error),
                   ),
                 ),
             ],
@@ -173,6 +227,27 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
     return Container(
       margin: lastIndex ? null : const EdgeInsets.only(bottom: 16.0),
       child: textField,
+    );
+  }
+
+  Widget buildWithTrailing(int index, Widget input) {
+    final trailing = widget.fields[index].trailing;
+    if (trailing == null) return input;
+
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: .stretch,
+        spacing: 8.0,
+        children: [
+          Expanded(child: input),
+          Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints.loose(const Size.square(SpTextInputsPage.trailingMaxSize)),
+              child: AspectRatio(aspectRatio: 1.0, child: trailing),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

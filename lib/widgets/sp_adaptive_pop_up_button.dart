@@ -17,6 +17,7 @@ class SpAdaptivePopUpButton extends StatefulWidget {
     required this.floatingBuilder,
     this.gap = 8,
     this.pathBuilder = PathBuilders.circleOut,
+    this.horizontalAnchor = 0.0,
   });
 
   final Widget Function(VoidCallback open) builder;
@@ -29,6 +30,10 @@ class SpAdaptivePopUpButton extends StatefulWidget {
   final double gap;
 
   final PathBuilder pathBuilder;
+
+  /// Which edges of the pop-up and trigger line up: -1 left, 0 centers (default), 1 right.
+  /// An edge keeps a pop-up wider than a trigger near the screen's side on screen.
+  final double horizontalAnchor;
 
   @override
   State<SpAdaptivePopUpButton> createState() => _SpAdaptivePopUpButtonState();
@@ -95,10 +100,10 @@ class _SpAdaptivePopUpButtonState extends State<SpAdaptivePopUpButton> with Sing
               CompositedTransformFollower(
                 link: layerLink,
                 showWhenUnlinked: false,
-                // Pin the follower's edge to the trigger's opposite edge and
-                // center horizontally; the follower sizes to the content.
-                targetAnchor: openAbove ? Alignment.topCenter : Alignment.bottomCenter,
-                followerAnchor: openAbove ? Alignment.bottomCenter : Alignment.topCenter,
+                // Pin the follower's edge to the trigger's opposite edge, lined up
+                // horizontally by [horizontalAnchor]; the follower sizes to the content.
+                targetAnchor: Alignment(widget.horizontalAnchor, openAbove ? -1.0 : 1.0),
+                followerAnchor: Alignment(widget.horizontalAnchor, openAbove ? 1.0 : -1.0),
                 offset: Offset(0.0, openAbove ? -widget.gap : widget.gap),
                 child: AnimatedBuilder(
                   animation: animationController,

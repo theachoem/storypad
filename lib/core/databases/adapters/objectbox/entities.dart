@@ -212,6 +212,7 @@ class TagObjectBox extends BaseObjectBox {
   String? emoji;
 
   int? categoryId;
+  int? colorSeedValue;
 
   @override
   @Property(type: PropertyType.date)
@@ -235,6 +236,7 @@ class TagObjectBox extends BaseObjectBox {
     required this.version,
     required this.emoji,
     required this.categoryId,
+    required this.colorSeedValue,
     required this.createdAt,
     required this.updatedAt,
     required this.permanentlyDeletedAt,

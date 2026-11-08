@@ -188,6 +188,7 @@
   "general.biometrics_lock": "生体認証ロック",
   "general.character_count_args": "文字数: {CHAR_COUNT}",
   "general.cloud_backup": "クラウドバックアップ",
+  "general.color": "色",
   "general.custom": "カスタマイズ",
   "general.customization": "カスタマイズ",
   "general.data_backup": "データとバックアップ",

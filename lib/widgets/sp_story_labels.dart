@@ -13,6 +13,7 @@ import 'package:storypad/core/extensions/string_extension.dart';
 import 'package:storypad/core/objects/story_tile_preferences_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/story_time_picker_service.dart';
+import 'package:storypad/core/services/tag_color_service.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/calendar/calendar_view.dart';
@@ -422,20 +423,17 @@ class SpStoryLabels extends StatelessWidget {
   }
 
   Widget buildTag(BuildContext context, TagsProvider provider, TagDbModel tag, {required String prefix}) {
-    final title = "$prefix${tag.title.sanitizeUtf16}";
-
-    if (onToggleTags != null) {
-      return buildPin(
-        context: context,
-        title: title,
-        onTap: () => _showLabelsSheet(context, tag.isPerson ? .people : .tags),
-      );
-    }
+    final seed = tag.colorSeed;
+    final colors = seed != null ? TagColorService.resolve(seed, Theme.of(context).brightness) : null;
 
     return buildPin(
       context: context,
-      title: title,
-      onTap: () => provider.viewTag(context: context, tag: tag, storyViewOnly: false),
+      title: "$prefix${tag.title.sanitizeUtf16}",
+      backgroundColor: colors?.background,
+      foregroundColor: colors?.foreground,
+      onTap: onToggleTags != null
+          ? () => _showLabelsSheet(context, tag.isPerson ? .people : .tags)
+          : () => provider.viewTag(context: context, tag: tag, storyViewOnly: false),
     );
   }
 
@@ -474,13 +472,16 @@ class SpStoryLabels extends StatelessWidget {
     String? tooltip,
     IconData? leadingIconData,
     Color? leadingIconColor,
+    Color? backgroundColor,
+    Color? foregroundColor,
   }) {
+    final textStyle = TextTheme.of(context).labelMedium?.copyWith(color: foregroundColor);
     Widget? text;
 
     if (leadingIconData != null) {
       text = Text.rich(
         TextSpan(
-          style: TextTheme.of(context).labelMedium,
+          style: textStyle,
           children: [
             WidgetSpan(
               child: Icon(leadingIconData, size: 16.0, color: leadingIconColor),
@@ -493,13 +494,13 @@ class SpStoryLabels extends StatelessWidget {
     } else if (title != null) {
       text = Text(
         title,
-        style: TextTheme.of(context).labelMedium,
+        style: textStyle,
       );
     }
 
     final child = Material(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-      color: (AppTheme.isDarkMode(context) ? Colors.white : Colors.black).withValues(alpha: 0.06),
+      color: backgroundColor ?? (AppTheme.isDarkMode(context) ? Colors.white : Colors.black).withValues(alpha: 0.06),
       child: InkWell(
         borderRadius: BorderRadius.circular(4.0),
         onTap: onTap,

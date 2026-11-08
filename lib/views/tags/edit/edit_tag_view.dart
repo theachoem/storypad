@@ -2,6 +2,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:storypad/core/services/tag_color_service.dart';
+import 'package:storypad/app_theme.dart';
+import 'package:storypad/widgets/sp_adaptive_pop_up_button.dart';
+import 'package:storypad/widgets/sp_color_picker.dart';
+import 'package:storypad/widgets/sp_tap_effect.dart';
 import 'package:storypad/core/databases/models/tag_category_db_model.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/widgets/base_view/base_route.dart';
@@ -12,13 +17,14 @@ import 'edit_tag_view_model.dart';
 
 part 'edit_tag_content.dart';
 
-/// Result returned by the edit/new tag page: the title plus the chosen category
-/// (null = a regular topic tag, [TagCategoryDbModel.peopleId] = a person).
+/// Result returned by the edit/new tag page: the title, the chosen category
+/// (null = a regular topic tag, [TagCategoryDbModel.peopleId] = a person) and color (null = none).
 class EditTagResult {
-  const EditTagResult({required this.title, required this.categoryId});
+  const EditTagResult({required this.title, required this.categoryId, required this.colorSeedValue});
 
   final String title;
   final int? categoryId;
+  final int? colorSeedValue;
 }
 
 class EditTagRoute extends BaseRoute {

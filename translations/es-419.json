@@ -188,6 +188,7 @@
   "general.biometrics_lock": "Cerradura biométrica",
   "general.character_count_args": "Caracteres: {CHAR_COUNT}",
   "general.cloud_backup": "Copia de seguridad en la nube",
+  "general.color": "Color",
   "general.custom": "Personalizado",
   "general.customization": "Personalización",
   "general.data_backup": "Datos y copias de seguridad",

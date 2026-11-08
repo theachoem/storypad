@@ -211,7 +211,7 @@ class _TagsTabState extends State<_TagsTab> {
         controlAffinity: .leading,
         contentPadding: const EdgeInsets.only(left: 8.0, right: 16.0),
         secondary: desktop || _query.isNotEmpty ? null : const Icon(SpIcons.dragIndicator),
-        title: Text(tag.title),
+        title: SpTagTitle(tag),
         subtitle: Text(plural("plural.entry", widget.storyCountByTagId[tag.id] ?? 0)),
       ),
     );

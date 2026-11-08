@@ -188,6 +188,7 @@
   "general.biometrics_lock": "قفل البيومترية",
   "general.character_count_args": "عدد الأحرف: {CHAR_COUNT}",
   "general.cloud_backup": "النسخ الاحتياطي السحابي",
+  "general.color": "اللون",
   "general.custom": "مخصص",
   "general.customization": "التخصيص",
   "general.data_backup": "البيانات والنسخ الاحتياطي",

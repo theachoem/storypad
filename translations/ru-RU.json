@@ -188,6 +188,7 @@
   "general.biometrics_lock": "Биометрическая блокировка",
   "general.character_count_args": "Символы: {CHAR_COUNT}",
   "general.cloud_backup": "Облачное резервное копирование",
+  "general.color": "Цвет",
   "general.custom": "Свой",
   "general.customization": "Настройка",
   "general.data_backup": "Данные и резервное копирование",

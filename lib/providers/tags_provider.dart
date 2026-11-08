@@ -192,7 +192,9 @@ class TagsProvider extends ChangeNotifier with DebounchedCallback {
     ).push(context);
 
     if (result is EditTagResult) {
-      TagDbModel newTag = TagDbModel.fromNow(categoryId: result.categoryId).copyWith(title: result.title);
+      TagDbModel newTag = TagDbModel.fromNow(
+        categoryId: result.categoryId,
+      ).copyWith(title: result.title, colorSeedValue: result.colorSeedValue);
       TagDbModel? tag = await TagDbModel.db.set(newTag);
       await reload();
 
@@ -235,11 +237,13 @@ class TagsProvider extends ChangeNotifier with DebounchedCallback {
     ).push(context);
 
     if (result is EditTagResult) {
-      // Use the field-level proxy for categoryId so moving a tag back to "Tag" (null) is applied.
-      TagDbModel newTag = tag
-          .copyWith(title: result.title, updatedAt: DateTime.now())
-          .copyWith
-          .categoryId(result.categoryId);
+      // `copyWith` clears a nullable field passed as null: moving back to "Tag", or removing the color.
+      TagDbModel newTag = tag.copyWith(
+        title: result.title,
+        updatedAt: DateTime.now(),
+        categoryId: result.categoryId,
+        colorSeedValue: result.colorSeedValue,
+      );
       await TagDbModel.db.set(newTag, debugSource: '$runtimeType#editTag');
       await reload();
 

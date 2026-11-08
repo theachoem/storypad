@@ -188,6 +188,7 @@
   "general.biometrics_lock": "Blokada biometryczna",
   "general.character_count_args": "Liczba znaków: {CHAR_COUNT}",
   "general.cloud_backup": "Kopia zapasowa w chmurze",
+  "general.color": "Kolor",
   "general.custom": "Niestandardowy",
   "general.customization": "Personalizacja",
   "general.data_backup": "Dane i kopie zapasowe",

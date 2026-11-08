@@ -188,6 +188,7 @@
   "general.biometrics_lock": "Biometrische Sperre",
   "general.character_count_args": "Zeichen: {CHAR_COUNT}",
   "general.cloud_backup": "Cloud-Backup",
+  "general.color": "Farbe",
   "general.custom": "Benutzerdefiniert",
   "general.customization": "Anpassung",
   "general.data_backup": "Daten & Sicherung",
