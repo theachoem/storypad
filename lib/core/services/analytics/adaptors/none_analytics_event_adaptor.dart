@@ -13,7 +13,4 @@ class NoneAnalyticsEventAdaptor extends BaseAnalyticsEventAdaptor {
 
   @override
   Future<void> logLogin({required String loginMethod}) => Future.value();
-
-  @override
-  Future<void> logSearchEvent({required String searchTerm}) => Future.value();
 }

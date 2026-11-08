@@ -83,9 +83,7 @@ class SearchViewModel extends ChangeNotifier with DisposeAwareMixin, DebounchedC
 
       // query does not need to be remembered.
       SearchFilterStorage().writeObject(searchFilter!.copyWith(query: null));
-      AnalyticsService.instance.logSearch(
-        searchTerm: query.trim(),
-      );
+      if (newQuery != null) AnalyticsService.instance.logSearch();
     });
   }
 

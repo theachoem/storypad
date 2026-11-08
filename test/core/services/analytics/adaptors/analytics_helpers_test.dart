@@ -69,4 +69,30 @@ void main() {
       expect(result, equals({'count': 10, 'label': 'abc'}));
     });
   });
+
+  group('urlAnalyticParameters', () {
+    test('keeps only scheme and host, dropping path, query and fragment', () {
+      final result = adaptor.urlAnalyticParameters('https://example.com/private/path?q=secret#frag');
+      expect(result, equals({'scheme': 'https', 'host': 'example.com'}));
+    });
+
+    test('drops map coordinates', () {
+      expect(
+        adaptor.urlAnalyticParameters('https://maps.apple.com/?ll=11.5564,104.9282'),
+        equals({'scheme': 'https', 'host': 'maps.apple.com'}),
+      );
+      expect(
+        adaptor.urlAnalyticParameters('https://www.google.com/maps/search/?api=1&query=11.5564,104.9282'),
+        equals({'scheme': 'https', 'host': 'www.google.com'}),
+      );
+    });
+
+    test('keeps only the scheme for mailto links', () {
+      expect(adaptor.urlAnalyticParameters('mailto:someone@example.com'), equals({'scheme': 'mailto'}));
+    });
+
+    test('returns null for an unparseable url', () {
+      expect(adaptor.urlAnalyticParameters('http://[::1'), isNull);
+    });
+  });
 }

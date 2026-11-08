@@ -152,6 +152,8 @@
   "dialog.connect_nextcloud.reconnect_message": "ពាក្យសម្ងាត់កម្មវិធីរបស់អ្នកលែងប្រើបានហើយ។ បញ្ចូលពាក្យសម្ងាត់ថ្មីដើម្បីភ្ជាប់ម្តងទៀត។",
   "dialog.connect_nextcloud.reconnect_title": "ភ្ជាប់ទៅ Nextcloud ម្តងទៀត",
   "dialog.connect_nextcloud.title": "ភ្ជាប់ទៅ Nextcloud",
+  "dialog.nextcloud_insecure_connection.message": "អាសយដ្ឋានម៉ាស៊ីនមេនេះចាប់ផ្តើមដោយ http:// ដូច្នេះពាក្យសម្ងាត់កម្មវិធី និងការបម្រុងទុករបស់អ្នកនឹងត្រូវបញ្ជូនដោយគ្មានការអ៊ិនគ្រីប ហើយអ្នកណាម្នាក់នៅលើបណ្តាញតែមួយអាចអានវាបាន។ សូមប្រើ https:// លុះត្រាតែម៉ាស៊ីនមេនេះស្ថិតនៅលើបណ្តាញផ្ទះរបស់អ្នកផ្ទាល់។",
+  "dialog.nextcloud_insecure_connection.title": "ភ្ជាប់ដោយគ្មានការអ៊ិនគ្រីប?",
   "dialog.editor_link.add_title": "បន្ថែមតំណ",
   "dialog.editor_link.edit_title": "កែសម្រួលតំណ",
   "dialog.icloud_settings.navigation_steps": "ការកំណត់ → iCloud → មើលទាំងអស់ → {SP_APP_NAME}",

@@ -152,6 +152,8 @@
   "dialog.connect_nextcloud.reconnect_message": "आपका ऐप पासवर्ड अब काम नहीं कर रहा है। दोबारा कनेक्ट करने के लिए नया पासवर्ड डालें।",
   "dialog.connect_nextcloud.reconnect_title": "Nextcloud से पुनः कनेक्ट करें",
   "dialog.connect_nextcloud.title": "Nextcloud से कनेक्ट करें",
+  "dialog.nextcloud_insecure_connection.message": "यह सर्वर पता http:// से शुरू होता है, इसलिए आपका ऐप पासवर्ड और बैकअप बिना एन्क्रिप्शन के भेजे जाएंगे, और उसी नेटवर्क पर कोई भी उन्हें पढ़ सकता है। जब तक यह सर्वर आपके अपने घरेलू नेटवर्क पर न हो, https:// का उपयोग करें।",
+  "dialog.nextcloud_insecure_connection.title": "बिना एन्क्रिप्शन के कनेक्ट करें?",
   "dialog.editor_link.add_title": "लिंक जोड़ें",
   "dialog.editor_link.edit_title": "लिंक संपादित करें",
   "dialog.icloud_settings.navigation_steps": "सेटिंग्स → iCloud → सभी देखें → {SP_APP_NAME}",

@@ -152,6 +152,8 @@
   "dialog.connect_nextcloud.reconnect_message": "Twoje hasło do aplikacji już nie działa. Wprowadź nowe, aby ponownie się połączyć.",
   "dialog.connect_nextcloud.reconnect_title": "Połącz się ponownie z NextCloud",
   "dialog.connect_nextcloud.title": "Połącz się z NextCloud",
+  "dialog.nextcloud_insecure_connection.message": "Ten adres serwera zaczyna się od http://, więc hasło aplikacji i kopie zapasowe byłyby przesyłane bez szyfrowania, a każdy w tej samej sieci mógłby je odczytać. Używaj https://, chyba że serwer znajduje się w Twojej sieci domowej.",
+  "dialog.nextcloud_insecure_connection.title": "Połączyć bez szyfrowania?",
   "dialog.editor_link.add_title": "Dodaj link",
   "dialog.editor_link.edit_title": "Edytuj link",
   "dialog.icloud_settings.navigation_steps": "Ustawienia → iCloud → Zobacz wszystko → {SP_APP_NAME}",

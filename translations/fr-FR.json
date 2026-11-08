@@ -152,6 +152,8 @@
   "dialog.connect_nextcloud.reconnect_message": "Votre mot de passe d'application ne fonctionne plus. Veuillez en saisir un nouveau pour vous reconnecter.",
   "dialog.connect_nextcloud.reconnect_title": "Reconnectez-vous à Nextcloud",
   "dialog.connect_nextcloud.title": "Se connecter à Nextcloud",
+  "dialog.nextcloud_insecure_connection.message": "Cette adresse de serveur commence par http://, donc votre mot de passe d'application et vos sauvegardes circuleraient sans chiffrement, et n'importe qui sur le même réseau pourrait les lire. Utilisez https://, sauf si ce serveur se trouve sur votre propre réseau domestique.",
+  "dialog.nextcloud_insecure_connection.title": "Se connecter sans chiffrement ?",
   "dialog.editor_link.add_title": "Ajouter un lien",
   "dialog.editor_link.edit_title": "Modifier le lien",
   "dialog.icloud_settings.navigation_steps": "Réglages → iCloud → Tout afficher → {SP_APP_NAME}",

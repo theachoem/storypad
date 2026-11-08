@@ -1,3 +1,4 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -92,6 +93,25 @@ class _ConnectNextcloudFormState extends State<_ConnectNextcloudForm> {
 
   Future<void> _connect() async {
     if (_formKey.currentState?.validate() != true) return;
+
+    // A bare host ("cloud.example.com") defaults to https://, so the app password and
+    // backups never go out unencrypted by accident.
+    final serverUrl = _serverUrlController.text.trim();
+    if (!serverUrl.contains('://')) _serverUrlController.text = 'https://$serverUrl';
+
+    // http:// stays allowed for servers on a home network, but only after a warning.
+    if (Uri.tryParse(_serverUrlController.text.trim())?.isScheme('http') == true) {
+      final result = await showOkCancelAlertDialog(
+        context: context,
+        title: tr("dialog.nextcloud_insecure_connection.title"),
+        message: tr("dialog.nextcloud_insecure_connection.message"),
+        okLabel: tr("button.connect"),
+        cancelLabel: tr("button.cancel"),
+        defaultType: OkCancelAlertDefaultType.cancel,
+      );
+
+      if (!mounted || result != OkCancelResult.ok) return;
+    }
 
     setState(() {
       _connecting = true;

@@ -3,7 +3,6 @@
 import 'dart:io';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart' as custom_tab;
@@ -67,7 +66,14 @@ class UrlOpenerService {
     return SpAppLockWrapper.disableAppLockIfHas(
       context,
       callback: () async {
-        if (!kIsWeb || !Platform.isIOS || !Platform.isAndroid) {
+        final uri = Uri.tryParse(url);
+
+        // Custom Tabs / SFSafariViewController only take http(s) links and throw otherwise
+        // (mailto:, tel:, app links in a story) or when no browser is installed — those go
+        // through url_launcher instead, which hands them to the right app.
+        final canUseCustomTab =
+            (Platform.isIOS || Platform.isAndroid) && (uri?.isScheme('http') == true || uri?.isScheme('https') == true);
+        if (uri == null || !canUseCustomTab) {
           await launchUrlString(url, deeplinkOnly: prefersDeepLink);
           return;
         }
@@ -75,22 +81,25 @@ class UrlOpenerService {
         Color toolbarColor = Theme.of(context).appBarTheme.backgroundColor ?? Colors.white;
         Color foregroundColor = Theme.of(context).appBarTheme.foregroundColor ?? toolbarColor.darken(0.5);
 
-        AnalyticsService.instance.logOpenLinkInCustomTab(
-          url: url,
-        );
+        try {
+          await custom_tab.launchUrl(
+            uri,
+            prefersDeepLink: prefersDeepLink,
+            customTabsOptions: custom_tab.CustomTabsOptions(
+              colorSchemes: custom_tab.CustomTabsColorSchemes.defaults(),
+            ),
+            safariVCOptions: custom_tab.SafariViewControllerOptions(
+              preferredBarTintColor: toolbarColor,
+              preferredControlTintColor: foregroundColor,
+              dismissButtonStyle: custom_tab.SafariViewControllerDismissButtonStyle.close,
+            ),
+          );
 
-        await custom_tab.launchUrl(
-          Uri.parse(url),
-          prefersDeepLink: prefersDeepLink,
-          customTabsOptions: custom_tab.CustomTabsOptions(
-            colorSchemes: custom_tab.CustomTabsColorSchemes.defaults(),
-          ),
-          safariVCOptions: custom_tab.SafariViewControllerOptions(
-            preferredBarTintColor: toolbarColor,
-            preferredControlTintColor: foregroundColor,
-            dismissButtonStyle: custom_tab.SafariViewControllerDismissButtonStyle.close,
-          ),
-        );
+          AnalyticsService.instance.logOpenLinkInCustomTab(url: url);
+        } catch (e) {
+          debugPrint('$UrlOpenerService.openInCustomTab failed, falling back to url_launcher: $e');
+          await launchUrl(uri);
+        }
       },
     );
   }

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
@@ -76,7 +77,8 @@ class InAppPurchaseProvider extends ChangeNotifier with DisposeAwareMixin {
     try {
       if (!kIAPEnabled) return;
 
-      await Purchases.setLogLevel(LogLevel.verbose);
+      // Verbose logs include the app user ID (a cloud account ID); keep them out of release device logs.
+      await Purchases.setLogLevel(kDebugMode ? LogLevel.verbose : LogLevel.warn);
       PurchasesConfiguration? configuration;
 
       if (Platform.isAndroid) {

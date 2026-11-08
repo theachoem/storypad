@@ -29,13 +29,9 @@ void main() {
       await expectLater(adaptor.logLogin(loginMethod: 'google'), completes);
     });
 
-    test('logSearchEvent completes without throwing', () async {
-      await expectLater(adaptor.logSearchEvent(searchTerm: 'query'), completes);
-    });
-
     // High-level methods via primitives
     test('logSearch completes without throwing', () async {
-      await expectLater(adaptor.logSearch(searchTerm: 'hello'), completes);
+      await expectLater(adaptor.logSearch(), completes);
     });
 
     test('logSyncBackup completes without throwing', () async {

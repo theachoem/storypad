@@ -152,6 +152,8 @@
   "dialog.connect_nextcloud.reconnect_message": "Kata sandi aplikasi Anda tidak lagi berfungsi. Masukkan kata sandi baru untuk terhubung kembali.",
   "dialog.connect_nextcloud.reconnect_title": "Sambungkan kembali ke Nextcloud",
   "dialog.connect_nextcloud.title": "Terhubung ke Nextcloud",
+  "dialog.nextcloud_insecure_connection.message": "Alamat server ini diawali http://, jadi kata sandi aplikasi dan cadangan Anda akan dikirim tanpa enkripsi, dan siapa pun di jaringan yang sama bisa membacanya. Gunakan https:// kecuali server ini ada di jaringan rumah Anda sendiri.",
+  "dialog.nextcloud_insecure_connection.title": "Hubungkan tanpa enkripsi?",
   "dialog.editor_link.add_title": "Tambah tautan",
   "dialog.editor_link.edit_title": "Sunting tautan",
   "dialog.icloud_settings.navigation_steps": "Pengaturan → iCloud → Lihat Semua → {SP_APP_NAME}",

@@ -152,6 +152,8 @@
   "dialog.connect_nextcloud.reconnect_message": "Твій пароль застосунку більше не працює. Введи новий, щоб підключитися знову.",
   "dialog.connect_nextcloud.reconnect_title": "Повторне підключення до Nextcloud",
   "dialog.connect_nextcloud.title": "Підключення до Nextcloud",
+  "dialog.nextcloud_insecure_connection.message": "Адреса цього сервера починається з http://, тому пароль застосунку та резервні копії передаватимуться без шифрування, і будь-хто в тій самій мережі зможе їх прочитати. Використовуйте https://, якщо сервер не у вашій домашній мережі.",
+  "dialog.nextcloud_insecure_connection.title": "Підключитися без шифрування?",
   "dialog.editor_link.add_title": "Додати посилання",
   "dialog.editor_link.edit_title": "Редагувати посилання",
   "dialog.icloud_settings.navigation_steps": "Налаштування → iCloud → Переглянути всі → {SP_APP_NAME}",
