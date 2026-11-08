@@ -87,6 +87,13 @@ void main() {
       );
     });
 
+    test('drops story text from a Reddit share link', () {
+      final result = adaptor.urlAnalyticParameters(
+        'https://www.reddit.com/submit?title=My%20day&text=Dear%20diary%2C%20today%20I...',
+      );
+      expect(result, equals({'scheme': 'https', 'host': 'www.reddit.com'}));
+    });
+
     test('keeps only the scheme for mailto links', () {
       expect(adaptor.urlAnalyticParameters('mailto:someone@example.com'), equals({'scheme': 'mailto'}));
     });
