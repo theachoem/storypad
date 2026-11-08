@@ -93,7 +93,7 @@ class _StickersTabState extends State<_StickersTab> with DebounchedCallback {
       interactive: true,
       child: SingleChildScrollView(
         // The sheet's safe area (see SpStoryLabelsSheet): emojis scroll under it.
-        padding: EdgeInsets.only(bottom: 16.0 + MediaQuery.paddingOf(context).bottom),
+        padding: EdgeInsets.only(top: 8.0, bottom: 16.0 + MediaQuery.paddingOf(context).bottom),
         child: Column(
           mainAxisSize: .min,
           crossAxisAlignment: .start,
