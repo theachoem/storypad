@@ -40,7 +40,7 @@ class SpGoogleMap<T> extends StatefulWidget {
   final List<SpMapMarker<T>> markers;
   final ValueChanged<SpLatLng>? onMapTap;
   final ValueChanged<SpMapMarker<T>>? onMarkerTap;
-  final ValueChanged<List<SpMapMarker<T>>>? onClusterTap;
+  final SpMapClusterTap<T>? onClusterTap;
   final SpGoogleMapMarkerIconBuilder<T>? markerIconBuilder;
   final SpMapViewportChanged? onViewportChanged;
   final VoidCallback? onCameraMoveStarted;
@@ -373,15 +373,12 @@ class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> with DebounchedCallback
   }
 
   Future<void> _handleClusterTap(Cluster cluster) async {
-    final ValueChanged<List<SpMapMarker<T>>>? onClusterTap = widget.onClusterTap;
+    final SpMapClusterTap<T>? onClusterTap = widget.onClusterTap;
     if (onClusterTap != null) {
       final List<SpMapMarker<T>> clusterMarkers = widget.markers
           .where((marker) => _latLngWithinBounds(cluster.bounds, marker.point))
           .toList();
-      if (clusterMarkers.isNotEmpty) {
-        onClusterTap(clusterMarkers);
-        return;
-      }
+      if (clusterMarkers.isNotEmpty && onClusterTap(clusterMarkers)) return;
     }
 
     final GoogleMapController? controller = _googleMapController;

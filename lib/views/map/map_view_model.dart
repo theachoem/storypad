@@ -34,6 +34,13 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
   static const double _minExpansionZoom = 4.0;
   static const double _maxExpansionZoom = 16.0;
   static const double _storiesSheetMapFocusOffsetFactor = 0.18;
+
+  /// A cluster tap zooms in until the cluster splits. These say when zooming
+  /// can't split it any more, so the tap lists its stories instead: every story
+  /// is within this many meters (e.g. many stories written at home — at max
+  /// zoom they'd still sit on one spot), or the map is already this close in.
+  static const double _clusterSheetMaxSpreadMeters = 30.0;
+  static const double _clusterSheetMinZoom = 18.0;
   static const int _imageResolveConcurrency = 3;
 
   final MapRoute params;
@@ -240,9 +247,19 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
     );
   }
 
-  Future<void> onClusterTap(List<SpMapMarker<MapStoryObject>> markers) async {
+  /// Returns false to let the map zoom into the cluster; true when it showed
+  /// the cluster's stories because zooming wouldn't split it.
+  bool onClusterTap(List<SpMapMarker<MapStoryObject>> markers) {
+    if (markers.isEmpty) return false;
+
+    final SpLatLngBounds bounds = _clusterBounds(markers);
+    final double spreadMeters = SpLatLng(bounds.south, bounds.west).distanceTo(SpLatLng(bounds.north, bounds.east));
+    final double zoom = _lastViewport?.zoom ?? 0.0;
+    if (spreadMeters > _clusterSheetMaxSpreadMeters && zoom < _clusterSheetMinZoom) return false;
+
     final List<int> storyIds = markers.map((marker) => marker.data.id).toSet().toList();
-    await _showStoriesSheet(storyIds, focusPoint: _clusterCenter(markers));
+    unawaited(_showStoriesSheet(storyIds, focusPoint: bounds.center));
+    return true;
   }
 
   Future<void> _showStoriesSheet(
@@ -289,9 +306,7 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
     );
   }
 
-  SpLatLng _clusterCenter(List<SpMapMarker<MapStoryObject>> markers) {
-    if (markers.isEmpty) return _lastViewport?.center ?? initialSpMapCamera.target;
-
+  SpLatLngBounds _clusterBounds(List<SpMapMarker<MapStoryObject>> markers) {
     double minLatitude = markers.first.point.latitude;
     double maxLatitude = markers.first.point.latitude;
     double minLongitude = markers.first.point.longitude;
@@ -304,9 +319,11 @@ class MapViewModel extends ChangeNotifier with DisposeAwareMixin {
       maxLongitude = maxLongitude > marker.point.longitude ? maxLongitude : marker.point.longitude;
     }
 
-    return SpLatLng(
-      (minLatitude + maxLatitude) / 2,
-      (minLongitude + maxLongitude) / 2,
+    return SpLatLngBounds(
+      south: minLatitude,
+      west: minLongitude,
+      north: maxLatitude,
+      east: maxLongitude,
     );
   }
 
