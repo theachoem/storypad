@@ -249,6 +249,8 @@ class _PlaceTabState extends State<_PlaceTab> with DebounchedCallback {
 
     return Column(
       children: [
+        // Edges the map at both ends, like the place bar's below.
+        const Divider(height: 1),
         Expanded(
           child: Stack(
             children: [
