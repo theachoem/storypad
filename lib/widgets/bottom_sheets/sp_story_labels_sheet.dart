@@ -133,6 +133,9 @@ class _StoryLabelsBodyState extends State<_StoryLabelsBody> {
   // Every tag tab toggles through here, from the latest set, so quick taps never undo each other.
   // [exclusiveWith]: tags that can't be on the story together with [id] (a single-select sticker category).
   Future<void> _toggleTag(int id, {Iterable<int> exclusiveWith = const []}) async {
+    // A sticker tap queued behind its save (see [_StickersTab]) can arrive after the sheet closed.
+    if (!mounted) return;
+
     final previous = selectedTags;
     final next = previous.contains(id)
         ? ({...previous}..remove(id))
@@ -234,10 +237,10 @@ class _StoryLabelsBodyState extends State<_StoryLabelsBody> {
       .tags || .people => _TagsTab(
         key: ValueKey(tab),
         peopleMode: tab == .people,
+        autofocusSearch: widget.sheet.autofocusSearch,
         selectedTags: selectedTags,
         storyCountByTagId: storyCountByTagId,
         onToggle: _toggleTag,
-        autofocusSearch: widget.sheet.autofocusSearch,
       ),
       .stickers => _StickersTab(
         selectedTags: selectedTags,

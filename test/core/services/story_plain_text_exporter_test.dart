@@ -79,9 +79,11 @@ code **here**''');
   test('markdown keeps headings and inline formatting, without storage syntax', () {
     expect(export([page], markdown: true), '''
 ### My day
+
 Went **out** with *friends*, see [map](https://example.com) and ~~not~~ `this`.
 
 ## Plans
+
 1. First
 \t1. Nested
 \t2. Again
@@ -90,10 +92,20 @@ Went **out** with *friends*, see [map](https://example.com) and ~~not~~ `this`.
 1. Restarted
 - [x] Done
 - [ ] Todo
+
 > Quoted
+
 ```
 code **here**
 ```''');
+  });
+
+  test('markdown keeps blocks apart: paragraphs stay paragraphs, a rule stays a rule', () {
+    expect(export(['One\n\nTwo\n\n---\n\nThree'], markdown: true), 'One\n\nTwo\n\n---\n\nThree');
+  });
+
+  test('a link keeps its other styles inside it', () {
+    expect(export(['[**Hello**](https://example.com)'], markdown: true), '[**Hello**](https://example.com)');
   });
 
   test('pages are separated by a rule, and empty pages are skipped', () {

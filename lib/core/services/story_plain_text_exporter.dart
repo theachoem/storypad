@@ -42,13 +42,13 @@ class StoryPlainTextExporter {
 
   /// A page, title (its leading heading) included.
   String _page(Iterable<DocumentNode> nodes) {
-    final lines = <String>[];
+    final blocks = <_Block>[];
     final orderedCounts = <int, int>{};
 
     for (final node in nodes) {
       // An embed leaves an empty line, so the text around it stays apart -- one, however many embeds in a row.
       if (node is StoryEmbedNode || node is ImageNode) {
-        if (lines.isNotEmpty && lines.last.isNotEmpty) lines.add('');
+        if (blocks.isNotEmpty && blocks.last.text.isNotEmpty) blocks.add(const _Block('', listItem: false));
         continue;
       }
 
@@ -62,10 +62,27 @@ class StoryPlainTextExporter {
       orderedCounts.removeWhere((l, _) => l > level || (l == level && !ordered));
 
       final line = _block(node, orderedCounts);
-      if (line != null) lines.add(line);
+      if (line != null) blocks.add(_Block(line, listItem: node is ListItemNode || node is TaskNode));
     }
 
-    return lines.join('\n').trim();
+    return _join(blocks).trim();
+  }
+
+  /// Plain text: one line per block. Markdown: a blank line between blocks -- on one newline, two paragraphs read as
+  /// one, and text right above `---` as a heading -- except between list items, which stay one list. Empty blocks
+  /// (empty lines, embeds) are dropped there: the blank line already keeps their neighbors apart.
+  String _join(List<_Block> blocks) {
+    if (!markdown) return blocks.map((block) => block.text).join('\n');
+
+    final buffer = StringBuffer();
+    _Block? previous;
+    for (final block in blocks) {
+      if (block.text.isEmpty) continue;
+      if (previous != null) buffer.write(previous.listItem && block.listItem ? '\n' : '\n\n');
+      buffer.write(block.text);
+      previous = block;
+    }
+    return buffer.toString();
   }
 
   /// One block as a line (a code block as several), or `null` for a block that has no text form.
@@ -165,6 +182,14 @@ class StoryPlainTextExporter {
   }
 }
 
+/// A block's text, and whether it's a list (or task) item.
+class _Block {
+  const _Block(this.text, {required this.listItem});
+
+  final String text;
+  final bool listItem;
+}
+
 /// The inline formatting a run of text is shared with.
 class _InlineStyle {
   const _InlineStyle({
@@ -192,10 +217,14 @@ class _InlineStyle {
   final bool code;
   final String? link;
 
-  /// [text] in this style's Markdown. Spaces at either end stay outside the delimiters: `** a**` isn't bold.
+  /// [text] in this style's Markdown, a link around its other styles (`[**a**](url)`).
   String wrap(String text) {
-    if (link != null) return '[$text]($link)';
+    final styled = _styled(text);
+    return link != null ? '[$styled]($link)' : styled;
+  }
 
+  /// Spaces at either end stay outside the delimiters: `** a**` isn't bold.
+  String _styled(String text) {
     final core = text.trim();
     if (core.isEmpty) return text;
 

@@ -144,6 +144,8 @@ class _TagsTabState extends State<_TagsTab> {
       thumbVisibility: true,
       interactive: true,
       child: ReorderableListView(
+        // The route's scroll controller, which the scrollbar uses: desktop doesn't attach it by default.
+        primary: true,
         // Rows scroll under the sheet's safe area / keyboard (see SpStoryLabelsSheet); the tiles keep
         // clear of the side insets themselves, so the list and its scrollbar span the full width.
         padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),

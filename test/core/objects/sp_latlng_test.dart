@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:storypad/core/objects/sp_latlng.dart';
 
@@ -33,6 +35,12 @@ void main() {
       const b = SpLatLng(-11.5564, -75.0718);
       expect(a.distanceTo(b), closeTo(20015087, 1));
       expect(const SpLatLng(90, 0).distanceTo(const SpLatLng(-90, 0)), closeTo(20015087, 1));
+    });
+
+    test('antipodal points are half the circumference, never NaN', () {
+      final distance = const SpLatLng(11.556412, 104.928213).distanceTo(const SpLatLng(-11.556412, -75.071787));
+      expect(distance.isNaN, isFalse);
+      expect(distance, closeTo(math.pi * 6371000.0, 1.0));
     });
   });
 }

@@ -17,9 +17,11 @@ class SpLatLng {
 
     final dLat = rad(other.latitude - latitude);
     final dLng = rad(other.longitude - longitude);
+    // Clamped: rounding can push it just past 1 for antipodal points, and sqrt(1 - a) would be NaN.
     final a =
-        math.pow(math.sin(dLat / 2), 2) +
-        math.cos(rad(latitude)) * math.cos(rad(other.latitude)) * math.pow(math.sin(dLng / 2), 2);
+        (math.pow(math.sin(dLat / 2), 2) +
+                math.cos(rad(latitude)) * math.cos(rad(other.latitude)) * math.pow(math.sin(dLng / 2), 2))
+            .clamp(0.0, 1.0);
     return earthRadius * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
   }
 

@@ -18,6 +18,10 @@ class _StickersTab extends StatefulWidget {
 class _StickersTabState extends State<_StickersTab> with DebounchedCallback {
   Map<TagCategoryDbModel, List<TagDbModel>>? emojisByCategory;
 
+  // Taps apply in tap order: a sticker still being saved isn't overtaken by a later tap. A queued tap still
+  // applies if the tab is switched meanwhile (the sheet holds the selection).
+  Future<void> _queue = Future.value();
+
   @override
   void initState() {
     super.initState();
@@ -37,37 +41,53 @@ class _StickersTabState extends State<_StickersTab> with DebounchedCallback {
     );
   }
 
-  // Toggled after any save, from the sheet's latest set: a quick second tap meanwhile isn't lost.
-  Future<void> _onToggle(TagDbModel tag, TagCategoryDbModel category) async {
-    if (!tag.exist()) await tag.save();
-    if (!mounted) return;
+  // Saves the sticker if needed, then toggles it from the sheet's latest set (not awaited: the sheet
+  // updates its set at once and saves the story after), so quick taps neither wait nor undo each other.
+  void _enqueue(TagDbModel tag, TagCategoryDbModel category, {Future<void> Function()? save}) {
+    _queue = _queue.then((_) async {
+      if (save != null) {
+        await save();
+      } else if (!tag.exist()) {
+        await tag.save();
+      }
 
-    await _toggle(tag, category);
-    debouncedCallback(_load);
+      // In its category's row before the toggle: a later tap in a single-select category must exclude it.
+      final row = emojisByCategory?[category];
+      if (row != null && !row.any((e) => e.id == tag.id)) {
+        emojisByCategory![category] = [...row, tag];
+        if (mounted) setState(() {});
+      }
+
+      unawaited(_toggle(tag, category));
+      if (mounted) debouncedCallback(_load);
+    });
   }
 
-  Future<void> _onPickCustomEmoji(String emoji, TagCategoryDbModel category) async {
+  void _onPickCustomEmoji(String emoji, TagCategoryDbModel picked) {
+    // A suggested emoji belongs to its own system category, whichever "+" picked it: it shows, and is
+    // single-selected, there. Any other emoji goes to the category it was picked for.
+    final suggestedIn = TagCategoryDbModel.systemCategories
+        .where((c) => c.suggestTags().any((t) => t.emoji == emoji))
+        .firstOrNull;
+    final category = suggestedIn ?? picked;
+
     // 1 emoji = 1 tag: deterministic ID guarantees no duplicates across categories.
     final tag = TagDbModel.emoji(emoji, categoryId: category.id);
 
-    // Persist logic:
-    // - Suggested emojis (appear in any system category's suggestTags): preserve original categoryId.
-    // - Custom (non-suggested) emojis that already exist: update categoryId to the tapped category.
-    // - New emojis: save under the tapped category.
-    final isSuggested = TagCategoryDbModel.systemCategories.any((c) => c.suggestTags().any((t) => t.emoji == emoji));
+    _enqueue(
+      tag,
+      category,
+      save: () async {
+        if (!tag.exist()) return tag.save();
+        if (suggestedIn != null) return;
 
-    if (!tag.exist()) {
-      await tag.save();
-    } else if (!isSuggested) {
-      final existing = await TagDbModel.db.find(tag.id);
-      if (existing != null && existing.categoryId != category.id) {
-        await TagDbModel.db.set(existing.copyWith(categoryId: category.id));
-      }
-    }
-
-    if (!mounted) return;
-    await _toggle(tag, category);
-    _load();
+        // A custom emoji used before moves to the category it was just picked for.
+        final existing = await TagDbModel.db.find(tag.id);
+        if (existing != null && existing.categoryId != category.id) {
+          await TagDbModel.db.set(existing.copyWith(categoryId: category.id));
+        }
+      },
+    );
   }
 
   Future<void> _openCustomEmojiPicker(TagCategoryDbModel category) async {
@@ -79,7 +99,7 @@ class _StickersTabState extends State<_StickersTab> with DebounchedCallback {
       initialCategory: preferredCategory,
     ).show<String>(context: context);
 
-    if (emoji != null) await _onPickCustomEmoji(emoji, category);
+    if (emoji != null) _onPickCustomEmoji(emoji, category);
   }
 
   @override
@@ -92,6 +112,8 @@ class _StickersTabState extends State<_StickersTab> with DebounchedCallback {
       thumbVisibility: true,
       interactive: true,
       child: SingleChildScrollView(
+        // The route's scroll controller, which the scrollbar uses: desktop doesn't attach it by default.
+        primary: true,
         // The sheet's safe area (see SpStoryLabelsSheet): emojis scroll under it.
         padding: EdgeInsets.only(top: 8.0, bottom: 16.0 + MediaQuery.paddingOf(context).bottom),
         child: Column(
@@ -104,7 +126,7 @@ class _StickersTabState extends State<_StickersTab> with DebounchedCallback {
                 category: entry.key,
                 tags: entry.value,
                 selectedTags: widget.selectedTags,
-                onToggle: (tag) => _onToggle(tag, entry.key),
+                onToggle: (tag) => _enqueue(tag, entry.key),
                 onAdd: () => _openCustomEmojiPicker(entry.key),
               ),
           ],
@@ -198,25 +220,29 @@ class _EmojiSection extends StatelessWidget {
     required void Function() onTap,
     required Widget child,
   }) {
-    return SpTapEffect(
-      scaleActive: 1.3,
-      effects: [.scaleDown],
-      onTap: onTap,
-      child: Container(
-        width: size,
-        height: size,
-        alignment: .center,
-        decoration: BoxDecoration(
-          shape: .circle,
-          color: selected ? ColorScheme.of(context).surface.withValues(alpha: 0.5) : Colors.transparent,
-          border: Border.all(
-            color: selected
-                ? ColorScheme.of(context).onSurface
-                : Theme.of(context).disabledColor.withValues(alpha: 0.1),
-            width: selected ? 2.0 : 1.0,
+    return Semantics(
+      button: true,
+      selected: selected,
+      child: SpTapEffect(
+        scaleActive: 1.3,
+        effects: [.scaleDown],
+        onTap: onTap,
+        child: Container(
+          width: size,
+          height: size,
+          alignment: .center,
+          decoration: BoxDecoration(
+            shape: .circle,
+            color: selected ? ColorScheme.of(context).surface.withValues(alpha: 0.5) : Colors.transparent,
+            border: Border.all(
+              color: selected
+                  ? ColorScheme.of(context).onSurface
+                  : Theme.of(context).disabledColor.withValues(alpha: 0.1),
+              width: selected ? 2.0 : 1.0,
+            ),
           ),
+          child: child,
         ),
-        child: child,
       ),
     );
   }

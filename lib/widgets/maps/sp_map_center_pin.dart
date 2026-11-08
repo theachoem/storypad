@@ -58,8 +58,13 @@ class _SpMapCenterPinState extends State<SpMapCenterPin> with SingleTickerProvid
     super.dispose();
   }
 
+  // Decorative: a drag that starts on the pin (or its shadow) must reach the map beneath it.
   @override
   Widget build(BuildContext context) {
+    return IgnorePointer(child: _buildPin());
+  }
+
+  Widget _buildPin() {
     return Transform.translate(
       offset: const Offset(0, -24.0),
       child: AnimatedBuilder(

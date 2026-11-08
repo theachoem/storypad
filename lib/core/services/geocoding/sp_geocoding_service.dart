@@ -50,7 +50,8 @@ abstract class SpGeocodingService {
   ///
   /// Uses a local coordinate window only (no meter distance calculation).
   /// Returns the first place found within the window, otherwise `null`.
-  /// With [namedOnly], only a place the user has a name for counts (looks at up to 20 nearby stories).
+  /// With [namedOnly], only a place the user has a name for counts (from up to 20 nearby named stories: a name
+  /// may still be blank once trimmed).
   static Future<PlaceDbModel?> reverseGeocodeViaDb(
     SpLatLng latLng, {
     double latitudeDelta = 0.00027,
@@ -68,6 +69,7 @@ abstract class SpGeocodingService {
     final nearbyStories = await StoryDbModel.db.getStoriesWithLocation(
       bounds: bounds,
       limit: namedOnly ? max(fetchLimit, 20) : fetchLimit,
+      namedOnly: namedOnly,
     );
 
     final firstMatch = namedOnly
