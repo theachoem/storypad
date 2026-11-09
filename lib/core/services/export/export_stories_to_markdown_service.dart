@@ -1,7 +1,15 @@
 import 'dart:io';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
+import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/services/quill/quill_delta_to_plain_text_service.dart';
+import 'package:storypad/core/types/asset_type.dart';
+import 'package:storypad/widgets/rich_editor/embeds/sp_audio_embed.dart';
+import 'package:storypad/widgets/rich_editor/embeds/sp_media_embed.dart';
+import 'package:storypad/widgets/rich_editor/embeds/sp_date_embed.dart';
+import 'package:storypad/widgets/rich_editor/sp_embeds.dart';
+import 'package:storypad_editor/storypad_editor.dart';
+import 'package:storypad_editor/super_editor.dart';
 
 /// Service to export stories to Obsidian-compatible markdown files
 /// organized by year with proper YAML frontmatter.
@@ -20,7 +28,7 @@ class ExportStoriesToMarkdownService {
   ///
   /// Each markdown file contains:
   /// - YAML frontmatter with metadata
-  /// - Story content with page headers
+  /// - Each page's stored Markdown, embeds as their stored HTML tags
   /// - Page separators using `---`
   ///
   /// [tagNameGetter] - Optional callback to resolve tag ID to tag name
@@ -152,47 +160,63 @@ class ExportStoriesToMarkdownService {
     return buffer.toString();
   }
 
+  /// Each page's stored Markdown (title included, as its leading heading), pages separated by `---`.
   static String _buildMarkdownContent(StoryContentDbModel content) {
-    final buffer = StringBuffer();
+    final pages = content.richPages ?? const <StoryPageDbModel>[];
+    return pages.map(_pageMarkdown).where((markdown) => markdown.isNotEmpty).join('\n\n---\n\n');
+  }
 
-    if (content.richPages != null && content.richPages!.isNotEmpty) {
-      for (int i = 0; i < content.richPages!.length; i++) {
-        final page = content.richPages![i];
+  /// Writes Markdown like `SpEmbeds.codec`, except that asset paths are relative to the year folder each file is
+  /// written to (see [_ExportMediaEmbed]).
+  static final _exportCodec = StoryCodec(
+    embeds: const [
+      _ExportMediaEmbed(),
+      _ExportAudioEmbed(),
+      SpDateEmbed(),
+    ],
+  );
 
-        // Add page title as header
-        if (page.title?.isNotEmpty == true) {
-          buffer.write('# ${page.title}\n');
-        } else if (content.richPages!.length > 1) {
-          buffer.write('# Page ${i + 1}\n');
-        }
+  /// [page]'s Markdown as stored: embeds stay the HTML tags they're stored as (`<img>`, `<video>`, `<audio>`,
+  /// `<sp-album>`, `<time>`), only their asset paths change. A page still stored as Quill is converted the way opening
+  /// it would -- unless that conversion would drop something, then it's written from its Quill (see
+  /// [_legacyPageMarkdown]).
+  static String _pageMarkdown(StoryPageDbModel page) {
+    if (page.isLegacy && !page.checkConversion().isLossless) return _legacyPageMarkdown(page);
+    return _exportCodec.encode(_withoutSpacing(SpEmbeds.codec.decodeNodes(page.markdown))).trim();
+  }
 
-        // Add page content
-        if (page.quillBody.isNotEmpty) {
-          final pageMarkdown = QuillDeltaToPlainTextService.call(
-            page.quillBody,
-            markdown: true,
-            includeMarkdownEmbeds: true,
-            embedRelativePath: '../',
-          ).trim(); // Trim to remove leading/trailing whitespace
-
-          if (pageMarkdown.isNotEmpty) {
-            buffer.write(pageMarkdown);
-            if (!pageMarkdown.endsWith('\n')) {
-              buffer.write('\n');
-            }
-          }
-        }
-
-        // Add page separator (except for last page)
-        if (i < content.richPages!.length - 1) {
-          buffer.writeln();
-          buffer.writeln('---');
-          buffer.writeln();
-        }
+  /// Stored Markdown keeps exactly what was typed so it reads back the same: an empty line as `&nbsp;`, trailing or
+  /// whitespace-only spaces as `&#32;`. Other apps (Obsidian included) show those as literal text, so the export trims
+  /// trailing whitespace and leaves out empty paragraphs -- the blank line between blocks already separates them. Code
+  /// blocks are written as they are.
+  static Iterable<DocumentNode> _withoutSpacing(List<DocumentNode> nodes) sync* {
+    for (final node in nodes) {
+      if (node is! TextNode || node.getMetadataValue(NodeMetadata.blockType) == codeAttribution) {
+        yield node;
+        continue;
       }
-    }
 
-    return buffer.toString();
+      final end = node.text.toPlainText().trimRight().length;
+      if (end == 0 && node is ParagraphNode) continue;
+      yield end == node.text.length ? node : node.copyTextNodeWith(text: node.text.copyText(0, end));
+    }
+  }
+
+  // TODO(markdown): remove once every page is stored as Markdown (bulk conversion of legacy Quill pages, see
+  // docs/app/features/story-editor.md) -- then drop the Quill-to-Markdown options of QuillDeltaToPlainTextService
+  // (`includeMarkdownEmbeds`, `embedRelativePath`) if the text/CSV exports no longer need them either.
+  /// A legacy page whose conversion isn't lossless (the app keeps it as Quill on disk too): the title as the same
+  /// heading a converted page has, then the body flattened from Quill the way exports did before Markdown.
+  static String _legacyPageMarkdown(StoryPageDbModel page) {
+    final title = PageTitle.normalize(page.title);
+    final body = QuillDeltaToPlainTextService.call(
+      page.quillBody,
+      markdown: true,
+      includeMarkdownEmbeds: true,
+      embedRelativePath: '../',
+    ).trim();
+
+    return [if (title != null) '${'#' * PageTitle.level} $title', if (body.isNotEmpty) body].join('\n\n');
   }
 
   static String _sanitizeFilename(String title) {
@@ -220,4 +244,36 @@ class ExportStoriesToMarkdownService {
   static String _escapeYaml(String value) {
     return value.replaceAll('"', '\\"').replaceAll('\n', '\\n');
   }
+}
+
+/// `images/1.jpg` -> `../images/1.jpg`: assets sit next to the year folders. URLs are left as they are.
+String _exportPath(String path) {
+  final isAsset = AssetType.values.any((type) => path.startsWith('${type.subDirectory.relativePath}/'));
+  return isAsset ? '../$path' : path;
+}
+
+/// Rewrites `src` once the HTML is built from the stored paths, which still tell a video (`videos/…`) from a photo.
+StoryHtmlElement _withExportSources(StoryHtmlElement element) {
+  return StoryHtmlElement(
+    element.tag,
+    attributes: {
+      for (final MapEntry(:key, :value) in element.attributes.entries) key: key == 'src' ? _exportPath(value) : value,
+    },
+    children: element.children.map(_withExportSources).toList(),
+    text: element.text,
+  );
+}
+
+class _ExportMediaEmbed extends SpMediaEmbed {
+  const _ExportMediaEmbed();
+
+  @override
+  StoryHtmlElement toHtml(SpMediaValue value) => _withExportSources(super.toHtml(value));
+}
+
+class _ExportAudioEmbed extends SpAudioEmbed {
+  const _ExportAudioEmbed();
+
+  @override
+  StoryHtmlElement toHtml(String value) => _withExportSources(super.toHtml(value));
 }
