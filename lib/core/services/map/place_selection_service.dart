@@ -26,20 +26,26 @@ class PlaceSelectionService {
     return (a.latitude - b.latitude).abs() < threshold && (a.longitude - b.longitude).abs() < threshold;
   }
 
-  /// Whether saving [selected] would change the story's [saved] place.
-  static bool hasChanges(PlaceDbModel selected, PlaceDbModel? saved) {
+  /// Whether saving [selected] would change the story's [saved] place. [savedWithDetails] is [saved]
+  /// with the details looked up when the picker opened (it was saved without them): matching it is
+  /// no change either, since opening a story isn't an edit.
+  static bool hasChanges(PlaceDbModel selected, PlaceDbModel? saved, {PlaceDbModel? savedWithDetails}) {
     if (saved == null) return true;
+    if (savedWithDetails != null && !_differs(selected, savedWithDetails)) return false;
+    return _differs(selected, saved);
+  }
 
+  static bool _differs(PlaceDbModel a, PlaceDbModel b) {
     String? text(String? value) {
       final trimmed = value?.trim();
       return trimmed == null || trimmed.isEmpty ? null : trimmed;
     }
 
-    return selected.latitude != saved.latitude ||
-        selected.longitude != saved.longitude ||
-        text(selected.placeName) != text(saved.placeName) ||
-        text(selected.locality) != text(saved.locality) ||
-        text(selected.country) != text(saved.country) ||
-        text(selected.address) != text(saved.address);
+    return a.latitude != b.latitude ||
+        a.longitude != b.longitude ||
+        text(a.placeName) != text(b.placeName) ||
+        text(a.locality) != text(b.locality) ||
+        text(a.country) != text(b.country) ||
+        text(a.address) != text(b.address);
   }
 }

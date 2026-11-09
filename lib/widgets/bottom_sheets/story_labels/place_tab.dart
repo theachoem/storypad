@@ -34,6 +34,10 @@ class _PlaceTabState extends State<_PlaceTab> with DebounchedCallback {
   PlaceDbModel? _selected;
   bool _resolving = false;
 
+  // The saved place with the details looked up for it (it was saved without them). Those details
+  // aren't the user's edit, so they don't enable Save on their own.
+  PlaceDbModel? _savedWithDetails;
+
   // Bumped by every selection, so a slower lookup for an older one is dropped.
   int _selectedVersion = 0;
 
@@ -52,7 +56,9 @@ class _PlaceTabState extends State<_PlaceTab> with DebounchedCallback {
   }
 
   bool get _canSave =>
-      _selected != null && !_resolving && PlaceSelectionService.hasChanges(_selected!, widget.savedPlace);
+      _selected != null &&
+      !_resolving &&
+      PlaceSelectionService.hasChanges(_selected!, widget.savedPlace, savedWithDetails: _savedWithDetails);
 
   @override
   void initState() {
@@ -101,7 +107,11 @@ class _PlaceTabState extends State<_PlaceTab> with DebounchedCallback {
     if (!mounted || version != _selectedVersion) return;
 
     setState(() {
-      if (details != null) _selected = details;
+      if (details != null) {
+        // Looked up for the saved place itself (on open, or after Reset): the new baseline for Save.
+        if (!PlaceSelectionService.hasChanges(_selected!, widget.savedPlace)) _savedWithDetails = details;
+        _selected = details;
+      }
       _resolving = false;
     });
     if (details != null) HapticFeedback.selectionClick();

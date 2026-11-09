@@ -138,5 +138,26 @@ void main() {
       expect(PlaceSelectionService.hasChanges(saved.copyWith(country: 'Thailand'), saved), isTrue);
       expect(PlaceSelectionService.hasChanges(saved.copyWith(address: 'St 1'), saved), isTrue);
     });
+
+    group('with details looked up for a place saved without them', () {
+      final bare = spot(placeName: 'Home');
+      final withDetails = bare.copyWith(locality: 'Phnom Penh', country: 'Cambodia', address: 'St 94');
+
+      test('those details alone are no change', () {
+        expect(PlaceSelectionService.hasChanges(withDetails, bare), isTrue);
+        expect(PlaceSelectionService.hasChanges(withDetails, bare, savedWithDetails: withDetails), isFalse);
+      });
+
+      test('the bare saved place is still no change', () {
+        expect(PlaceSelectionService.hasChanges(bare, bare, savedWithDetails: withDetails), isFalse);
+      });
+
+      test('a rename or a move on top of them is a change', () {
+        final renamed = withDetails.copyWith(placeName: 'Office');
+        final moved = withDetails.copyWith(latitude: lat + 0.001);
+        expect(PlaceSelectionService.hasChanges(renamed, bare, savedWithDetails: withDetails), isTrue);
+        expect(PlaceSelectionService.hasChanges(moved, bare, savedWithDetails: withDetails), isTrue);
+      });
+    });
   });
 }
