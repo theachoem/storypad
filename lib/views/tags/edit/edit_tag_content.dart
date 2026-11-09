@@ -25,6 +25,7 @@ class _EditTagContent extends StatelessWidget {
         ],
       ),
       header: buildCategorySelector(context),
+      footer: buildColors(context),
       onSubmitted: (values) => Navigator.of(context).pop(
         EditTagResult(
           title: values.first,
@@ -46,7 +47,6 @@ class _EditTagContent extends StatelessWidget {
 
             return null;
           },
-          trailing: buildColorBox(context),
         ),
       ],
     );
@@ -73,45 +73,29 @@ class _EditTagContent extends StatelessWidget {
     );
   }
 
-  // Beside the title, as tall as the field. The same picker as the theme's Color Seed: picking the
-  // current color again, or black/white, clears it.
-  Widget buildColorBox(BuildContext context) {
-    final value = viewModel.selectedColorSeedValue;
-    final color = value != null ? TagColorService.resolve(Color(value), Theme.of(context).brightness).dot : null;
+  // Every color in the palette, below the title. Each swatch is the color the tag's chip becomes
+  // (TagColors.swatch); the first one is no color, and picking the current color again clears it too.
+  Widget buildColors(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    final selected = viewModel.selectedColorSeedValue;
 
-    return SpAdaptivePopUpButton(
-      // At the field's end: line up the ends so the picker stays on screen.
-      horizontalAnchor: Directionality.of(context) == .rtl ? -1.0 : 1.0,
-      floatingBuilder: (close, openAbove) {
-        return SpColorPicker(
-          isDarkMode: AppTheme.isDarkMode(context),
-          position: openAbove ? .bottom : .top,
-          currentColor: value != null ? Color(value) : null,
-          level: .one,
-          onPickedColor: (color) async {
-            await close();
-            viewModel.setColor(color);
-          },
-        );
-      },
-      builder: (open) {
-        return Tooltip(
-          message: tr("general.color"),
-          child: SpTapEffect(
-            onTap: open,
-            child: Container(
-              padding: const EdgeInsets.all(4.0),
-              decoration: BoxDecoration(
-                border: Border.all(color: color?.withValues(alpha: 0.5) ?? ColorScheme.of(context).outlineVariant),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              child: Container(
-                decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4.0)),
-              ),
-            ),
+    return Wrap(
+      spacing: 8.0,
+      runSpacing: 8.0,
+      children: [
+        SpColorItem(
+          color: Colors.transparent,
+          selected: selected == null,
+          onPressed: (_) => viewModel.setColor(null),
+          child: Icon(SpIcons.clear, size: 16.0, color: ColorScheme.of(context).onSurfaceVariant),
+        ),
+        for (final seed in TagColorService.palette)
+          SpColorItem(
+            color: TagColorService.resolve(seed, brightness).swatch,
+            selected: seed.toARGB32() == selected,
+            onPressed: (_) => viewModel.setColor(seed),
           ),
-        );
-      },
+      ],
     );
   }
 }

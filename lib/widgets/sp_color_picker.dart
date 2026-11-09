@@ -255,6 +255,7 @@ class SpColorItem extends StatelessWidget {
     this.onPressed,
     required this.color,
     this.size = 32.0,
+    this.child,
   });
 
   final EdgeInsets? margin;
@@ -262,6 +263,9 @@ class SpColorItem extends StatelessWidget {
   final Color color;
   final void Function(Color)? onPressed;
   final double size;
+
+  // Drawn on top of [color], centered (e.g. an icon for a "no color" option).
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -286,6 +290,8 @@ class SpColorItem extends StatelessWidget {
             width: size - 2,
             height: size - 2,
             decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+            alignment: child != null ? Alignment.center : null,
+            child: child,
           ),
         ),
       ),

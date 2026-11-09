@@ -13,8 +13,8 @@ enum SpAddMediaAction {
 }
 
 /// Single entry point for adding any media to an entry: picks between the
-/// in-app asset library, the native OS photo/video picker, camera capture
-/// (photo or video), and voice recording. Returns the chosen action (or null
+/// native OS photo/video picker, the in-app asset library (Gallery),
+/// camera capture (photo or video), and voice recording. Returns the chosen action (or null
 /// if dismissed) for the caller to act on -- this sheet doesn't know about
 /// the rich text editor itself, it's just a menu.
 class SpAddMediaActionSheet extends BaseBottomSheet {
@@ -49,17 +49,18 @@ class SpAddMediaActionSheet extends BaseBottomSheet {
         mainAxisSize: .min,
         crossAxisAlignment: .start,
         children: [
-          _buildTile(
-            context,
-            icon: SpIcons.photo,
-            label: tr('button.select_from_library'),
-            action: .selectFromLibrary,
-          ),
+          // The device's photos first: the usual way to add one. Then what's already in StoryPad.
           _buildTile(
             context,
             icon: SpIcons.addPhoto,
             label: tr('button.select_from_photos'),
             action: .selectFromPhotos,
+          ),
+          _buildTile(
+            context,
+            icon: SpIcons.photo,
+            label: tr('button.select_from_library'),
+            action: .selectFromLibrary,
           ),
           if (kSupportCamera)
             _buildTile(

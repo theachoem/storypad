@@ -26,11 +26,10 @@ class EditTagViewModel extends ChangeNotifier with DisposeAwareMixin {
     notifyListeners();
   }
 
-  // Picking the current color again, or black/white (which flips with the theme), clears it.
-  void setColor(Color color) {
-    final value = color.toARGB32();
-    final clear = value == selectedColorSeedValue || value == 0xFF000000 || value == 0xFFFFFFFF;
-    selectedColorSeedValue = clear ? null : value;
+  // Null, or picking the current color again, clears it.
+  void setColor(Color? color) {
+    final value = color?.toARGB32();
+    selectedColorSeedValue = value == selectedColorSeedValue ? null : value;
     notifyListeners();
   }
 }

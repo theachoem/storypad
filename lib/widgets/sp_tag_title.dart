@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:storypad/core/databases/models/tag_db_model.dart';
 import 'package:storypad/core/services/tag_color_service.dart';
 
-/// A tag's title, followed by a dot of its color when it has one. The dot is the font size, inside
-/// the line height, so a list tile keeps the same height with or without it.
+/// A tag's title, followed by a dot of its color when it has one ([TagColors.swatch], as on the edit
+/// tag page). The dot is the font size, inside the line height, so a list tile keeps the same height
+/// with or without it.
 class SpTagTitle extends StatelessWidget {
   const SpTagTitle(this.tag, {super.key});
 
@@ -29,7 +30,7 @@ class SpTagTitle extends StatelessWidget {
               height: dotSize,
               decoration: BoxDecoration(
                 shape: .circle,
-                color: TagColorService.resolve(seed, Theme.of(context).brightness).dot,
+                color: TagColorService.resolve(seed, Theme.of(context).brightness).swatch,
               ),
             ),
           ),
