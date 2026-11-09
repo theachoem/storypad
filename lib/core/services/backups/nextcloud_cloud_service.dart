@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:storypad/core/objects/backup_exceptions/backup_exception.dart' as exp;
 import 'package:storypad/core/objects/cloud_file_object.dart';
 import 'package:storypad/core/objects/cloud_storage_quota_object.dart';
@@ -109,7 +110,7 @@ class NextcloudCloudService extends BackupCloudService {
       await client.ping();
     } catch (e) {
       throw exp.AuthException(
-        'Could not connect to Nextcloud: $e',
+        'Could not connect to Nextcloud: ${describeError(e)}',
         exp.AuthExceptionType.signInFailed,
         context: 'connect',
         serviceType: serviceType,
@@ -549,6 +550,25 @@ class NextcloudCloudService extends BackupCloudService {
     return client;
   }
 
+  /// Dio's and dart:io's error text names the server (`Failed host lookup:
+  /// 'cloud.example.com'`, `address = 192.168.1.20`), and that server is the
+  /// user's own, often at home. Exception messages end up in Crashlytics logs
+  /// (sync failures, Cloud Optimize), so only the kind of error goes into them:
+  /// its type, Dio's failure type and status code, and the OS error code.
+  @visibleForTesting
+  static String describeError(Object? error) {
+    return switch (error) {
+      DioException(:final type, :final response, error: final inner) =>
+        'DioException(${[
+          type.name,
+          if (response?.statusCode case final status?) 'status $status',
+          if (inner != null) describeError(inner),
+        ].join(', ')})',
+      io.SocketException(:final osError) => 'SocketException(errno ${osError?.errorCode ?? '-'})',
+      _ => '${error.runtimeType}',
+    };
+  }
+
   exp.BackupException _buildException(dynamic error, String methodName) {
     if (error is exp.BackupException) return error;
 
@@ -597,7 +617,7 @@ class NextcloudCloudService extends BackupCloudService {
           error.type == DioExceptionType.sendTimeout ||
           error.type == DioExceptionType.connectionError) {
         return exp.NetworkException(
-          'Network error during $methodName: $error',
+          'Network error during $methodName: ${describeError(error)}',
           context: methodName,
           serviceType: serviceType,
         );
@@ -606,14 +626,14 @@ class NextcloudCloudService extends BackupCloudService {
 
     if (error is io.SocketException || error is TimeoutException) {
       return exp.NetworkException(
-        'Network error during $methodName: $error',
+        'Network error during $methodName: ${describeError(error)}',
         context: methodName,
         serviceType: serviceType,
       );
     }
 
     return exp.ServiceException(
-      'Unknown error during $methodName: $error',
+      'Unknown error during $methodName: ${describeError(error)}',
       exp.ServiceExceptionType.unexpectedError,
       context: methodName,
       serviceType: serviceType,

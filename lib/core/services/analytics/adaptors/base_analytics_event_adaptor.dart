@@ -357,6 +357,8 @@ abstract class BaseAnalyticsEventAdaptor {
   // Shared helpers
   // ---------------------------------------------------------------------------
 
+  // Counts, flags and categories only — never the entry's text, location, or date
+  // (the day something was written about can be personal on its own).
   Map<String, Object>? storyAnalyticParameters(
     StoryDbModel story, {
     int? topicTagsCount,
@@ -367,9 +369,6 @@ abstract class BaseAnalyticsEventAdaptor {
       'version': story.version.toString(),
       'type': story.type.name,
       'starred': ?story.starred?.toString(),
-      'year': story.year.toString(),
-      'month': story.month.toString(),
-      'day': story.day.toString(),
       'pinned': ?story.pinned?.toString(),
       'gallery_template_id': ?story.galleryTemplateId,
       'pages_count': (story.draftContent?.id != null ? story.draftContent : story.latestContent)?.richPages?.length
