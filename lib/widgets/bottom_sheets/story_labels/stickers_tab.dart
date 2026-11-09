@@ -182,7 +182,7 @@ class _EmojiSection extends StatelessWidget {
                       size: itemWidth,
                       selected: selectedTags.contains(tag.id),
                       onTap: () => onToggle(tag),
-                      child: Text(tag.emoji ?? '', style: const TextStyle(fontSize: 22.0)),
+                      child: Text(tag.emoji ?? '', style: const TextStyle(fontSize: 24.0)),
                     ),
                   _buildItem(
                     context: context,

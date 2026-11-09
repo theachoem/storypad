@@ -74,7 +74,7 @@ class _EditTagContent extends StatelessWidget {
   }
 
   // Every color in the palette, below the title. Each swatch is the color the tag's chip becomes
-  // (TagColors.swatch); the first one is no color, and picking the current color again clears it too.
+  // (TagColors.swatch); tapping the selected one again clears it, as toggles do elsewhere in the app.
   Widget buildColors(BuildContext context) {
     final brightness = Theme.of(context).brightness;
     final selected = viewModel.selectedColorSeedValue;
@@ -83,12 +83,6 @@ class _EditTagContent extends StatelessWidget {
       spacing: 8.0,
       runSpacing: 8.0,
       children: [
-        SpColorItem(
-          color: Colors.transparent,
-          selected: selected == null,
-          onPressed: (_) => viewModel.setColor(null),
-          child: Icon(SpIcons.clear, size: 16.0, color: ColorScheme.of(context).onSurfaceVariant),
-        ),
         for (final seed in TagColorService.palette)
           SpColorItem(
             color: TagColorService.resolve(seed, brightness).swatch,

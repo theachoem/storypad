@@ -8,8 +8,9 @@ typedef TagColors = ({Color background, Color foreground, Color swatch});
 /// - [TagColors.background] / [TagColors.foreground]: the chip in story labels, a tonal container and
 ///   its text color, readable together in both modes.
 /// - [TagColors.swatch]: the same color as a small mark on a plain surface (the edit page's swatches,
-///   the dot after a tag's title). The chip's own color in dark mode; one tone darker in light mode,
-///   where the chip's pastel is too faint on a white surface.
+///   the dot after a tag's title): one tone from the chip's toward the middle, darker in light mode
+///   and lighter in dark mode. A plain circle of the chip's exact color reads fainter (light) or
+///   darker (dark) than the chip itself, which its text color lifts.
 class TagColorService {
   const TagColorService._();
 
@@ -39,7 +40,8 @@ class TagColorService {
     return (
       background: scheme.primaryContainer,
       foreground: scheme.onPrimaryContainer,
-      swatch: brightness == .light ? scheme.primaryFixedDim : scheme.primaryContainer,
+      // Same tonal palette: the chip is tone 90 (light) / 30 (dark), these are tone 80 / 40.
+      swatch: brightness == .light ? scheme.primaryFixedDim : ColorScheme.fromSeed(seedColor: seed).primary,
     );
   }
 }

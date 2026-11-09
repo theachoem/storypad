@@ -26,9 +26,9 @@ class EditTagViewModel extends ChangeNotifier with DisposeAwareMixin {
     notifyListeners();
   }
 
-  // Null, or picking the current color again, clears it.
-  void setColor(Color? color) {
-    final value = color?.toARGB32();
+  // A toggle: picking the current color again clears it.
+  void setColor(Color color) {
+    final value = color.toARGB32();
     selectedColorSeedValue = value == selectedColorSeedValue ? null : value;
     notifyListeners();
   }
