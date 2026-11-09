@@ -64,7 +64,7 @@ class InitialMapCameraResolver {
   final bool preferDevicePlace;
 
   /// Added to the device/story-derived zoom levels below. Callers that want
-  /// the initial camera closer in (e.g. the map picker, so a place name
+  /// the initial camera closer in (e.g. the story labels sheet's Map tab, so a place name
   /// resolves instantly) can pass a positive value here instead of every
   /// call site re-deriving its own zoom levels.
   final double closeZoomBoost;

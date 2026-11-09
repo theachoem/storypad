@@ -190,7 +190,7 @@
     },
     {
       "id": "2:5548558812249966101",
-      "lastPropertyId": "12:2093176491331659474",
+      "lastPropertyId": "13:6938926037074304819",
       "name": "TagObjectBox",
       "properties": [
         {
@@ -242,6 +242,11 @@
         {
           "id": "12:2093176491331659474",
           "name": "categoryId",
+          "type": 6
+        },
+        {
+          "id": "13:6938926037074304819",
+          "name": "colorSeedValue",
           "type": 6
         }
       ],

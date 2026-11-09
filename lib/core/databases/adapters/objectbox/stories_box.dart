@@ -252,11 +252,18 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     AppLogger.info('🔍 Reindexed Stories: $count (Failed: $failed)');
   }
 
+  /// With [namedOnly], only stories whose place has a name: filtered before [limit], so unnamed stories can't
+  /// crowd out a named one.
   Future<List<MapStoryObject>> getStoriesWithLocation({
     SpLatLngBounds? bounds,
     int? limit,
+    bool namedOnly = false,
   }) async {
     Condition<StoryObjectBox> conditions = _storiesWithLocationConditions();
+
+    if (namedOnly) {
+      conditions = conditions.and(StoryObjectBox_.placeName.notNull()).and(StoryObjectBox_.placeName.notEquals(''));
+    }
 
     if (bounds != null) {
       conditions = conditions
@@ -306,6 +313,35 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
 
     final result = await query.findAsync();
     return result.map(_objectToMapStoryObject).toList();
+  }
+
+  /// Every named place from stories, each identical place once — for picking a place by name.
+  /// Reads only the place column (no story content), decoded off the main isolate.
+  Future<List<PlaceDbModel>> getNamedPlaces() async {
+    final query = box
+        .query(
+          _storiesWithLocationConditions()
+              .and(StoryObjectBox_.placeName.notNull())
+              .and(StoryObjectBox_.placeName.notEquals('')),
+        )
+        .build();
+
+    try {
+      final placeJsons = (query.property(StoryObjectBox_.place)..distinct = true).find();
+      return await Isolate.run(() {
+        final places = <PlaceDbModel>[];
+        for (final json in placeJsons) {
+          try {
+            if (jsonDecode(json) case final Map<String, dynamic> map) places.add(PlaceDbModel.fromJson(map));
+          } catch (_) {
+            // One malformed place mustn't empty the whole list.
+          }
+        }
+        return places;
+      });
+    } finally {
+      query.close();
+    }
   }
 
   Condition<StoryObjectBox> _storiesWithLocationConditions() {

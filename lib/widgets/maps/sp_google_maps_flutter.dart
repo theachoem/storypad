@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:storypad/core/mixins/debounched_callback.dart';
@@ -31,6 +33,7 @@ class SpGoogleMap<T> extends StatefulWidget {
     this.onCameraMoveStarted,
     this.onCameraIdle,
     this.showCurrentLocation = false,
+    this.eagerGestures = false,
   });
 
   final SpMapController mapController;
@@ -40,12 +43,16 @@ class SpGoogleMap<T> extends StatefulWidget {
   final List<SpMapMarker<T>> markers;
   final ValueChanged<SpLatLng>? onMapTap;
   final ValueChanged<SpMapMarker<T>>? onMarkerTap;
-  final ValueChanged<List<SpMapMarker<T>>>? onClusterTap;
+  final SpMapClusterTap<T>? onClusterTap;
   final SpGoogleMapMarkerIconBuilder<T>? markerIconBuilder;
   final SpMapViewportChanged? onViewportChanged;
   final VoidCallback? onCameraMoveStarted;
   final ValueChanged<SpLatLng>? onCameraIdle;
   final bool showCurrentLocation;
+
+  // Takes every gesture on the map (e.g. inside a bottom sheet, whose drag-to-close
+  // would otherwise win vertical drags). Off by default so edge swipes (iOS back) still work.
+  final bool eagerGestures;
 
   @override
   State<SpGoogleMap<T>> createState() => _SpGoogleMapState<T>();
@@ -131,6 +138,9 @@ class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> with DebounchedCallback
   @override
   Widget build(BuildContext context) {
     return GoogleMap(
+      gestureRecognizers: widget.eagerGestures
+          ? const {Factory<OneSequenceGestureRecognizer>(EagerGestureRecognizer.new)}
+          : const <Factory<OneSequenceGestureRecognizer>>{},
       padding: widget.padding,
       mapType: _toGoogleMapType(widget.mapStyle),
       initialCameraPosition: CameraPosition(
@@ -373,15 +383,12 @@ class _SpGoogleMapState<T> extends State<SpGoogleMap<T>> with DebounchedCallback
   }
 
   Future<void> _handleClusterTap(Cluster cluster) async {
-    final ValueChanged<List<SpMapMarker<T>>>? onClusterTap = widget.onClusterTap;
+    final SpMapClusterTap<T>? onClusterTap = widget.onClusterTap;
     if (onClusterTap != null) {
       final List<SpMapMarker<T>> clusterMarkers = widget.markers
           .where((marker) => _latLngWithinBounds(cluster.bounds, marker.point))
           .toList();
-      if (clusterMarkers.isNotEmpty) {
-        onClusterTap(clusterMarkers);
-        return;
-      }
+      if (clusterMarkers.isNotEmpty && onClusterTap(clusterMarkers)) return;
     }
 
     final GoogleMapController? controller = _googleMapController;

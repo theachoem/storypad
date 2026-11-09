@@ -266,7 +266,8 @@ class SpColorItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: Durations.medium1,
+      // As quick as SpTapEffect's ring: the selection follows the tap.
+      duration: Durations.short2,
       margin: margin,
       decoration: BoxDecoration(
         shape: BoxShape.circle,

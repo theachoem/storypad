@@ -99,8 +99,8 @@ void main() {
       final content = await files.first.readAsString();
 
       // Should have NO blank line between --- and content
-      expect(content.contains('---\n# Test Story\n'), true, reason: 'Should have no blank line after closing ---');
-      expect(content.contains('---\n\n# Test Story'), false, reason: 'Should NOT have blank line after closing ---');
+      expect(content.contains('---\n### Test Story\n'), true, reason: 'Should have no blank line after closing ---');
+      expect(content.contains('---\n\n### Test Story'), false, reason: 'Should NOT have blank line after closing ---');
 
       // Should not have multiple consecutive blank lines
       expect(content.contains('\n\n\n'), false, reason: 'Should not have multiple consecutive blank lines');
@@ -133,13 +133,9 @@ void main() {
       final files = Directory('${tempDir.path}/2025').listSync().whereType<File>().toList();
       final content = await files.first.readAsString();
 
-      // Should have title followed by content without extra blank lines
-      expect(
-        content.contains('# Test Story\nFirst line'),
-        true,
-        reason: 'Title and content should be on consecutive lines',
-      );
-      expect(content.contains('# Test Story\n\nFirst line'), false, reason: 'Should not have blank line after title');
+      // The page title is the stored heading, then one blank line (Markdown's block separator) before the content
+      expect(content, contains('### Test Story\n\nFirst line'));
+      expect(content.contains('\n\n\n'), false, reason: 'Should not have multiple consecutive blank lines');
     });
 
     test('should generate correct filename format', () async {
@@ -449,13 +445,10 @@ void main() {
       final file = yearDir.listSync().whereType<File>().first;
       final content = await file.readAsString();
 
-      expect(content, contains('# Page 1'));
-      expect(content, contains('First page content'));
-      expect(content, contains('---'));
-      expect(content, contains('# Page 2'));
-      expect(content, contains('Second page content'));
-      expect(content, contains('# Page 3'));
-      expect(content, contains('Third page content'));
+      expect(content, contains('### Page 1\n\nFirst page content\n\n---\n\n### Page 2\n\nSecond page content'));
+      // An untitled page is exported as stored: no made-up heading
+      expect(content, contains('Second page content\n\n---\n\nThird page content'));
+      expect(content, isNot(contains('Page 3')));
     });
 
     test('should include image embeds in markdown', () async {
@@ -492,10 +485,10 @@ void main() {
       final content = await file.readAsString();
 
       expect(content, contains('Check out this image:'));
-      expect(content, contains('![image](../images/1759081859921.jpg)'));
+      expect(content, contains('![](../images/1759081859921.jpg)'));
     });
 
-    test('should include video embeds as links, not image tags', () async {
+    test('should include video embeds as video tags, not image tags', () async {
       // Photos and video share the `media` embed key by design -- see docs/app/features/media.md.
       final story = _createStoryWithRichPages(
         id: 2,
@@ -527,8 +520,8 @@ void main() {
       final content = await file.readAsString();
 
       expect(content, contains('Check out this video:'));
-      expect(content, contains('[video](../videos/1759081859922.mp4)'));
-      expect(content, isNot(contains('![video]')));
+      expect(content, contains('<video controls src="../videos/1759081859922.mp4"></video>'));
+      expect(content, isNot(contains('![](../videos')));
     });
 
     test('should escape special characters in YAML values', () async {
@@ -612,6 +605,118 @@ void main() {
   });
 
   group('Markdown pages', () {
+    test('leaves out empty lines and trailing spaces, which are stored as &nbsp; and &#32;', () async {
+      final dir = await Directory.systemTemp.createTemp('markdown_export_spacing_');
+      addTearDown(() => dir.delete(recursive: true));
+
+      const stored =
+          '### Trip\n\n'
+          '&nbsp;\n\n'
+          'Hello&#32;&#32;\n\n'
+          '&#32;&#32;\n\n'
+          '- item&#32;\n\n'
+          '```\nkeep  \n```\n\n'
+          '&nbsp;\n\n'
+          'End';
+
+      await ExportStoriesToMarkdownService.call(
+        stories: [
+          _createStoryWithRichPages(
+            id: 1,
+            year: 2025,
+            month: 1,
+            day: 4,
+            pages: [StoryPageDbModel.markdown(id: 1, markdown: stored)],
+          ),
+        ],
+        outputDir: dir,
+      );
+
+      final file = Directory('${dir.path}/2025').listSync().whereType<File>().first;
+      final content = await file.readAsString();
+      final body = content.substring(content.indexOf('---\n', 4) + 4);
+
+      expect(body, '### Trip\n\nHello\n\n- item\n\n```\nkeep  \n```\n\nEnd');
+    });
+
+    test('a legacy page that would not convert losslessly is exported from its Quill', () async {
+      final dir = await Directory.systemTemp.createTemp('markdown_export_lossy_');
+      addTearDown(() => dir.delete(recursive: true));
+
+      final page = StoryPageDbModel.legacy(
+        id: 1,
+        title: 'Old page',
+        body: [
+          {
+            "insert": "Serif text",
+            "attributes": {"font": "serif", "bold": true},
+          },
+          {"insert": "\n"},
+          {
+            "insert": {"media": "videos/2.mp4"},
+          },
+          {"insert": "\n"},
+        ],
+      );
+      expect(page.checkConversion().isLossless, isFalse, reason: 'precondition: `font` is dropped by the conversion');
+
+      await ExportStoriesToMarkdownService.call(
+        stories: [
+          _createStoryWithRichPages(id: 1, year: 2025, month: 1, day: 4, pages: [page]),
+        ],
+        outputDir: dir,
+      );
+
+      final file = Directory('${dir.path}/2025').listSync().whereType<File>().first;
+      final content = await file.readAsString();
+
+      expect(content, contains('---\n### Old page\n\n**Serif text**\n[video](../videos/2.mp4)'));
+    });
+
+    test('exports the stored Markdown, embeds as their HTML tags with asset paths from the year folder', () async {
+      final dir = await Directory.systemTemp.createTemp('markdown_export_stored_');
+      addTearDown(() => dir.delete(recursive: true));
+
+      const stored =
+          '### Trip\n\n'
+          'Hi **bold** ~~gone~~ `code`\n\n'
+          '## Morning\n\n'
+          '<img src="images/1.jpg" data-size="max">\n\n'
+          '<sp-album><img src="images/2.jpg"><video controls src="videos/3.mp4"></video></sp-album>\n\n'
+          '<audio controls src="audio/4.m4a"></audio>\n\n'
+          '<time datetime="2025-01-04T00:00:00.000">2025-01-04T00:00:00.000</time>\n\n'
+          '![](https://example.com/a.png)';
+
+      await ExportStoriesToMarkdownService.call(
+        stories: [
+          _createStoryWithRichPages(
+            id: 1,
+            year: 2025,
+            month: 1,
+            day: 4,
+            pages: [StoryPageDbModel.markdown(id: 1, markdown: stored)],
+          ),
+        ],
+        outputDir: dir,
+      );
+
+      final file = Directory('${dir.path}/2025').listSync().whereType<File>().first;
+      final content = await file.readAsString();
+      final body = content.substring(content.indexOf('---\n', 4) + 4);
+
+      expect(
+        body,
+        '### Trip\n\n'
+        'Hi **bold** ~~gone~~ `code`\n\n'
+        '## Morning\n\n'
+        '<img src="../images/1.jpg" data-size="max">\n\n'
+        '<sp-album><img src="../images/2.jpg"><video controls src="../videos/3.mp4"></video></sp-album>\n\n'
+        '<audio controls src="../audio/4.m4a"></audio>\n\n'
+        '<time datetime="2025-01-04T00:00:00.000">2025-01-04T00:00:00.000</time>\n\n'
+        '![](https://example.com/a.png)',
+      );
+    });
+
     test('a converted story exports exactly like it did as Quill', () async {
       final legacyPages = [
         StoryPageDbModel.legacy(

@@ -21,6 +21,8 @@ class SpIcons {
   static const IconData locationPin = kIsCupertino ? CupertinoIcons.location_solid : Icons.location_pin;
   static const IconData myLocation = kIsCupertino ? CupertinoIcons.location : Icons.my_location_outlined;
   static const IconData satellite = kIsCupertino ? CupertinoIcons.map_fill : Icons.satellite_alt_outlined;
+  static const IconData mapLayers = kIsCupertino ? CupertinoIcons.layers : Icons.layers_outlined;
+  static const IconData openInNew = kIsCupertino ? CupertinoIcons.arrow_up_right_square : Icons.open_in_new;
   static const IconData tag = kIsCupertino ? CupertinoIcons.tag : Icons.sell_outlined;
   static const IconData person = kIsCupertino ? CupertinoIcons.person : Icons.person_outline;
   static const IconData people = kIsCupertino ? CupertinoIcons.person_2 : Icons.people_outline;

@@ -80,6 +80,7 @@ class _StoryTileContents extends StatelessWidget {
           SpStoryLabels(
             story: story,
             fromStoryTile: true,
+            editing: false,
             voicesCount: audioPaths?.length,
             margin: EdgeInsets.only(top: MediaQuery.textScalerOf(context).scale(8)),
             preferences: preferences,
