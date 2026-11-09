@@ -1,17 +1,21 @@
 part of 'edit_tag_view.dart';
 
 class _EditTagContent extends StatelessWidget {
-  const _EditTagContent(this.viewModel);
+  const _EditTagContent(this.viewModel, {required this.inSheet});
 
   final EditTagViewModel viewModel;
+  final bool inSheet;
+
+  String get title => viewModel.tag != null ? tr("page.edit_tag.title") : tr("page.new_tag.title");
 
   bool get isPerson => viewModel.selectedCategoryId == TagCategoryDbModel.peopleId;
 
   @override
   Widget build(BuildContext context) {
     return SpTextInputsPage(
+      contentOnly: inSheet,
       appBar: AppBar(
-        title: viewModel.tag != null ? Text(tr("page.edit_tag.title")) : Text(tr("page.new_tag.title")),
+        title: Text(title),
         actions: [
           if (viewModel.tag != null)
             IconButton(
@@ -24,7 +28,7 @@ class _EditTagContent extends StatelessWidget {
             ),
         ],
       ),
-      header: buildCategorySelector(context),
+      header: inSheet ? buildSheetHeader(context) : buildCategorySelector(context),
       footer: buildColors(context),
       onSubmitted: (values) => Navigator.of(context).pop(
         EditTagResult(
@@ -48,6 +52,23 @@ class _EditTagContent extends StatelessWidget {
             return null;
           },
         ),
+      ],
+    );
+  }
+
+  // A sheet has no app bar: the title goes above the category, styled like the other sheets'.
+  Widget buildSheetHeader(BuildContext context) {
+    return Column(
+      crossAxisAlignment: .start,
+      spacing: 12.0,
+      children: [
+        Text(
+          title,
+          maxLines: 1,
+          overflow: .ellipsis,
+          style: TextTheme.of(context).titleLarge?.copyWith(color: ColorScheme.of(context).primary),
+        ),
+        buildCategorySelector(context),
       ],
     );
   }

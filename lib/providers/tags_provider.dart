@@ -12,6 +12,7 @@ import 'package:storypad/core/services/analytics/analytics_service.dart' show An
 import 'package:storypad/providers/backup_provider.dart';
 import 'package:storypad/views/tags/edit/edit_tag_view.dart' show EditTagResult, EditTagRoute;
 import 'package:storypad/views/tags/show/show_tag_view.dart' show ShowTagRoute;
+import 'package:storypad/widgets/bottom_sheets/sp_edit_tag_sheet.dart';
 
 class TagsProvider extends ChangeNotifier with DebounchedCallback {
   TagsProvider() {
@@ -229,12 +230,14 @@ class TagsProvider extends ChangeNotifier with DebounchedCallback {
     return false;
   }
 
-  Future<void> editTag(BuildContext context, TagDbModel tag) async {
-    final result = await EditTagRoute(
+  /// [inSheet]: open the form as a sheet, for when [context] is already in one (the story labels sheet).
+  Future<void> editTag(BuildContext context, TagDbModel tag, {bool inSheet = false}) async {
+    final route = EditTagRoute(
       tag: tag,
       tags: tagsOf(tag.categoryId)?.items ?? [],
       categoryId: tag.categoryId,
-    ).push(context);
+    );
+    final result = inSheet ? await SpEditTagSheet(params: route).show(context: context) : await route.push(context);
 
     if (result is EditTagResult) {
       // `copyWith` clears a nullable field passed as null: moving back to "Tag", or removing the color.

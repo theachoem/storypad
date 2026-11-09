@@ -201,7 +201,7 @@ class _TagsTabState extends State<_TagsTab> {
             label: tr("button.delete"),
           ),
           SlidableAction(
-            onPressed: (context) => provider.editTag(context, tag),
+            onPressed: (context) => provider.editTag(context, tag, inSheet: true),
             backgroundColor: ColorScheme.of(context).secondary,
             foregroundColor: ColorScheme.of(context).onSecondary,
             icon: SpIcons.edit,

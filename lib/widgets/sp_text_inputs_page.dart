@@ -37,6 +37,9 @@ class SpTextInputsPage extends StatefulWidget {
   final PreferredSizeWidget? appBar;
   final List<SpTextInputField> fields;
   final String? saveButtonLabel;
+
+  // Just the form, sized to its content and without the bottom inset, for a sheet: the sheet adds
+  // its own bottom padding (safe area + keyboard). Off: a full page with [appBar].
   final bool contentOnly;
 
   // Optional widget rendered above the input fields (e.g. a category chip selector).
@@ -94,9 +97,14 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
   Widget buildContent(BuildContext context) {
     final screenPadding = MediaQuery.paddingOf(context);
     return ListView(
-      padding: const EdgeInsets.all(
-        16.0,
-      ).add(EdgeInsets.only(left: screenPadding.left, right: screenPadding.right, bottom: screenPadding.bottom)),
+      shrinkWrap: widget.contentOnly,
+      padding: const EdgeInsets.all(16.0).add(
+        EdgeInsets.only(
+          left: screenPadding.left,
+          right: screenPadding.right,
+          bottom: widget.contentOnly ? 0.0 : screenPadding.bottom,
+        ),
+      ),
       children: [
         if (widget.header != null) ...[
           widget.header!,

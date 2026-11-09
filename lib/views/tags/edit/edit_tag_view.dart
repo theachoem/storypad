@@ -48,16 +48,20 @@ class EditTagView extends StatelessWidget {
   const EditTagView({
     super.key,
     required this.params,
+    this.inSheet = false,
   });
 
   final EditTagRoute params;
+
+  /// Shown in `SpEditTagSheet`: no app bar (deleting is a swipe on the row that opened it).
+  final bool inSheet;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<EditTagViewModel>(
       create: (context) => EditTagViewModel(params: params),
       builder: (context, child) {
-        return _EditTagContent(Provider.of(context));
+        return _EditTagContent(Provider.of(context), inSheet: inSheet);
       },
     );
   }

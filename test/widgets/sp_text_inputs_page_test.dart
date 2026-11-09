@@ -31,6 +31,27 @@ void main() {
       expect(tester.getRect(find.byKey(footerKey)).top, greaterThan(tester.getRect(input).bottom));
     });
 
+    // In a sheet: as tall as the form, not the screen.
+    testWidgets('contentOnly sizes to its content', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Material(
+            child: Column(
+              mainAxisSize: .min,
+              children: [
+                Flexible(
+                  child: SpTextInputsPage(contentOnly: true, fields: [SpTextInputField(hintText: 'Title')]),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(Scaffold), findsNothing);
+      expect(tester.getSize(find.byType(SpTextInputsPage)).height, lessThan(300.0));
+    });
+
     testWidgets('shows an error for an empty field', (tester) async {
       await pump(tester, validator: (value) => (value ?? '').isEmpty ? 'Required' : null);
 
