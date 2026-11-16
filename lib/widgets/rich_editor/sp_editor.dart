@@ -188,7 +188,7 @@ class _SpEditorState extends State<SpEditor> {
           baseTextStyle: style.baseTextStyle,
           styleRules: style.styleRules,
           blockStyles: style.blockStyles,
-          placeholder: '...',
+          placeholder: widget.readOnly ? '...' : tr('input.story_body.hint'),
           placeholderStyle: style.placeholderStyle,
           headingPlaceholder: (level) => tr('input.story_headline.hint', args: ['$level']),
           titlePlaceholder: tr('input.story_title.hint'),

@@ -29,7 +29,8 @@ class SpEditorController {
   }
 
   /// An empty page opens for editing on an empty title line (the title's heading level), so the first line typed is
-  /// its title; Enter starts the body as a plain line. Left as is, the page is still saved empty (see [serialize]).
+  /// its title; Enter on it while still empty turns it into a plain line (skipping the title). Left as is, the page is
+  /// still saved empty (see [serialize]).
   static const _emptyPageMarkdown = '###';
 
   /// The editor itself, for the editor widget and toolbar.
