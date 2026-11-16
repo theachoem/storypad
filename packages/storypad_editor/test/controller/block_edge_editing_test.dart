@@ -169,6 +169,22 @@ void main() {
       });
     }
 
+    test('on an empty heading (an empty page\'s title line), Enter turns it into a plain line in place', () {
+      final controller = controllerFor('###');
+      final title = controller.document.first;
+      placeCaret(controller, 0, 0);
+      controller.editor.execute([InsertNewlineAtCaretRequest()]);
+
+      expect(controller.document.nodeCount, 1, reason: 'no empty title line is left above');
+      expect(controller.document.first.getMetadataValue(NodeMetadata.blockType), isNot(header3Attribution));
+      expect(controller.selection.value?.extent.nodeId, title.id);
+
+      controller.editor.execute([
+        InsertTextRequest(documentPosition: controller.selection.value!.extent, textToInsert: 'Body', attributions: {}),
+      ]);
+      expect(controller.toMarkdown(), 'Body');
+    });
+
     test('in the middle of a heading, Enter still splits it as usual', () {
       final controller = controllerFor('# Title');
       placeCaret(controller, 0, 2);

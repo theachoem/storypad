@@ -8,6 +8,7 @@ import '../embed/story_embed.dart';
 import '../embed/story_embed_codec.dart';
 import '../embed/story_embed_node.dart';
 import '../embed/story_embed_registry.dart';
+import 'enter_on_empty_heading.dart';
 import 'insert_block.dart';
 import 'keep_indent.dart';
 import 'newline_before_block.dart';
@@ -69,6 +70,7 @@ class StoryEditorController extends ChangeNotifier {
       editables: {Editor.documentKey: _document, Editor.composerKey: _composer},
       requestHandlers: [
         NewlineBeforeBlock.handler,
+        EnterOnEmptyHeading.handler,
         KeepIndent.newlineHandler,
         KeepIndent.outdentAtLineStartHandler,
         TextAtBlockEdge.handler,
