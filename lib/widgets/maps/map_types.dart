@@ -8,6 +8,11 @@ import 'package:storypad/core/objects/sp_latlng.dart';
 
 typedef SpMapViewportChanged = void Function(SpMapViewport viewport);
 
+/// Called when a cluster is tapped. Return true when the tap was handled (e.g.
+/// a list of the cluster's items was shown); false lets the map zoom in to fit
+/// the cluster instead, so it splits into smaller clusters or single pins.
+typedef SpMapClusterTap<T> = bool Function(List<SpMapMarker<T>> markers);
+
 enum SpMapRenderer {
   googleMap,
   flutterMap;

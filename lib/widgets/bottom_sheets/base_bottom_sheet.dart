@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +21,12 @@ abstract class BaseBottomSheet {
   bool get showMaterialDragHandle => true;
   bool get barrierDismissible => true;
   bool get includeKeyboardPadding => true;
+
+  /// Content spans the sheet's full width, with the side insets (landscape notch, macOS) left in
+  /// MediaQuery for it to apply once itself — e.g. a map running edge to edge with lists insetting
+  /// their own rows. Off: the sheet insets all its content (Cupertino) or drops the insets (Material,
+  /// whose sheet is narrower than the screen wherever they matter).
+  bool get edgeToEdge => false;
 
   double get cupertinoPaddingTop => 16.0;
 
@@ -92,6 +99,7 @@ abstract class BaseBottomSheet {
     T? result;
     if (kIsCupertino) {
       result = await openCupertino(
+        edgeToEdge: edgeToEdge,
         paddingTop: cupertinoPaddingTop,
         backgroundColor: getBackgroundColor(context),
         context: context,
@@ -176,6 +184,7 @@ abstract class BaseBottomSheet {
   /// )
   /// ```
   static Future<T?> openCupertino<T>({
+    bool edgeToEdge = false,
     required BuildContext context,
     required bool fullScreen,
     required double paddingTop,
@@ -211,6 +220,20 @@ abstract class BaseBottomSheet {
       barrierDismissible: barrierDismissible,
       useRootNavigator: useRootNavigator,
       builder: (context) {
+        final bottomPadding =
+            MediaQuery.of(context).padding.bottom +
+            (includeKeyboardPadding ? MediaQuery.of(context).viewInsets.bottom : 0);
+
+        if (edgeToEdge) {
+          return Material(
+            color: backgroundColor,
+            child: Padding(
+              padding: EdgeInsets.only(top: paddingTop),
+              child: builder(context, bottomPadding),
+            ),
+          );
+        }
+
         return MediaQuery.removePadding(
           context: context,
           removeLeft: true,
@@ -223,11 +246,7 @@ abstract class BaseBottomSheet {
                 left: MediaQuery.of(context).padding.left,
                 right: MediaQuery.of(context).padding.right,
               ),
-              child: builder(
-                context,
-                MediaQuery.of(context).padding.bottom +
-                    (includeKeyboardPadding ? MediaQuery.of(context).viewInsets.bottom : 0),
-              ),
+              child: builder(context, bottomPadding),
             ),
           ),
         );
@@ -236,6 +255,14 @@ abstract class BaseBottomSheet {
   }
 
   // IOS already have animation when open keyboard.
+  /// A fixed content height for a sheet whose content changes size (filtering, tabs), so it never
+  /// resizes as you type: 60% of the screen, or with the keyboard open whatever fits above it
+  /// (minus room for the status bar and drag handle). Put [bottomPadding] below it.
+  double fixedContentHeight(BuildContext context, double bottomPadding) {
+    final screenHeight = MediaQuery.sizeOf(context).height;
+    return max(0.0, min(screenHeight * 0.6, screenHeight - bottomPadding - 120.0));
+  }
+
   Widget buildBottomPadding(double bottomPadding) {
     if (Platform.isIOS || Platform.isMacOS) {
       return SizedBox(height: bottomPadding);

@@ -29,7 +29,7 @@ class StoryHeader extends StatelessWidget {
     required this.currentPageIndexNotifier,
     required this.setFeeling,
     required this.onSetPlace,
-    this.onAddCurrentLocation,
+    required this.onAddCurrentPlace,
     required this.onToggleShowDayCount,
     required this.onToggleManagingPage,
     required this.onToggleTags,
@@ -45,7 +45,7 @@ class StoryHeader extends StatelessWidget {
   final ValueNotifier<int?>? currentPageIndexNotifier;
   final Future<void> Function(String? feeling) setFeeling;
   final Future<void> Function(PlaceDbModel? place) onSetPlace;
-  final Future<void> Function()? onAddCurrentLocation;
+  final Future<bool> Function() onAddCurrentPlace;
   final Future<bool> Function(List<int> tags) onToggleTags;
   final Future<void> Function() onToggleShowDayCount;
   final Future<void> Function(DateTime) onChangeDate;
@@ -69,7 +69,7 @@ class StoryHeader extends StatelessWidget {
       draftContent: viewModel.draftContent!,
       setFeeling: viewModel.setFeeling,
       onSetPlace: viewModel.setPlace,
-      onAddCurrentLocation: viewModel.addCurrentLocation,
+      onAddCurrentPlace: viewModel.addCurrentPlace,
       onToggleTags: (tags) => viewModel.setTags(tags, context),
       onToggleShowDayCount: viewModel.toggleShowDayCount,
       readOnly: false,
@@ -97,7 +97,7 @@ class StoryHeader extends StatelessWidget {
       draftContent: viewModel.draftContent!,
       setFeeling: viewModel.setFeeling,
       onSetPlace: viewModel.setPlace,
-      onAddCurrentLocation: viewModel.addCurrentLocation,
+      onAddCurrentPlace: viewModel.addCurrentPlace,
       onToggleTags: (tags) => viewModel.setTags(tags, context),
       onToggleShowDayCount: viewModel.toggleShowDayCount,
       readOnly: true,
@@ -157,10 +157,11 @@ class StoryHeader extends StatelessWidget {
           onChangeDate: onChangeDate,
           setFeeling: setFeeling,
           onSetPlace: onSetPlace,
-          onAddCurrentLocation: onAddCurrentLocation,
+          onAddCurrentPlace: onAddCurrentPlace,
           onToggleTags: onToggleTags,
           onToggleManagingPage: onToggleManagingPage,
           draftActions: draftActions,
+          editing: !readOnly,
           preferences: StoryTilePreferencesObject.editing(),
         ),
       ],

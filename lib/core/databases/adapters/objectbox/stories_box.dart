@@ -252,11 +252,18 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
     AppLogger.info('🔍 Reindexed Stories: $count (Failed: $failed)');
   }
 
+  /// With [namedOnly], only stories whose place has a name: filtered before [limit], so unnamed stories can't
+  /// crowd out a named one.
   Future<List<MapStoryObject>> getStoriesWithLocation({
     SpLatLngBounds? bounds,
     int? limit,
+    bool namedOnly = false,
   }) async {
     Condition<StoryObjectBox> conditions = _storiesWithLocationConditions();
+
+    if (namedOnly) {
+      conditions = conditions.and(StoryObjectBox_.placeName.notNull()).and(StoryObjectBox_.placeName.notEquals(''));
+    }
 
     if (bounds != null) {
       conditions = conditions
@@ -306,6 +313,76 @@ class StoriesBox extends BaseBox<StoryObjectBox, StoryDbModel> {
 
     final result = await query.findAsync();
     return result.map(_objectToMapStoryObject).toList();
+  }
+
+  /// Every named place from stories (only those in [bounds], when given), each identical place once — for
+  /// picking a place by name, or the nearest one. Never limited: many stories at one place still come back as
+  /// that one place, so none nearby is left out. Reads only the place column (no story content), decoded off
+  /// the main isolate.
+  Future<List<PlaceDbModel>> getNamedPlaces({SpLatLngBounds? bounds}) async {
+    var conditions = _storiesWithLocationConditions()
+        .and(StoryObjectBox_.placeName.notNull())
+        .and(StoryObjectBox_.placeName.notEquals(''));
+    if (bounds != null) {
+      conditions = conditions
+          .and(StoryObjectBox_.latitude.between(bounds.south, bounds.north))
+          .and(StoryObjectBox_.longitude.between(bounds.west, bounds.east));
+    }
+    final query = box.query(conditions).build();
+
+    try {
+      final placeJsons = (query.property(StoryObjectBox_.place)..distinct = true).find();
+      return await Isolate.run(() {
+        final places = <PlaceDbModel>[];
+        for (final json in placeJsons) {
+          try {
+            if (jsonDecode(json) case final Map<String, dynamic> map) places.add(PlaceDbModel.fromJson(map));
+          } catch (_) {
+            // One malformed place mustn't empty the whole list.
+          }
+        }
+        return places;
+      });
+    } finally {
+      query.close();
+    }
+  }
+
+  /// Sets story [id]'s place to [place] in one write transaction, only while its saved place still passes
+  /// [isExpected]: a place that arrives late (a GPS fix, a name lookup) can neither write back an older copy of
+  /// the story nor replace a place changed meanwhile. Only the place (and [StoryObjectBox.updatedAt]) changes.
+  /// [exists] is false when there's no such story (not saved yet, or permanently deleted); [updated] is the
+  /// story as saved, null when nothing was written.
+  Future<({bool exists, StoryDbModel? updated})> setPlaceIf(
+    int id,
+    PlaceDbModel place, {
+    required bool Function(PlaceDbModel? saved) isExpected,
+  }) async {
+    final written = store.runInTransaction(TxMode.write, () {
+      final object = box.get(id);
+      if (object == null || object.permanentlyDeletedAt != null) return null;
+
+      final saved = object.place != null ? PlaceDbModel.fromJson(jsonDecode(object.place!)) : null;
+      if (!isExpected(saved)) return false;
+
+      object
+        ..latitude = place.latitude
+        ..longitude = place.longitude
+        ..placeName = place.placeName
+        ..place = jsonEncode(place.toJson())
+        ..updatedAt = DateTime.now()
+        // The place name is searched: reindexed when the search view opens.
+        ..searchMetadata = null
+        ..setDeviceId();
+      box.put(object, mode: PutMode.update);
+      return true;
+    });
+
+    if (written != true) return (exists: written != null, updated: null);
+
+    final updated = await find(id);
+    await afterCommit(id, updated);
+    return (exists: true, updated: updated);
   }
 
   Condition<StoryObjectBox> _storiesWithLocationConditions() {

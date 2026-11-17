@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:animated_clipper/animated_clipper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,18 +12,16 @@ import 'package:storypad/core/extensions/matrix_4_extension.dart';
 import 'package:storypad/core/extensions/string_extension.dart';
 import 'package:storypad/core/objects/story_tile_preferences_object.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
+import 'package:storypad/core/services/location/current_place_service.dart';
+import 'package:storypad/core/services/map/place_selection_service.dart';
 import 'package:storypad/core/services/story_time_picker_service.dart';
 import 'package:storypad/core/services/tag_color_service.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/providers/tags_provider.dart';
 import 'package:storypad/views/calendar/calendar_view.dart';
-import 'package:storypad/views/map/picker/map_picker_view.dart';
 import 'package:storypad/widgets/bottom_sheets/sp_days_count_bottom_sheet.dart';
-import 'package:storypad/widgets/sp_floating_pop_up_button.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_story_labels_sheet.dart';
 import 'package:storypad/widgets/sp_icons.dart';
-import 'package:storypad/widgets/sp_emoji_tag_picker.dart';
-import 'package:storypad/widgets/sp_floating_tag_picker.dart';
-import 'package:storypad/widgets/sp_single_state_widget.dart';
 import 'package:storypad/widgets/sp_tap_effect.dart';
 
 class SpStoryLabelsDraftActions {
@@ -49,10 +46,11 @@ class SpStoryLabels extends StatelessWidget {
     required this.onToggleShowDayCount,
     required this.onChangeDate,
     required this.onToggleManagingPage,
+    required this.editing,
     this.setFeeling,
     this.onToggleTags,
     this.onSetPlace,
-    this.onAddCurrentLocation,
+    this.onAddCurrentPlace,
     this.currentPagesCount,
     this.voicesCount,
     this.draftActions,
@@ -75,12 +73,18 @@ class SpStoryLabels extends StatelessWidget {
 
   final EdgeInsets margin;
   final bool fromStoryTile;
+
+  // True in the edit view (see [SpStoryLabelsSheet.editing]).
+  final bool editing;
   final SpStoryLabelsDraftActions? draftActions;
   final Future<void> Function()? onToggleShowDayCount;
   final Future<void> Function(String? feeling)? setFeeling;
   final Future<bool> Function(List<int> tags)? onToggleTags;
   final Future<void> Function(PlaceDbModel? place)? onSetPlace;
-  final Future<void> Function()? onAddCurrentLocation;
+
+  /// The pin on a story dated today sets the current location in one tap (no sheet); false when there's
+  /// none, and the Map tab opens instead.
+  final Future<bool> Function()? onAddCurrentPlace;
   final Future<void> Function(DateTime dateTime)? onChangeDate;
   final void Function()? onToggleManagingPage;
 
@@ -232,77 +236,74 @@ class SpStoryLabels extends StatelessWidget {
       );
     }
 
-    if (onAddCurrentLocation != null && !story.hasLocation) {
-      children.add(
-        _buildIconButton(
-          context: context,
-          icon: SpIcons.locationPin,
-          tooltip: tr("button.add_current_location"),
-          onTap: () async => onAddCurrentLocation!(),
-        ),
-      );
-    }
-
-    bool showLocation = preferences.showLocation || !fromStoryTile;
-    if (story.hasLocation && showLocation) {
-      children.add(
-        buildPin(
-          context: context,
-          title: story.place!.displayLabel,
-          leadingIconData: SpIcons.map,
-          onTap: onSetPlace != null
-              ? () async {
-                  final result = await MapPickerRoute(
-                    initialSelectedPlace: story.place,
-                  ).push(context);
-
-                  if (result is MapPickerResult) {
-                    switch (result.action) {
-                      case MapPickerFinalAction.confirm:
-                        final selected = result.place;
-                        if (selected != null) {
-                          await onSetPlace?.call(selected);
-                        }
-                        break;
-                      case MapPickerFinalAction.remove:
-                        await onSetPlace?.call(null);
-                        break;
-                      case MapPickerFinalAction.cancel:
-                        break;
-                    }
-                  }
-                }
-              : null,
-        ),
-      );
-    }
-
     // Tags labels including its add button. Topics (#) and people (@) are toggled independently.
     bool showTagLabels = preferences.showTagLabels || !fromStoryTile;
     bool showPeopleLabels = preferences.showPeopleLabels || !fromStoryTile;
     final topicLabels = buildTags(tagProvider, context, people: false);
     final peopleLabels = buildTags(tagProvider, context, people: true);
+
     if (showTagLabels) children.addAll(topicLabels);
     if (showPeopleLabels) children.addAll(peopleLabels);
+
     // Add button (opens the picker covering both tags & people) only when the story has neither.
     if (onToggleTags != null && topicLabels.isEmpty && peopleLabels.isEmpty) {
       children.add(
-        SpFloatingPopUpButton(
-          estimatedFloatingWidth: 288,
-          bottomToTop: false,
-          dyGetter: (dy) => dy + 24,
-          pathBuilder: PathBuilders.slideDown,
-          floatingBuilder: (close) => SpFloatingTagPicker(
-            initialTags: story.validTags ?? [],
-            onUpdated: onToggleTags!,
-            close: close,
+        _buildIconButton(
+          context: context,
+          icon: SpIcons.tag,
+          tooltip: tr('page.tags.title'),
+          onTap: () => _showLabelsSheet(context, .tags),
+        ),
+      );
+    }
+
+    if (onSetPlace != null && !story.hasLocation) {
+      final addCurrentPlace = onAddCurrentPlace;
+
+      // Where it's written, for a story about today; for another day the place is likely elsewhere: pick it on the map.
+      if (addCurrentPlace != null && DateUtils.isSameDay(story.displayPathDate, DateTime.now())) {
+        children.add(
+          _AddCurrentPlaceButton(
+            onAdd: addCurrentPlace,
+            onUnavailable: () => _showLabelsSheet(context, .place),
+            buildButton: (onTap) => _buildIconButton(
+              context: context,
+              icon: SpIcons.locationPin,
+              tooltip: tr("button.add_current_location"),
+              onTap: onTap,
+            ),
+            locating: _buildCurrentLocationPin(context, onTap: null),
           ),
-          builder: (open) => _buildIconButton(
+        );
+      } else {
+        children.add(
+          _buildIconButton(
             context: context,
-            icon: SpIcons.tag,
-            tooltip: tr('page.tags.title'),
-            onTap: open,
+            icon: SpIcons.locationPin,
+            tooltip: tr("page.map.title"),
+            onTap: () => _showLabelsSheet(context, .place),
           ),
+        );
+      }
+    }
+
+    bool showLocation = preferences.showLocation || !fromStoryTile;
+    if (story.hasLocation && showLocation) {
+      final place = story.place!;
+      final onTap = onSetPlace != null ? () => _showLabelsSheet(context, .place) : null;
+
+      children.add(
+        // Set from the current location and its name still on the way: "Current location", not bare coordinates.
+        // One of the user's own places shows its name at once.
+        ValueListenableBuilder(
+          valueListenable: CurrentPlaceService.locating,
+          builder: (context, _, _) {
+            final named = place.placeName?.trim().isNotEmpty == true;
+            if (CurrentPlaceService.isLocating(place) && !named && PlaceSelectionService.needsDetails(place)) {
+              return _buildCurrentLocationPin(context, onTap: onTap);
+            }
+            return buildPin(context: context, title: place.displayLabel, leadingIconData: SpIcons.map, onTap: onTap);
+          },
         ),
       );
     }
@@ -336,45 +337,23 @@ class SpStoryLabels extends StatelessWidget {
 
     if (onToggleTags != null && emojis.isEmpty) {
       children.add(
-        SpFloatingPopUpButton(
-          estimatedFloatingWidth: 288,
-          bottomToTop: false,
-          dyGetter: (dy) => dy + 24,
-          pathBuilder: PathBuilders.slideDown,
-          floatingBuilder: (close) => SpEmojiTagPicker(
-            initialTags: story.validTags ?? [],
-            onUpdated: onToggleTags!,
-            close: close,
-          ),
-          builder: (open) => _buildIconButton(
-            context: context,
-            icon: SpIcons.addFeeling,
-            tooltip: tr('general.stickers'),
-            onTap: open,
-          ),
+        _buildIconButton(
+          context: context,
+          icon: SpIcons.addFeeling,
+          tooltip: tr('general.stickers'),
+          onTap: () => _showLabelsSheet(context, .stickers),
         ),
       );
     }
 
     if (emojis.isNotEmpty) {
       children.add(
-        SpFloatingPopUpButton(
-          estimatedFloatingWidth: 288,
-          bottomToTop: false,
-          dyGetter: (dy) => dy + 24,
-          pathBuilder: PathBuilders.slideDown,
-          floatingBuilder: (close) => SpEmojiTagPicker(
-            initialTags: story.validTags ?? [],
-            onUpdated: onToggleTags!,
-            close: close,
-          ),
-          builder: (open) => SpTapEffect(
-            duration: Durations.medium3,
-            curve: Curves.easeInOutCubicEmphasized,
-            behavior: .translucent,
-            onTap: onToggleTags != null ? open : null,
-            child: emojiRow,
-          ),
+        SpTapEffect(
+          duration: Durations.medium3,
+          curve: Curves.easeInOutCubicEmphasized,
+          behavior: .translucent,
+          onTap: onToggleTags != null ? () => _showLabelsSheet(context, .stickers) : null,
+          child: emojiRow,
         ),
       );
     }
@@ -446,6 +425,17 @@ class SpStoryLabels extends StatelessWidget {
     );
   }
 
+  Future<void> _showLabelsSheet(BuildContext context, SpStoryLabelsTab tab) {
+    return SpStoryLabelsSheet(
+      initialTab: tab,
+      initialTags: story.validTags ?? [],
+      initialPlace: story.place,
+      onUpdateTags: onToggleTags,
+      onSetPlace: onSetPlace,
+      editing: editing,
+    ).show(context: context);
+  }
+
   Future<void> showTimePicker(BuildContext context) async {
     final newTime = await StoryTimePickerService(
       context: context,
@@ -473,38 +463,29 @@ class SpStoryLabels extends StatelessWidget {
   }
 
   Widget buildTag(BuildContext context, TagsProvider provider, TagDbModel tag, {required String prefix}) {
-    final title = "$prefix ${tag.title.sanitizeUtf16}";
     final seed = tag.colorSeed;
     final colors = seed != null ? TagColorService.resolve(seed, Theme.of(context).brightness) : null;
 
-    if (onToggleTags != null) {
-      return SpFloatingPopUpButton(
-        estimatedFloatingWidth: 288,
-        bottomToTop: false,
-        dyGetter: (dy) => dy + 24,
-        pathBuilder: PathBuilders.slideDown,
-        floatingBuilder: (close) => SpFloatingTagPicker(
-          initialTags: story.validTags ?? [],
-          onUpdated: onToggleTags!,
-          close: close,
-          initialPeopleMode: tag.isPerson,
-        ),
-        builder: (open) => buildPin(
-          context: context,
-          title: title,
-          backgroundColor: colors?.background,
-          foregroundColor: colors?.foreground,
-          onTap: open,
-        ),
-      );
-    }
-
     return buildPin(
       context: context,
-      title: title,
+      title: "$prefix${tag.title.sanitizeUtf16}",
       backgroundColor: colors?.background,
       foregroundColor: colors?.foreground,
-      onTap: () => provider.viewTag(context: context, tag: tag, storyViewOnly: false),
+      onTap: onToggleTags != null
+          ? () => _showLabelsSheet(context, tag.isPerson ? .people : .tags)
+          : () => provider.viewTag(context: context, tag: tag, storyViewOnly: false),
+    );
+  }
+
+  // Gently pulsing while the name is on the way: nothing to wait for, the story can be written meanwhile.
+  Widget _buildCurrentLocationPin(BuildContext context, {required void Function()? onTap}) {
+    return _Pulse(
+      child: buildPin(
+        context: context,
+        title: tr("general.current_location"),
+        leadingIconData: SpIcons.map,
+        onTap: onTap,
+      ),
     );
   }
 
@@ -512,47 +493,27 @@ class SpStoryLabels extends StatelessWidget {
     required BuildContext context,
     required IconData icon,
     required String tooltip,
-    required FutureOr<void> Function() onTap,
+    required void Function() onTap,
   }) {
-    return SpSingleStateWidget.listen(
-      initialValue: false,
-      builder: (context, loading, notifier) {
-        return Tooltip(
-          message: tooltip,
-          child: Material(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-            color: (AppTheme.isDarkMode(context) ? Colors.white : Colors.black).withValues(alpha: 0.06),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(4.0),
-              onTap: onTap is Future<void> Function()
-                  ? () async {
-                      notifier.value = true;
-                      await onTap();
-                      notifier.value = false;
-                    }
-                  : onTap,
-              child: loading
-                  ? Container(
-                      padding: EdgeInsets.all(MediaQuery.textScalerOf(context).scale(4)),
-                      height: MediaQuery.textScalerOf(context).scale(20),
-                      width: MediaQuery.textScalerOf(context).scale(20),
-                      child: CircularProgressIndicator.adaptive(
-                        strokeWidth: MediaQuery.textScalerOf(context).scale(3.0),
-                      ),
-                    )
-                  : Container(
-                      padding: EdgeInsets.symmetric(horizontal: MediaQuery.textScalerOf(context).scale(8.0)),
-                      height: MediaQuery.textScalerOf(context).scale(20),
-                      child: Icon(
-                        icon,
-                        size: MediaQuery.textScalerOf(context).scale(14.0),
-                        color: ColorScheme.of(context).onSurface.withValues(alpha: 0.6),
-                      ),
-                    ),
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+        color: (AppTheme.isDarkMode(context) ? Colors.white : Colors.black).withValues(alpha: 0.06),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(4.0),
+          onTap: onTap,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: MediaQuery.textScalerOf(context).scale(8.0)),
+            height: MediaQuery.textScalerOf(context).scale(20),
+            child: Icon(
+              icon,
+              size: MediaQuery.textScalerOf(context).scale(14.0),
+              color: ColorScheme.of(context).onSurface.withValues(alpha: 0.6),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -613,5 +574,76 @@ class SpStoryLabels extends StatelessWidget {
       message: tooltip ?? title,
       child: child,
     );
+  }
+}
+
+/// The pin that sets the current location in one tap: shows [locating] until the coordinates are set (then
+/// the story's place chip takes its place), or opens the Map tab ([onUnavailable]) when there are none.
+class _AddCurrentPlaceButton extends StatefulWidget {
+  const _AddCurrentPlaceButton({
+    required this.onAdd,
+    required this.onUnavailable,
+    required this.buildButton,
+    required this.locating,
+  });
+
+  final Future<bool> Function() onAdd;
+  final void Function() onUnavailable;
+  final Widget Function(void Function() onTap) buildButton;
+  final Widget locating;
+
+  @override
+  State<_AddCurrentPlaceButton> createState() => _AddCurrentPlaceButtonState();
+}
+
+class _AddCurrentPlaceButtonState extends State<_AddCurrentPlaceButton> {
+  bool _adding = false;
+
+  Future<void> _add() async {
+    if (_adding) return;
+    setState(() => _adding = true);
+
+    bool added = false;
+    try {
+      added = await widget.onAdd();
+    } finally {
+      // Also when adding threw (a failed save): otherwise the chip keeps pulsing.
+      if (mounted) setState(() => _adding = false);
+    }
+
+    if (mounted && !added) widget.onUnavailable();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _adding ? widget.locating : widget.buildButton(_add);
+  }
+}
+
+class _Pulse extends StatefulWidget {
+  const _Pulse({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_Pulse> createState() => _PulseState();
+}
+
+class _PulseState extends State<_Pulse> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 900),
+    lowerBound: 0.45,
+  )..repeat(reverse: true);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(opacity: _controller, child: widget.child);
   }
 }
