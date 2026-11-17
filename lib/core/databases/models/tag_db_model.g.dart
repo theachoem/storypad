@@ -25,6 +25,8 @@ abstract class _$TagDbModelCWProxy {
 
   TagDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt);
 
+  TagDbModel colorSeedValue(int? colorSeedValue);
+
   TagDbModel index(int? index);
 
   /// Creates a new instance with the provided field values.
@@ -44,6 +46,7 @@ abstract class _$TagDbModelCWProxy {
     DateTime updatedAt,
     String? lastSavedDeviceId,
     DateTime? permanentlyDeletedAt,
+    int? colorSeedValue,
     int? index,
   });
 }
@@ -85,9 +88,12 @@ class _$TagDbModelCWProxyImpl implements _$TagDbModelCWProxy {
       call(permanentlyDeletedAt: permanentlyDeletedAt);
 
   @override
-  TagDbModel index(int? index) => call(index: index);
+  TagDbModel colorSeedValue(int? colorSeedValue) =>
+      call(colorSeedValue: colorSeedValue);
 
   @override
+  TagDbModel index(int? index) => call(index: index);
+
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `TagDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -95,6 +101,7 @@ class _$TagDbModelCWProxyImpl implements _$TagDbModelCWProxy {
   /// ```dart
   /// TagDbModel(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   TagDbModel call({
     Object? id = const $CopyWithPlaceholder(),
     Object? version = const $CopyWithPlaceholder(),
@@ -105,6 +112,7 @@ class _$TagDbModelCWProxyImpl implements _$TagDbModelCWProxy {
     Object? updatedAt = const $CopyWithPlaceholder(),
     Object? lastSavedDeviceId = const $CopyWithPlaceholder(),
     Object? permanentlyDeletedAt = const $CopyWithPlaceholder(),
+    Object? colorSeedValue = const $CopyWithPlaceholder(),
     Object? index = const $CopyWithPlaceholder(),
   }) {
     return TagDbModel(
@@ -144,6 +152,10 @@ class _$TagDbModelCWProxyImpl implements _$TagDbModelCWProxy {
           ? _value.permanentlyDeletedAt
           // ignore: cast_nullable_to_non_nullable
           : permanentlyDeletedAt as DateTime?,
+      colorSeedValue: colorSeedValue == const $CopyWithPlaceholder()
+          ? _value.colorSeedValue
+          // ignore: cast_nullable_to_non_nullable
+          : colorSeedValue as int?,
       index: index == const $CopyWithPlaceholder()
           ? _value.index
           // ignore: cast_nullable_to_non_nullable
@@ -175,6 +187,7 @@ TagDbModel _$TagDbModelFromJson(Map<String, dynamic> json) => TagDbModel(
   permanentlyDeletedAt: json['permanently_deleted_at'] == null
       ? null
       : DateTime.parse(json['permanently_deleted_at'] as String),
+  colorSeedValue: (json['color_seed_value'] as num?)?.toInt(),
   index: (json['index'] as num?)?.toInt(),
 )..storiesCount = (json['stories_count'] as num?)?.toInt();
 
@@ -188,6 +201,7 @@ Map<String, dynamic> _$TagDbModelToJson(
   'emoji': instance.emoji,
   'created_at': instance.createdAt.toIso8601String(),
   'category_id': instance.categoryId,
+  'color_seed_value': instance.colorSeedValue,
   'updated_at': instance.updatedAt.toIso8601String(),
   'last_saved_device_id': instance.lastSavedDeviceId,
   'permanently_deleted_at': instance.permanentlyDeletedAt?.toIso8601String(),
