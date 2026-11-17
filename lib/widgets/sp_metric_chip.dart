@@ -1,4 +1,6 @@
-part of '../stats_view.dart';
+import 'package:flutter/material.dart';
+import 'package:storypad/core/extensions/color_scheme_extension.dart';
+import 'package:storypad/widgets/sp_tap_effect.dart';
 
 /// One compact summary chip in the overview grid: an icon over a bold value and
 /// a muted label.
@@ -10,8 +12,9 @@ part of '../stats_view.dart';
 /// │ Entries      │  label
 /// └──────────────┘
 /// ```
-class _StatsMetricChip extends StatelessWidget {
-  const _StatsMetricChip({
+class SpMetricChip extends StatelessWidget {
+  const SpMetricChip({
+    super.key,
     required this.icon,
     required this.value,
     required this.label,
@@ -22,9 +25,9 @@ class _StatsMetricChip extends StatelessWidget {
   final String value;
   final String label;
 
-  /// When non-null, the chip becomes tappable (opens the filtered stories sheet).
-  /// Null keeps the chip inert — e.g. for active days / words, which have no
-  /// list to drill into.
+  /// When non-null, the chip becomes tappable (e.g. stats opens the filtered
+  /// stories sheet). Null keeps the chip inert — for metrics with nothing to
+  /// drill into.
   final VoidCallback? onTap;
 
   @override

@@ -30,6 +30,14 @@ class _CalendarContent extends StatelessWidget {
     return AppBar(
       centerTitle: true,
       bottom: viewModel.segments.length > 1 ? buildSegmentButtons(context) : null,
+      actions: [
+        if (viewModel.selectedSegment == .period)
+          IconButton(
+            tooltip: tr('page.period_history.title'),
+            icon: const Icon(SpIcons.history),
+            onPressed: () => viewModel.openPeriodHistory(context),
+          ),
+      ],
       title: ValueListenableBuilder(
         valueListenable: viewModel.monthYearNotifier,
         builder: (context, monthYear, child) {
