@@ -207,6 +207,35 @@ void main() {
     });
   });
 
+  group('dropEmptyParagraphs', () {
+    TaskNode task(String text) => TaskNode(id: Editor.createNodeId(), text: AttributedText(text), isComplete: false);
+    String readable(List<DocumentNode> nodes) => _codec.encode(nodes, dropEmptyParagraphs: true);
+
+    test('off by default: two tasks an empty line apart keep the &nbsp; line', () {
+      expect(_write([task('a'), _paragraph(''), task('b')]), '- [ ] a\n\n&nbsp;\n\n- [ ] b');
+    });
+
+    test('two tasks an empty line apart stay apart (not one list)', () {
+      expect(readable([task('a'), _paragraph(''), task('b')]), '- [ ] a\n\n- [ ] b');
+    });
+
+    test('several empty lines between tasks are one blank line', () {
+      expect(readable([task('a'), _paragraph(''), _paragraph(''), task('b')]), '- [ ] a\n\n- [ ] b');
+    });
+
+    test('consecutive tasks are still one list', () {
+      expect(readable([task('a'), task('b')]), '- [ ] a\n- [ ] b');
+    });
+
+    test('empty lines at the ends and between paragraphs are left out', () {
+      expect(readable([_paragraph(''), _paragraph('a'), _paragraph(''), _paragraph('b'), _paragraph('')]), 'a\n\nb');
+    });
+
+    test('an empty heading is still written: only plain empty lines are dropped', () {
+      expect(readable([_paragraph('a'), _paragraph('', blockType: header2Attribution)]), 'a\n\n##');
+    });
+  });
+
   group('text that looks like block syntax is escaped at the start of a line', () {
     const cases = {
       '# not a heading': r'\# not a heading',

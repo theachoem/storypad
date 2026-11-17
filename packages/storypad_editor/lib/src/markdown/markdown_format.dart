@@ -16,6 +16,15 @@ class MarkdownFormat {
 
   static bool isListLike(DocumentNode node) => node is ListItemNode || node is TaskNode;
 
+  /// What goes between two written blocks: a single newline between list items/tasks, so they stay one list; a blank
+  /// line otherwise. [gap]: something between them was left out of the output (an empty line, an embed), so a blank
+  /// line keeps them apart -- else two tasks an empty line apart would come out as one list.
+  ///
+  /// The one rule every Markdown writer follows: the storage writer, and the readable ones for export and sharing.
+  static String blockSeparator({required bool previousIsListItem, required bool nextIsListItem, bool gap = false}) {
+    return previousIsListItem && nextIsListItem && !gap ? '\n' : '\n\n';
+  }
+
   /// A plain paragraph with no text, alignment or indent -- written as [emptyParagraphMarker].
   static bool isEmptyParagraph(DocumentNode node) {
     if (node is! ParagraphNode || node.text.toPlainText().isNotEmpty || node.indent != 0) return false;

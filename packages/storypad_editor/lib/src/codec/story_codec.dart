@@ -63,7 +63,13 @@ final class StoryCodec {
   List<DocumentNode> decodeNodes(String markdown) => _reader.read(markdown);
 
   /// Writes [nodes] (e.g. a [Document]) as canonical Markdown.
-  String encode(Iterable<DocumentNode> nodes) => _writer.write(nodes);
+  ///
+  /// [dropEmptyParagraphs]: leave empty paragraphs out rather than write them as `&nbsp;`, for Markdown other apps
+  /// read (an export) -- the blocks around them stay apart, two tasks an empty line apart included. Not canonical:
+  /// it doesn't read back to [nodes].
+  String encode(Iterable<DocumentNode> nodes, {bool dropEmptyParagraphs = false}) {
+    return _writer.write(nodes, dropEmptyParagraphs: dropEmptyParagraphs);
+  }
 
   /// Converts Quill Delta ops (a stored story's JSON `ops` list) to canonical Markdown. Embeds convert through the
   /// embeds' `fromQuill`; anything unclaimed or rejected is preserved by the unknown embed. Never throws on malformed

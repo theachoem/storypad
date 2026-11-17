@@ -16,6 +16,7 @@ export 'src/widgets/editor/story_editor_layout.dart';
 
 // Conversion without an editor: Markdown and Quill in and out, page titles, plain text.
 export 'src/codec/story_codec.dart';
+export 'src/markdown/markdown_format.dart' show MarkdownFormat;
 
 // Embeds: the app's own blocks (photos, audio, …) and the catch-all for ones nothing reads.
 export 'src/embed/quill_embed_op.dart';
