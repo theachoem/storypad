@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -6,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:storypad/core/databases/models/place_db_model.dart';
-import 'package:storypad/core/services/location/sp_location_service.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
 import 'package:storypad/core/databases/models/story_page_db_model.dart';
@@ -16,6 +16,9 @@ import 'package:storypad/core/mixins/debounched_callback.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/story_page_objects_map.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
+import 'package:storypad/core/services/location/current_place_service.dart';
+import 'package:storypad/core/services/location/place_details_service.dart';
+import 'package:storypad/core/services/map/place_selection_service.dart';
 import 'package:storypad/core/services/stories/story_extract_assets_from_pages_service.dart';
 import 'package:storypad/core/services/stories/story_has_data_written_service.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
@@ -77,9 +80,21 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     return draftContent!.hasChanges(latestContent);
   }
 
-  Future<bool> setTags(List<int> tags, BuildContext context) async {
+  // Tag saves, one at a time in call order: overlapping ones (quick toggles across the labels sheet's tabs)
+  // could otherwise finish out of order and leave an older selection saved over a newer one.
+  Future<void> _tagsSaving = Future.value();
+
+  Future<bool> setTags(List<int> tags, BuildContext context) {
+    // Read now: the context may be gone by the time a queued save runs.
     final provider = context.read<TagsProvider>();
-    final orderedTags = await _cleanTags(tags, context);
+
+    final saved = _tagsSaving.then((_) => _setTags(tags, provider));
+    _tagsSaving = saved.then((_) {}, onError: (_) {});
+    return saved;
+  }
+
+  Future<bool> _setTags(List<int> tags, TagsProvider provider) async {
+    final orderedTags = _cleanTags(tags, provider);
     story = story!.copyWith(updatedAt: DateTime.now(), tags: orderedTags.map((e) => e.toString()).toList());
     notifyListeners();
 
@@ -108,10 +123,10 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
   /// their categoryId. Non-emoji tags follow after.
   ///
   /// 2. Ensure all tags exist.
-  Future<List<int>> _cleanTags(List<int> tagIds, BuildContext context) async {
+  List<int> _cleanTags(List<int> tagIds, TagsProvider provider) {
     if (tagIds.isEmpty) return tagIds;
 
-    final emojiTags = context.read<TagsProvider>().emojiTags;
+    final emojiTags = provider.emojiTags;
     final emojiTagMap = {for (var t in emojiTags?.items ?? []) t.id: t};
 
     final emojiTagIds = <int>[];
@@ -128,7 +143,7 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     emojiTagIds.sort((a, b) => (emojiTagMap[a]?.categoryId ?? 0).compareTo(emojiTagMap[b]?.categoryId ?? 0));
     final allTagIds = [...emojiTagIds, ...nonEmojiTagIds];
 
-    return allTagIds.where(context.read<TagsProvider>().allTags!.items.map((t) => t.id).toSet().contains).toList();
+    return allTagIds.where(provider.allTags!.items.map((t) => t.id).toSet().contains).toList();
   }
 
   Future<void> changePreferences(StoryPreferencesDbModel preferences) async {
@@ -166,7 +181,60 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
     );
   }
 
+  /// Saves [place] as the story's place. One saved with coordinates only (offline, or picked on the map
+  /// before its name came) gets its name looked up after.
   Future<void> setPlace(PlaceDbModel? place) async {
+    await _writePlace(place);
+    if (place != null && PlaceSelectionService.needsDetails(place)) unawaited(_fillPlaceDetails(place));
+  }
+
+  /// The phone's current location as the story's place, without waiting for a GPS fix or the name (see
+  /// [CurrentPlaceService]). False, with nothing set, when there's no location access or position.
+  Future<bool> addCurrentPlace() {
+    return CurrentPlaceService.add(currentPlace: () => disposed ? null : story?.place, setPlace: _writeLatePlace);
+  }
+
+  // Only while the story's place is still [place]: one changed or renamed meanwhile is kept.
+  Future<void> _fillPlaceDetails(PlaceDbModel place) async {
+    final details = await PlaceDetailsService.details(place);
+    final current = story?.place;
+    if (details == null || disposed || current == null || PlaceSelectionService.hasChanges(current, place)) return;
+    await _writeLatePlace(details);
+  }
+
+  /// A place that arrives seconds later (a GPS fix, a name lookup), when this view's copy of the story may be
+  /// stale: edited in another view meanwhile, moved to the bin or deleted. Changes only the place of the saved
+  /// story, in one write transaction (`StoriesBox.setPlaceIf`), never writing this copy over it, and only
+  /// while the saved place is still the one this view knows.
+  Future<void> _writeLatePlace(PlaceDbModel place) async {
+    final known = story;
+    if (known == null) return;
+    final knownPlace = known.place;
+
+    final result = hasDataWritten
+        ? await StoryDbModel.db.setPlaceIf(known.id, place, isExpected: (saved) => _isSamePlace(saved, knownPlace))
+        : (exists: false, updated: null);
+
+    if (disposed) return;
+    final updated = result.updated;
+
+    // Not saved yet (a new story) or gone: this copy only, saved with the story if it ever is.
+    if (!result.exists) {
+      story = story?.copyWith(place: place);
+      notifyListeners();
+    } else if (updated != null) {
+      story = story?.copyWith(updatedAt: updated.updatedAt, place: place);
+      notifyListeners();
+      lastSavedAtNotifier.value = updated.updatedAt;
+    }
+  }
+
+  static bool _isSamePlace(PlaceDbModel? a, PlaceDbModel? b) {
+    if (a == null || b == null) return a == b;
+    return !PlaceSelectionService.hasChanges(a, b);
+  }
+
+  Future<void> _writePlace(PlaceDbModel? place) async {
     story = story?.copyWith(updatedAt: DateTime.now(), place: place);
     notifyListeners();
 
@@ -174,11 +242,6 @@ abstract class BaseStoryViewModel extends ChangeNotifier with DisposeAwareMixin,
       await StoryDbModel.db.set(story!);
       lastSavedAtNotifier.value = story?.updatedAt;
     }
-  }
-
-  Future<void> addCurrentLocation() async {
-    final result = await SpLocationService.fetchCurrentPlace();
-    if (result.isSuccess) await setPlace(result.place);
   }
 
   Future<void> toggleShowDayCount() async {

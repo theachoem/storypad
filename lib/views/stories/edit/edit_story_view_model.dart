@@ -14,6 +14,7 @@ import 'package:storypad/core/types/asset_type.dart';
 import 'package:storypad/core/types/editing_flow_type.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
 import 'package:storypad/views/stories/local_widgets/base_story_view_model.dart';
+import 'package:storypad/widgets/bottom_sheets/sp_story_labels_sheet.dart';
 import 'edit_story_view.dart';
 
 class EditStoryViewModel extends BaseStoryViewModel {
@@ -33,7 +34,26 @@ class EditStoryViewModel extends BaseStoryViewModel {
       initialStory: params.story,
       initialPagesMap: params.pagesMap,
       defaultStoryPreferences: context.read<DevicePreferencesProvider>().preferences.defaultStoryPreferences,
-    ).then((_) => requestFocus());
+    ).then((_) async {
+      requestFocus();
+
+      // A new story opened to record where it's written (from the stories map). With no location access or
+      // position, the Map tab instead, as the one-tap pin does.
+      if (params.autoRequestLocation && !disposed && !await addCurrentPlace() && context.mounted && !disposed) {
+        await _showPlaceTab(context);
+      }
+    });
+  }
+
+  Future<void> _showPlaceTab(BuildContext context) {
+    return SpStoryLabelsSheet(
+      initialTab: .place,
+      initialTags: story?.validTags ?? [],
+      initialPlace: story?.place,
+      onUpdateTags: (tags) => setTags(tags, context),
+      onSetPlace: setPlace,
+      editing: true,
+    ).show(context: context);
   }
 
   @override
@@ -104,10 +124,6 @@ class EditStoryViewModel extends BaseStoryViewModel {
     }
 
     notifyListeners();
-
-    if (params.autoRequestLocation) {
-      await addCurrentLocation();
-    }
   }
 
   Future<void> done(BuildContext context) async {

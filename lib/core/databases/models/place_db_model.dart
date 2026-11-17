@@ -46,6 +46,15 @@ class PlaceDbModel extends BaseDbModel {
     return '${latitude.toStringAsFixed(4)}, ${longitude.toStringAsFixed(4)}';
   }
 
+  /// "Locality, Country", or null when neither is known.
+  String? get areaLabel {
+    final parts = [locality?.trim(), country?.trim()].whereType<String>().where((e) => e.isNotEmpty);
+    return parts.isEmpty ? null : parts.join(', ');
+  }
+
+  /// A place's second line: its area, or its coordinates when the area isn't known.
+  String get areaOrCoordinatesLabel => areaLabel ?? '${latitude.toStringAsFixed(5)}, ${longitude.toStringAsFixed(5)}';
+
   @override
   int get id => 0;
 

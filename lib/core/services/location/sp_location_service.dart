@@ -4,6 +4,7 @@ import 'package:storypad/core/databases/models/place_db_model.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:storypad/core/objects/sp_latlng.dart';
 import 'package:storypad/core/services/geocoding/sp_geocoding_service.dart';
+import 'package:storypad/core/services/location/place_details_service.dart';
 
 enum SpLocationFetchStatus {
   success,
@@ -40,13 +41,12 @@ class SpLocationFetchResult {
 ///   2. **Reverse geocoding is best-effort** — it runs after coordinates are
 ///      captured and is bounded by [geocodeTimeout]. On timeout/failure the
 ///      entry is saved with coords only; no data is lost.
-///   3. **Label can be filled later** — the map editor auto-retries geocoding
+///   3. **Label can be filled later** — the Map tab auto-retries geocoding
 ///      when opened and the user can always type a custom name via the edit-
 ///      label flow, regardless of connectivity.
 ///
-/// The same [geocodeTimeout] is reused in [MapPickerViewModel.buildConfirmResult]
-/// to bound the confirm action, but NOT during interactive resolve (while the
-/// user is viewing the map picker with a visible spinner).
+/// A story's place never waits for its name: it's saved with coordinates, and the name is
+/// looked up after (see `PlaceDetailsService`, shared with the Map tab).
 class SpLocationService {
   const SpLocationService._();
 
@@ -55,7 +55,7 @@ class SpLocationService {
   static const Duration gpsTimeout = Duration(seconds: 5);
 
   /// Max time to wait for reverse geocoding before saving coordinates only.
-  /// The user can fill the label later via the map editor.
+  /// The user can fill the label later via the Map tab.
   static const Duration geocodeTimeout = Duration(seconds: 2);
 
   /// Requests permission (if needed), gets the device GPS position,
@@ -68,48 +68,21 @@ class SpLocationService {
     bool skipReverseGeocoding = false,
   }) async {
     try {
-      if (!await Geolocator.isLocationServiceEnabled()) {
-        return const SpLocationFetchResult(status: SpLocationFetchStatus.serviceDisabled);
-      }
+      final access = await checkAccess(requestPermission: requestPermission);
+      if (access != SpLocationFetchStatus.success) return SpLocationFetchResult(status: access);
 
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied && requestPermission) {
-        permission = await Geolocator.requestPermission();
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        return const SpLocationFetchResult(status: SpLocationFetchStatus.deniedForever);
-      }
-
-      if (permission == LocationPermission.denied) {
-        return const SpLocationFetchResult(status: SpLocationFetchStatus.denied);
-      }
-
-      // Prefer a fresh fix, but don't hang on low signal: fall back to the
-      // last known position so we can still save coordinates quickly.
-      Position? position;
-      try {
-        position = await Geolocator.getCurrentPosition(
-          locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
-        ).timeout(gpsTimeout);
-      } on TimeoutException {
-        position = await Geolocator.getLastKnownPosition();
-      }
-
-      if (position == null) {
+      final latLng = await fetchFreshLatLng();
+      if (latLng == null) {
         return const SpLocationFetchResult(status: SpLocationFetchStatus.failed);
       }
-
-      final latLng = SpLatLng(position.latitude, position.longitude);
 
       PlaceDbModel? place;
 
       if (!skipReverseGeocoding) {
-        // Always prefer DB reverse geocoding first to avoid unnecessary API calls and latency.
-        // User can still use reverseGeocode on map picker.
-        place = await SpGeocodingService.reverseGeocodeViaDb(latLng);
+        // One of the user's own places first (local, instant, the same rule as one-tap), else the geocoder.
+        place = await PlaceDetailsService.savedPlaceAtCurrentLocation(latLng);
         // Bound the network geocode: on timeout/failure we save coordinates
-        // only, and the label can be filled later from the map editor.
+        // only, and the label can be filled later from the Map tab.
         if (place == null) {
           try {
             place = await SpGeocodingService.systemInstance.reverseGeocode(latLng).timeout(geocodeTimeout);
@@ -119,7 +92,7 @@ class SpLocationService {
         }
       }
 
-      place ??= PlaceDbModel(latitude: position.latitude, longitude: position.longitude);
+      place ??= PlaceDbModel(latitude: latLng.latitude, longitude: latLng.longitude);
 
       return SpLocationFetchResult(
         status: SpLocationFetchStatus.success,
@@ -130,10 +103,51 @@ class SpLocationService {
     }
   }
 
-  /// Reads only last-known coordinates without reverse geocoding.
+  /// Whether location can be read: [SpLocationFetchStatus.success], or why not. With [requestPermission],
+  /// asks for access when it hasn't been decided yet (the system prompt).
+  static Future<SpLocationFetchStatus> checkAccess({bool requestPermission = true}) async {
+    try {
+      if (!await Geolocator.isLocationServiceEnabled()) return SpLocationFetchStatus.serviceDisabled;
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied && requestPermission) {
+        permission = await Geolocator.requestPermission();
+      }
+
+      return switch (permission) {
+        LocationPermission.deniedForever => SpLocationFetchStatus.deniedForever,
+        LocationPermission.denied => SpLocationFetchStatus.denied,
+        _ => SpLocationFetchStatus.success,
+      };
+    } catch (_) {
+      return SpLocationFetchStatus.failed;
+    }
+  }
+
+  /// A fresh GPS fix, but never longer than [gpsTimeout]: on low signal, the last known position instead
+  /// (so coordinates can still be saved quickly). Null when there's neither. Expects access (see [checkAccess]).
+  static Future<SpLatLng?> fetchFreshLatLng() async {
+    try {
+      Position? position;
+      try {
+        position = await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+        ).timeout(gpsTimeout);
+      } on TimeoutException {
+        position = await Geolocator.getLastKnownPosition();
+      }
+
+      return position == null ? null : SpLatLng(position.latitude, position.longitude);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Reads only last-known coordinates without reverse geocoding — instant, no GPS. Null without access,
+  /// or when the position is older than [maxAge] (an old one may be in another city).
   ///
   /// Use this for fast, initial camera positioning where coordinates are enough.
-  static Future<SpLatLng?> fetchLastKnownLocation() async {
+  static Future<SpLatLng?> fetchLastKnownLocation({Duration? maxAge}) async {
     try {
       final LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
@@ -142,11 +156,17 @@ class SpLocationService {
 
       final Position? position = await Geolocator.getLastKnownPosition();
       if (position == null) return null;
+      if (maxAge != null && DateTime.now().difference(position.timestamp) > maxAge) return null;
 
       return SpLatLng(position.latitude, position.longitude);
     } catch (_) {
       return null;
     }
+  }
+
+  /// The distance between [a] and [b], in meters.
+  static double distanceBetween(SpLatLng a, SpLatLng b) {
+    return Geolocator.distanceBetween(a.latitude, a.longitude, b.latitude, b.longitude);
   }
 
   static Future<bool> openAppSettings() {

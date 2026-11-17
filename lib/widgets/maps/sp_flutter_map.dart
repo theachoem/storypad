@@ -39,7 +39,7 @@ class SpFlutterMap<T> extends StatefulWidget {
   final List<SpMapMarker<T>> markers;
   final ValueChanged<SpLatLng>? onMapTap;
   final ValueChanged<SpMapMarker<T>>? onMarkerTap;
-  final ValueChanged<List<SpMapMarker<T>>>? onClusterTap;
+  final SpMapClusterTap<T>? onClusterTap;
   final SpFlutterMapMarkerBuilder<T>? markerBuilder;
   final SpFlutterMapClusterMarkerBuilder<T>? clusterMarkerBuilder;
   final SpMapViewportChanged? onViewportChanged;
@@ -257,16 +257,8 @@ class _SpFlutterMapState<T> extends State<SpFlutterMap<T>> with DebounchedCallba
         rotate: true,
         child: GestureDetector(
           onTap: () {
-            final ValueChanged<List<SpMapMarker<T>>>? onClusterTap = widget.onClusterTap;
-            if (onClusterTap != null) {
-              onClusterTap(cluster.markers);
-              return;
-            }
-
-            if (!_isFiniteLatLng(cluster.position)) return;
-
-            final double nextZoom = (_safeZoom(_currentZoom) + 2.0).clamp(_minZoom, _maxZoom).toDouble();
-            _flutterMapController.moveAndRotate(cluster.position, nextZoom, _safeRotation(_currentRotation));
+            if (widget.onClusterTap?.call(cluster.markers) == true) return;
+            _zoomToCluster(cluster);
           },
           child:
               widget.clusterMarkerBuilder?.call(context, cluster.markers) ??
@@ -402,6 +394,24 @@ class _SpFlutterMapState<T> extends State<SpFlutterMap<T>> with DebounchedCallba
       position,
       _safeZoom(zoom ?? _currentZoom),
       _safeRotation(bearing ?? _currentRotation),
+    );
+  }
+
+  /// Fits every pin in [cluster] on screen, same as Google Maps' cluster tap.
+  void _zoomToCluster(_MapCluster<T> cluster) {
+    final List<latlong.LatLng> coordinates = cluster.markers
+        .map((marker) => _toLatLng(marker.point))
+        .where(_isFiniteLatLng)
+        .toList();
+    if (coordinates.isEmpty) return;
+
+    _flutterMapController.fitCamera(
+      CameraFit.coordinates(
+        coordinates: coordinates,
+        padding: const EdgeInsets.all(84.0),
+        minZoom: _minZoom,
+        maxZoom: _maxZoom,
+      ),
     );
   }
 
