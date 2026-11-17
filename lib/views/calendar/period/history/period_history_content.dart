@@ -185,7 +185,9 @@ class _PeriodHistoryContent extends StatelessWidget {
                 borderRadius: BorderRadius.circular(4.0),
                 child: SizedBox(
                   height: 8.0,
+                  // Stretch: childless ColoredBoxes would otherwise collapse to 0px tall.
                   child: Row(
+                    crossAxisAlignment: .stretch,
                     children: [
                       Expanded(
                         flex: cycle.periodLength,

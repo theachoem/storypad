@@ -21,10 +21,20 @@ class PeriodHistoryViewModel extends ChangeNotifier with DisposeAwareMixin {
   /// Fallback "usual" cycle before there are two logged starts to average.
   static const int _defaultCycleLength = 28;
 
+  /// Bounds on the usual cycle used for display. Sparse logging can push the
+  /// raw average way out (two starts a year apart average 365 days), which
+  /// would disable the gap guard below; clamping to a realistic range keeps
+  /// it working. Display-only — the prediction keeps the raw average.
+  static const int _minUsualCycleLength = 21;
+  static const int _maxUsualCycleLength = 45;
+
+  int get _usualCycleLength =>
+      (averageCycleLength?.round() ?? _defaultCycleLength).clamp(_minUsualCycleLength, _maxUsualCycleLength);
+
   /// Anything longer than twice the usual cycle is a logging gap (or tracking
   /// stopped), not a real cycle: the latest cycle stops counting days, and
   /// long gaps fill the bar instead of shrinking every other bar to a sliver.
-  int get _longCycleDays => 2 * (averageCycleLength?.round() ?? _defaultCycleLength);
+  int get _longCycleDays => 2 * _usualCycleLength;
 
   /// Days a full-width bar stands for, shared by every row.
   int _barScaleDays = 1;
