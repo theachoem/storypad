@@ -14,7 +14,8 @@ import 'markdown_link_destination.dart';
 ///
 /// - Every block is **one line** (a hard line break inside text is an inline `<br>`), except a fenced code block and
 ///   an alignment/indent `<div>` wrapper.
-/// - Blocks are separated by a blank line; consecutive list items and tasks by a single newline.
+/// - Blocks are separated by a blank line; consecutive list items and tasks by a single newline
+///   ([MarkdownFormat.blockSeparator]).
 /// - An empty paragraph is a `&nbsp;` line -- wherever it is, first and last included: blank lines are the writer's
 ///   own. Only a document that is nothing but one empty paragraph (a blank page) is written as nothing.
 /// - Nested list items and tasks are indented 4 spaces per level (correct nesting under both `-` and `1.` markers).
@@ -31,15 +32,24 @@ class MarkdownWriter {
 
   static const _inline = InlineMarkdownWriter();
 
-  String write(Iterable<DocumentNode> nodes) {
+  /// Writes [nodes]. [dropEmptyParagraphs] leaves empty paragraphs out instead of writing `&nbsp;` -- for Markdown
+  /// read by other apps, which show `&nbsp;` as text. Blocks an empty paragraph stood between still stay apart (see
+  /// [MarkdownFormat.blockSeparator]); that output doesn't read back exactly.
+  String write(Iterable<DocumentNode> nodes, {bool dropEmptyParagraphs = false}) {
     final blocks = nodes.toList();
     if (blocks.length == 1 && MarkdownFormat.isEmptyParagraph(blocks.single)) return '';
 
     final buffer = StringBuffer();
     DocumentNode? previous;
     var previousWrapped = false;
+    var gap = false;
     for (var i = 0; i < blocks.length; i++) {
       final node = blocks[i];
+
+      if (dropEmptyParagraphs && MarkdownFormat.isEmptyParagraph(node)) {
+        gap = true;
+        continue;
+      }
 
       // A run of list items/tasks sharing a (non-left) alignment is one wrapper.
       final align = MarkdownFormat.isListLike(node) ? _alignment(node) : null;
@@ -53,6 +63,7 @@ class MarkdownWriter {
         buffer.write('<div style="text-align:$align">\n\n${items.join('\n')}\n\n</div>');
         previous = blocks[i];
         previousWrapped = true;
+        gap = false;
         continue;
       }
 
@@ -61,12 +72,17 @@ class MarkdownWriter {
 
       if (previous != null) {
         buffer.write(
-          !previousWrapped && MarkdownFormat.isListLike(previous) && MarkdownFormat.isListLike(node) ? '\n' : '\n\n',
+          MarkdownFormat.blockSeparator(
+            previousIsListItem: !previousWrapped && MarkdownFormat.isListLike(previous),
+            nextIsListItem: MarkdownFormat.isListLike(node),
+            gap: gap,
+          ),
         );
       }
       buffer.write(markdown);
       previous = node;
       previousWrapped = false;
+      gap = false;
     }
     return buffer.toString();
   }

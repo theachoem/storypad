@@ -9,7 +9,7 @@ import 'package:storypad/core/constants/app_constants.dart';
 import 'package:storypad/core/databases/models/asset_db_model.dart';
 import 'package:storypad/core/databases/models/story_content_db_model.dart';
 import 'package:storypad/core/databases/models/story_db_model.dart';
-import 'package:storypad/core/objects/story_page_object.dart';
+import 'package:storypad/core/databases/models/story_page_db_model.dart';
 import 'package:storypad/core/services/analytics/analytics_service.dart';
 import 'package:storypad/core/services/stories/story_extract_assets_from_pages_service.dart';
 import 'package:storypad/core/services/story_plain_text_exporter.dart';
@@ -109,31 +109,27 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
   }
 
   String getShareText(BuildContext context) {
-    final tags = context
-        .read<TagsProvider>()
-        .tags
-        ?.items
-        .where((e) => widget.story.validTags?.contains(e.id) == true)
-        .toList();
-
-    final emojis = widget.story.validTags?.map((tagId) {
-      return context.read<TagsProvider>().emojiById[tagId];
-    }).whereType<String>();
-
-    List<StoryPageObject> pages = List.generate(widget.draftContent.richPages?.length ?? 0, (index) {
-      final page = widget.draftContent.richPages![index];
-      return widget.pagesManager.pagesMap[page.id];
-    }).toList().whereType<StoryPageObject>().toList();
+    final tagsProvider = context.read<TagsProvider>();
+    final tagIds = widget.story.validTags ?? const <int>[];
 
     return StoryPlainTextExporter(
-      pages: pages,
+      pages: [
+        for (final page in widget.draftContent.richPages ?? const <StoryPageDbModel>[])
+          if (widget.pagesManager.pagesMap[page.id] case final pageObject?) pageObject.bodyController.editor.document,
+      ],
       displayPathDate: widget.story.displayPathDate,
-      tags: tags ?? [],
+      tags: tagsProvider.tags?.items.where((tag) => tagIds.contains(tag.id)).toList() ?? [],
       timeFormat: context.read<DevicePreferencesProvider>().timeFormatOf(context),
       locale: context.locale,
-      emojis: emojis?.isNotEmpty == true ? emojis!.toList() : [],
+      emojis: tagIds.map((tagId) => tagsProvider.emojiById[tagId]).whereType<String>().toList(),
       markdown: option == _ShareOption.markdown,
     ).export();
+  }
+
+  void selectOption(BuildContext context, _ShareOption value) {
+    option = value;
+    controller.text = getShareText(context);
+    setState(() {});
   }
 
   @override
@@ -269,22 +265,14 @@ class _ShareStoryBottomSheetState extends State<_ShareStoryBottomSheet> {
           avatar: const Icon(SpIcons.text),
           label: const Text("Text"),
           selected: option == _ShareOption.txt,
-          onSelected: (value) {
-            option = _ShareOption.txt;
-            controller.text = getShareText(context);
-            setState(() {});
-          },
+          onSelected: (_) => selectOption(context, _ShareOption.txt),
         ),
         ChoiceChip(
           showCheckmark: false,
           avatar: const Icon(SpIcons.markdown),
           label: const Text("Markdown"),
           selected: option == _ShareOption.markdown,
-          onSelected: (value) {
-            option = _ShareOption.markdown;
-            controller.text = getShareText(context);
-            setState(() {});
-          },
+          onSelected: (_) => selectOption(context, _ShareOption.markdown),
         ),
       ],
     );
