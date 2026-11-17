@@ -270,7 +270,7 @@ class _StatsContent extends StatelessWidget {
             for (final metric in metrics)
               SizedBox(
                 width: cardWidth,
-                child: _StatsMetricChip(
+                child: SpMetricChip(
                   icon: metric.icon,
                   value: metric.value,
                   label: metric.label,

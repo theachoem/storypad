@@ -122,4 +122,82 @@ void main() {
       expect(next, equals(DateTime(2026, 2, 26)));
     });
   });
+
+  group('PeriodPredictionService.groupCycles', () {
+    test('returns empty for no dates', () {
+      expect(PeriodPredictionService.groupCycles([]), isEmpty);
+    });
+
+    test('groups consecutive days, across month boundaries, oldest first', () {
+      final cycles = PeriodPredictionService.groupCycles([
+        DateTime(2026, 2, 26),
+        DateTime(2026, 1, 30),
+        DateTime(2026, 1, 31),
+        DateTime(2026, 2, 1),
+        DateTime(2026, 2, 27),
+        DateTime(2026, 2, 27),
+      ]);
+
+      expect(cycles.length, 2);
+      expect(cycles[0].start, DateTime(2026, 1, 30));
+      expect(cycles[0].end, DateTime(2026, 2, 1));
+      expect(cycles[0].periodLength, 3);
+      expect(cycles[0].cycleLength, 27);
+      expect(cycles[1].start, DateTime(2026, 2, 26));
+      expect(cycles[1].periodLength, 2);
+      expect(cycles[1].cycleLength, isNull);
+    });
+
+    test('counts whole days across a DST shift', () {
+      // Most northern-hemisphere DST changes fall in March.
+      final cycles = PeriodPredictionService.groupCycles([
+        DateTime(2026, 3, 1),
+        DateTime(2026, 3, 29),
+      ]);
+      expect(cycles.first.cycleLength, 28);
+    });
+  });
+
+  group('PeriodPredictionService averages', () {
+    test('average only recent cycles, ignoring the ongoing one for cycle length', () {
+      final cycles = PeriodPredictionService.groupCycles([
+        // Old cycle (> 6 months before the latest start) — excluded.
+        DateTime(2025, 1, 1),
+        DateTime(2025, 1, 2),
+        DateTime(2025, 1, 3),
+        DateTime(2025, 1, 4),
+        DateTime(2025, 1, 5),
+        DateTime(2025, 1, 6),
+        DateTime(2025, 1, 7),
+        // Recent: 4-day, 28 days, 2-day, 30 days, 3-day (ongoing).
+        DateTime(2026, 1, 1),
+        DateTime(2026, 1, 2),
+        DateTime(2026, 1, 3),
+        DateTime(2026, 1, 4),
+        DateTime(2026, 1, 29),
+        DateTime(2026, 1, 30),
+        DateTime(2026, 2, 28),
+        DateTime(2026, 3, 1),
+        DateTime(2026, 3, 2),
+      ]);
+      final recent = PeriodPredictionService.recentCycles(cycles);
+
+      expect(recent.length, 3);
+      expect(PeriodPredictionService.averageCycleLength(recent), 29);
+      expect(PeriodPredictionService.averagePeriodLength(recent), 3);
+    });
+
+    test('falls back to the last two cycles when the window is too sparse', () {
+      final cycles = PeriodPredictionService.groupCycles([DateTime(2025, 1, 1), DateTime(2026, 1, 1)]);
+      final recent = PeriodPredictionService.recentCycles(cycles);
+
+      expect(recent.length, 2);
+      expect(PeriodPredictionService.averageCycleLength(recent), 365);
+    });
+
+    test('returns null averages without data', () {
+      expect(PeriodPredictionService.averageCycleLength([]), isNull);
+      expect(PeriodPredictionService.averagePeriodLength([]), isNull);
+    });
+  });
 }

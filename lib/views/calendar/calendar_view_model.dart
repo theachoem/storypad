@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:storypad/core/mixins/dispose_aware_mixin.dart';
 import 'package:storypad/core/objects/calendar_segment_id.dart';
 import 'package:storypad/providers/device_preferences_provider.dart';
+import 'package:storypad/views/calendar/period/history/period_history_view.dart';
 import 'calendar_view.dart';
 
 class CalendarViewModel extends ChangeNotifier with DisposeAwareMixin {
@@ -53,5 +54,12 @@ class CalendarViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   void onMonthYearChanged(int newYear, int newMonth) {
     monthYearNotifier.value = (year: newYear, month: newMonth);
+  }
+
+  /// Tapping a cycle in the history pops with its start — jump the period
+  /// calendar to that month.
+  Future<void> openPeriodHistory(BuildContext context) async {
+    final start = await const PeriodHistoryRoute().push<DateTime>(context);
+    if (start != null) onMonthYearChanged(start.year, start.month);
   }
 }

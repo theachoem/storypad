@@ -16,6 +16,10 @@ class DateFormatHelper {
     return DateFormat.MMMM(locale.toLanguageTag()).format(date);
   }
 
+  static String MMMd(DateTime date, Locale locale) {
+    return DateFormat.MMMd(locale.toLanguageTag()).format(date);
+  }
+
   static String Md(DateTime date, Locale locale) {
     return DateFormat.Md(locale.toLanguageTag()).format(date);
   }

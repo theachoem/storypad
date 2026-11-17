@@ -1,4 +1,5 @@
 import 'package:storypad/core/databases/models/event_db_model.dart';
+import 'package:storypad/core/objects/period_cycle_object.dart';
 
 /// Predicts the next period start date from logged period days.
 ///
@@ -22,18 +23,8 @@ class PeriodPredictionService {
   /// or when the most recent logged start is older than [maxHistoryMonths]
   /// relative to `now` (nothing recent enough to extrapolate from).
   static DateTime? predictNextPeriodStart(List<DateTime> periodDates, {DateTime? now}) {
-    final days = periodDates.map((d) => DateTime(d.year, d.month, d.day)).toSet().toList()..sort();
-
-    // A day is a cycle start when the previous calendar day isn't also a
-    // period day — this groups consecutive logged days (a single period,
-    // possibly spanning a month boundary) into one cycle start.
-    final daySet = days.toSet();
-    final allStarts = <DateTime>[
-      for (final day in days)
-        if (!daySet.contains(day.subtract(const Duration(days: 1)))) day,
-    ];
-
-    if (allStarts.length < minCycleStarts) return null;
+    final cycles = groupCycles(periodDates);
+    if (cycles.length < minCycleStarts) return null;
 
     final today = now ?? DateTime.now();
     final todayDay = DateTime(today.year, today.month, today.day);
@@ -43,24 +34,12 @@ class PeriodPredictionService {
     // stale to extrapolate from — bail rather than roll a long-dead cycle
     // forward into a misleadingly confident future date.
     final staleCutoff = DateTime(todayDay.year, todayDay.month - maxHistoryMonths, todayDay.day);
-    if (allStarts.last.isBefore(staleCutoff)) return null;
+    if (cycles.last.start.isBefore(staleCutoff)) return null;
 
-    final cutoff = DateTime(allStarts.last.year, allStarts.last.month - maxHistoryMonths, allStarts.last.day);
-    var starts = allStarts.where((d) => !d.isBefore(cutoff)).toList();
-    // The 6-month window can leave too few points (e.g. sparse logging) —
-    // fall back to the most recent [minCycleStarts] starts so we still predict.
-    if (starts.length < minCycleStarts) {
-      starts = allStarts.sublist(allStarts.length - minCycleStarts);
-    }
+    final avgCycle = averageCycleLength(recentCycles(cycles))?.round();
+    if (avgCycle == null || avgCycle <= 0) return null;
 
-    int totalGap = 0;
-    for (int i = 1; i < starts.length; i++) {
-      totalGap += starts[i].difference(starts[i - 1]).inDays;
-    }
-    final avgCycle = (totalGap / (starts.length - 1)).round();
-    if (avgCycle <= 0) return null;
-
-    var next = starts.last.add(Duration(days: avgCycle));
+    var next = cycles.last.start.add(Duration(days: avgCycle));
     // Roll forward whole cycles if the naive prediction is already in the past.
     while (next.isBefore(todayDay)) {
       next = next.add(Duration(days: avgCycle));
@@ -68,10 +47,70 @@ class PeriodPredictionService {
     return next;
   }
 
+  /// Groups flat period day-dates into cycles, oldest first. A day starts a
+  /// new cycle when the previous calendar day isn't also a period day, so a
+  /// single period spanning a month boundary (e.g. Jan 27–Feb 2) stays one
+  /// cycle. Each cycle's length runs to the next cycle's start; the latest
+  /// cycle's is null.
+  static List<PeriodCycleObject> groupCycles(List<DateTime> periodDates) {
+    final days = periodDates.map((d) => DateTime(d.year, d.month, d.day)).toSet().toList()..sort();
+
+    final runs = <({DateTime start, DateTime end})>[];
+    for (final day in days) {
+      if (runs.isNotEmpty && PeriodCycleObject.daysBetween(runs.last.end, day) == 1) {
+        runs.last = (start: runs.last.start, end: day);
+      } else {
+        runs.add((start: day, end: day));
+      }
+    }
+
+    return [
+      for (int i = 0; i < runs.length; i++)
+        PeriodCycleObject(
+          start: runs[i].start,
+          end: runs[i].end,
+          cycleLength: i + 1 < runs.length ? PeriodCycleObject.daysBetween(runs[i].start, runs[i + 1].start) : null,
+        ),
+    ];
+  }
+
+  /// Cycles within [maxHistoryMonths] of the latest start — the same window
+  /// [predictNextPeriodStart] averages over, so stats shown next to the
+  /// prediction agree with it.
+  ///
+  /// The window can leave too few points (e.g. sparse logging) — then it falls
+  /// back to the most recent [minCycleStarts] cycles so there's still a gap to
+  /// average.
+  static List<PeriodCycleObject> recentCycles(List<PeriodCycleObject> cycles) {
+    if (cycles.isEmpty) return cycles;
+    final latest = cycles.last.start;
+    final cutoff = DateTime(latest.year, latest.month - maxHistoryMonths, latest.day);
+    final recent = cycles.where((c) => !c.start.isBefore(cutoff)).toList();
+    if (recent.length >= minCycleStarts || cycles.length < minCycleStarts) return recent;
+    return cycles.sublist(cycles.length - minCycleStarts);
+  }
+
+  /// Mean start-to-start gap over [cycles] that have ended; null when none has.
+  static double? averageCycleLength(List<PeriodCycleObject> cycles) {
+    final lengths = cycles.map((c) => c.cycleLength).whereType<int>().toList();
+    if (lengths.isEmpty) return null;
+    return lengths.reduce((a, b) => a + b) / lengths.length;
+  }
+
+  /// Mean number of period days over [cycles]; null when empty.
+  static double? averagePeriodLength(List<PeriodCycleObject> cycles) {
+    if (cycles.isEmpty) return null;
+    return cycles.map((c) => c.periodLength).reduce((a, b) => a + b) / cycles.length;
+  }
+
+  /// All logged period day-dates from the database.
+  static Future<List<DateTime>> loadPeriodDates() async {
+    final collection = await EventDbModel.db.where(filters: {"event_type": "period"});
+    return collection?.items.map((e) => e.date).whereType<DateTime>().toList() ?? [];
+  }
+
   /// Loads period history from the database and predicts the next start date.
   static Future<DateTime?> loadPredictedNextPeriodStart({DateTime? now}) async {
-    final collection = await EventDbModel.db.where(filters: {"event_type": "period"});
-    final dates = collection?.items.map((e) => e.date).whereType<DateTime>().toList() ?? [];
-    return predictNextPeriodStart(dates, now: now);
+    return predictNextPeriodStart(await loadPeriodDates(), now: now);
   }
 }
