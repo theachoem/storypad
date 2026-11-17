@@ -232,7 +232,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(2, 5548558812249966101),
     name: 'TagObjectBox',
-    lastPropertyId: const obx_int.IdUid(12, 2093176491331659474),
+    lastPropertyId: const obx_int.IdUid(13, 6938926037074304819),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -292,6 +292,12 @@ final _entities = <obx_int.ModelEntity>[
       obx_int.ModelProperty(
         id: const obx_int.IdUid(12, 2093176491331659474),
         name: 'categoryId',
+        type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(13, 6938926037074304819),
+        name: 'colorSeedValue',
         type: 6,
         flags: 0,
       ),
@@ -1092,7 +1098,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final lastSavedDeviceIdOffset = object.lastSavedDeviceId == null
             ? null
             : fbb.writeString(object.lastSavedDeviceId!);
-        fbb.startTable(13);
+        fbb.startTable(14);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, titleOffset);
         fbb.addInt64(2, object.version);
@@ -1103,6 +1109,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addInt64(8, object.permanentlyDeletedAt?.millisecondsSinceEpoch);
         fbb.addOffset(9, lastSavedDeviceIdOffset);
         fbb.addInt64(11, object.categoryId);
+        fbb.addInt64(12, object.colorSeedValue);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1139,6 +1146,11 @@ obx_int.ModelDefinition getObjectBoxModel() {
           rootOffset,
           26,
         );
+        final colorSeedValueParam = const fb.Int64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          28,
+        );
         final createdAtParam = DateTime.fromMillisecondsSinceEpoch(
           const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0),
         );
@@ -1158,6 +1170,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           version: versionParam,
           emoji: emojiParam,
           categoryId: categoryIdParam,
+          colorSeedValue: colorSeedValueParam,
           createdAt: createdAtParam,
           updatedAt: updatedAtParam,
           permanentlyDeletedAt: permanentlyDeletedAtParam,
@@ -1941,6 +1954,11 @@ class TagObjectBox_ {
   /// See [TagObjectBox.categoryId].
   static final categoryId = obx.QueryIntegerProperty<TagObjectBox>(
     _entities[1].properties[9],
+  );
+
+  /// See [TagObjectBox.colorSeedValue].
+  static final colorSeedValue = obx.QueryIntegerProperty<TagObjectBox>(
+    _entities[1].properties[10],
   );
 }
 

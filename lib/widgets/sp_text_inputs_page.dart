@@ -30,16 +30,23 @@ class SpTextInputsPage extends StatefulWidget {
     required this.fields,
     this.contentOnly = false,
     this.header,
+    this.footer,
     this.onSubmitted,
   });
 
   final PreferredSizeWidget? appBar;
   final List<SpTextInputField> fields;
   final String? saveButtonLabel;
+
+  // Just the form, sized to its content and without the bottom inset, for a sheet: the sheet adds
+  // its own bottom padding (safe area + keyboard). Off: a full page with [appBar].
   final bool contentOnly;
 
   // Optional widget rendered above the input fields (e.g. a category chip selector).
   final Widget? header;
+
+  // Optional widget rendered below the input fields, above the save button (e.g. a color row).
+  final Widget? footer;
 
   // When provided, called with the trimmed field values on a valid submit instead of
   // popping the route with the values list. Lets callers return a custom result.
@@ -90,15 +97,24 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
   Widget buildContent(BuildContext context) {
     final screenPadding = MediaQuery.paddingOf(context);
     return ListView(
-      padding: const EdgeInsets.all(
-        16.0,
-      ).add(EdgeInsets.only(left: screenPadding.left, right: screenPadding.right, bottom: screenPadding.bottom)),
+      shrinkWrap: widget.contentOnly,
+      padding: const EdgeInsets.all(16.0).add(
+        EdgeInsets.only(
+          left: screenPadding.left,
+          right: screenPadding.right,
+          bottom: widget.contentOnly ? 0.0 : screenPadding.bottom,
+        ),
+      ),
       children: [
         if (widget.header != null) ...[
           widget.header!,
           const SizedBox(height: 16.0),
         ],
         for (int index = 0; index < controllers.length; index++) buildTextField(index, context),
+        if (widget.footer != null) ...[
+          const SizedBox(height: 16.0),
+          widget.footer!,
+        ],
         const SizedBox(height: 16.0),
         buildSaveButton(context),
       ],
@@ -127,6 +143,8 @@ class _SpTextInputsPageState extends State<SpTextInputsPage> {
 
     if (kIsCupertino) {
       textField = FormField(
+        // Validate the prefilled text too, not only what's typed.
+        initialValue: controllers[index].text,
         validator: widget.fields[index].validator,
         builder: (state) {
           return Column(

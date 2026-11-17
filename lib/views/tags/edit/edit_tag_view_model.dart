@@ -8,10 +8,14 @@ class EditTagViewModel extends ChangeNotifier with DisposeAwareMixin {
 
   EditTagViewModel({
     required this.params,
-  }) : selectedCategoryId = params.tag?.categoryId ?? params.categoryId;
+  }) : selectedCategoryId = params.tag?.categoryId ?? params.categoryId,
+       selectedColorSeedValue = params.tag?.colorSeedValue;
 
   // null = regular topic tag, TagCategoryDbModel.peopleId = a person.
   int? selectedCategoryId;
+
+  // null = no color (the default chip).
+  int? selectedColorSeedValue;
 
   TagDbModel? get tag => params.tag;
   List<String> get tagTitles => params.tags.map((e) => e.title).toList();
@@ -19,6 +23,13 @@ class EditTagViewModel extends ChangeNotifier with DisposeAwareMixin {
   void setCategory(int? categoryId) {
     if (selectedCategoryId == categoryId) return;
     selectedCategoryId = categoryId;
+    notifyListeners();
+  }
+
+  // A toggle: picking the current color again clears it.
+  void setColor(Color color) {
+    final value = color.toARGB32();
+    selectedColorSeedValue = value == selectedColorSeedValue ? null : value;
     notifyListeners();
   }
 }
