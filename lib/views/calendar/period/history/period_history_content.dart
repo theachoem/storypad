@@ -20,24 +20,12 @@ class _PeriodHistoryContent extends StatelessWidget {
     final cycles = viewModel.cycles;
     if (cycles == null) return const Center(child: CircularProgressIndicator.adaptive());
 
-    if (cycles.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Text(
-            tr('page.period_history.empty'),
-            style: TextTheme.of(context).bodyMedium,
-            textAlign: .center,
-          ),
-        ),
-      );
-    }
-
     // Flat and lazy: overview first, then each year's title followed by its
     // cycles. History grows with every logged period (unlike the capped stats
     // lists), so only visible rows get built and painted.
     final List<Object> entries = [
-      _overviewEntry,
+      if (viewModel.isDemo) _HeaderEntry.demoNotice,
+      _HeaderEntry.overview,
       for (final year in cycles.map((c) => c.start.year).toSet()) ...[
         year,
         ...cycles.where((c) => c.start.year == year),
@@ -57,7 +45,10 @@ class _PeriodHistoryContent extends StatelessWidget {
         ),
         itemCount: entries.length,
         itemBuilder: (context, index) {
-          return switch (entries[index]) {
+          final entry = entries[index];
+          if (entry == _HeaderEntry.demoNotice) return _buildDemoNotice(context);
+
+          final Widget child = switch (entry) {
             final PeriodCycleObject cycle => _buildCycleRow(context, cycle),
             // Same 24pt section gap and 8pt title→content gap as stats.
             final int year => Padding(
@@ -71,12 +62,51 @@ class _PeriodHistoryContent extends StatelessWidget {
               child: _buildOverview(context),
             ),
           };
+
+          // Sample data reads as a preview: dimmed and not tappable.
+          if (!viewModel.isDemo) return child;
+          return IgnorePointer(child: Opacity(opacity: 0.4, child: child));
         },
       ),
     );
   }
 
-  static const Object _overviewEntry = Object();
+  /// Shown above the dimmed sample history when nothing is logged yet.
+  Widget _buildDemoNotice(BuildContext context) {
+    final colorScheme = ColorScheme.of(context);
+    final textTheme = TextTheme.of(context);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24.0),
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: colorScheme.readOnly.surface3,
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      child: Column(
+        crossAxisAlignment: .start,
+        spacing: 8.0,
+        children: [
+          Row(
+            spacing: 8.0,
+            children: [
+              Icon(SpIcons.waterDrop, size: 20.0, color: colorScheme.error),
+              Expanded(child: Text(tr('page.period_history.empty'), style: textTheme.titleMedium)),
+            ],
+          ),
+          Text(
+            tr('page.period_history.example_note'),
+            style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface.withValues(alpha: 0.7)),
+          ),
+          const SizedBox(height: 4.0),
+          SpFilledButton(
+            onPressed: () => viewModel.openCalendar(context),
+            child: Text(tr('button.view_calendar')),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildSection(
     BuildContext context, {
@@ -141,14 +171,12 @@ class _PeriodHistoryContent extends StatelessWidget {
     );
   }
 
-  /// Date range, lengths, and a thin bar: period days (drop color) then the
-  /// rest of the cycle, scaled against the usual cycle so irregular cycles
-  /// stand out. No leading icon — it would be the same on every row.
+  /// Date range over its period and cycle lengths. No leading icon or bar —
+  /// the same icon on every row adds nothing, and the lengths say it all.
   Widget _buildCycleRow(BuildContext context, PeriodCycleObject cycle) {
     final colorScheme = ColorScheme.of(context);
     final textTheme = TextTheme.of(context);
 
-    final restDays = viewModel.barRestDays(cycle);
     final currentDay = viewModel.currentCycleDay(cycle);
 
     final details = [
@@ -178,31 +206,6 @@ class _PeriodHistoryContent extends StatelessWidget {
               overflow: .ellipsis,
               style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurface.withValues(alpha: 0.6)),
             ),
-            FractionallySizedBox(
-              alignment: .centerLeft,
-              widthFactor: viewModel.barFraction(cycle),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(4.0),
-                child: SizedBox(
-                  height: 8.0,
-                  // Stretch: childless ColoredBoxes would otherwise collapse to 0px tall.
-                  child: Row(
-                    crossAxisAlignment: .stretch,
-                    children: [
-                      Expanded(
-                        flex: cycle.periodLength,
-                        child: ColoredBox(color: colorScheme.error),
-                      ),
-                      if (restDays > 0)
-                        Expanded(
-                          flex: restDays,
-                          child: ColoredBox(color: colorScheme.readOnly.surface3!),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
       ),
@@ -223,3 +226,6 @@ class _PeriodHistoryContent extends StatelessWidget {
 
   String _formatDays(double? days) => days != null ? plural('plural.day', days.round()) : '-';
 }
+
+/// Non-cycle rows in the lazy history list.
+enum _HeaderEntry { demoNotice, overview }

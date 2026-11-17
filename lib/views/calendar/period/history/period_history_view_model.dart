@@ -11,8 +11,12 @@ class PeriodHistoryViewModel extends ChangeNotifier with DisposeAwareMixin {
     load();
   }
 
-  /// Newest first; null while loading.
+  /// Newest first; null while loading. Sample cycles while [isDemo].
   List<PeriodCycleObject>? cycles;
+
+  /// Nothing logged yet: the page previews itself with sample data instead of
+  /// an empty message, so users see what logging gets them.
+  bool isDemo = false;
 
   double? averageCycleLength;
   double? averagePeriodLength;
@@ -32,15 +36,14 @@ class PeriodHistoryViewModel extends ChangeNotifier with DisposeAwareMixin {
       (averageCycleLength?.round() ?? _defaultCycleLength).clamp(_minUsualCycleLength, _maxUsualCycleLength);
 
   /// Anything longer than twice the usual cycle is a logging gap (or tracking
-  /// stopped), not a real cycle: the latest cycle stops counting days, and
-  /// long gaps fill the bar instead of shrinking every other bar to a sliver.
+  /// stopped), not a real cycle, so the latest cycle stops counting days.
   int get _longCycleDays => 2 * _usualCycleLength;
 
-  /// Days a full-width bar stands for, shared by every row.
-  int _barScaleDays = 1;
-
   Future<void> load() async {
-    final dates = await PeriodPredictionService.loadPeriodDates();
+    final loggedDates = await PeriodPredictionService.loadPeriodDates();
+    isDemo = loggedDates.isEmpty;
+
+    final dates = isDemo ? _demoPeriodDates(DateTime.now()) : loggedDates;
     final all = PeriodPredictionService.groupCycles(dates);
     final recent = PeriodPredictionService.recentCycles(all);
 
@@ -48,8 +51,6 @@ class PeriodHistoryViewModel extends ChangeNotifier with DisposeAwareMixin {
     averagePeriodLength = PeriodPredictionService.averagePeriodLength(recent);
     predictedNextStart = PeriodPredictionService.predictNextPeriodStart(dates);
     cycles = all.reversed.toList();
-    final longestBar = cycles!.fold(1, (max, c) => _barDays(c) > max ? _barDays(c) : max);
-    _barScaleDays = longestBar < _longCycleDays ? longestBar : _longCycleDays;
 
     notifyListeners();
   }
@@ -63,20 +64,29 @@ class PeriodHistoryViewModel extends ChangeNotifier with DisposeAwareMixin {
     return day >= 1 && day <= _longCycleDays ? day : null;
   }
 
-  /// Days the cycle's bar represents: the full cycle once it ended, else the
-  /// days elapsed so far (never shorter than the period itself).
-  int _barDays(PeriodCycleObject cycle) {
-    final days = cycle.cycleLength ?? currentCycleDay(cycle) ?? 0;
-    return days > cycle.periodLength ? days : cycle.periodLength;
-  }
-
-  /// Bar width as a fraction of the row; gaps past the scale fill it.
-  double barFraction(PeriodCycleObject cycle) => (_barDays(cycle) / _barScaleDays).clamp(0.04, 1.0);
-
-  /// Bar days after the period itself (drawn as the rest of the cycle).
-  int barRestDays(PeriodCycleObject cycle) => _barDays(cycle) - cycle.periodLength;
-
   void openCycle(BuildContext context, PeriodCycleObject cycle) {
     Navigator.of(context).pop(cycle.start);
+  }
+
+  /// Back to the calendar, on the current month, to log a first period.
+  void openCalendar(BuildContext context) {
+    Navigator.of(context).pop(DateTime.now());
+  }
+
+  /// A plausible recent history relative to [now]: three ended 28-30 day
+  /// cycles and an ongoing one, 5-6 period days each. Run through the same
+  /// grouping/averaging/prediction as real data, so the preview is honest.
+  static List<DateTime> _demoPeriodDates(DateTime now) {
+    final today = DateTime(now.year, now.month, now.day);
+    const periods = [
+      (daysAgo: 96, length: 5),
+      (daysAgo: 66, length: 6),
+      (daysAgo: 38, length: 5),
+      (daysAgo: 9, length: 5),
+    ];
+    return [
+      for (final period in periods)
+        for (int i = 0; i < period.length; i++) DateTime(today.year, today.month, today.day - period.daysAgo + i),
+    ];
   }
 }
