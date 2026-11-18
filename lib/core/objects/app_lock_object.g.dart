@@ -46,7 +46,6 @@ class _$AppLockObjectCWProxyImpl implements _$AppLockObjectCWProxy {
     Map<AppLockQuestion, String>? securityAnswers,
   ) => call(securityAnswers: securityAnswers);
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `AppLockObject(...).copyWith.fieldName(value)`.
   ///
@@ -54,6 +53,7 @@ class _$AppLockObjectCWProxyImpl implements _$AppLockObjectCWProxy {
   /// ```dart
   /// AppLockObject(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   AppLockObject call({
     Object? pin = const $CopyWithPlaceholder(),
     Object? enabledBiometric = const $CopyWithPlaceholder(),

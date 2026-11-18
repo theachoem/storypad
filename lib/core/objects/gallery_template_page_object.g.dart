@@ -35,7 +35,6 @@ class _$GalleryTemplatePageObjectCWProxyImpl
   @override
   GalleryTemplatePageObject content(String content) => call(content: content);
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `GalleryTemplatePageObject(...).copyWith.fieldName(value)`.
   ///
@@ -43,6 +42,7 @@ class _$GalleryTemplatePageObjectCWProxyImpl
   /// ```dart
   /// GalleryTemplatePageObject(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   GalleryTemplatePageObject call({
     Object? title = const $CopyWithPlaceholder(),
     Object? content = const $CopyWithPlaceholder(),

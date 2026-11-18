@@ -111,7 +111,6 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
   @override
   AssetDbModel height(double? height) => call(height: height);
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `AssetDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -119,6 +118,7 @@ class _$AssetDbModelCWProxyImpl implements _$AssetDbModelCWProxy {
   /// ```dart
   /// AssetDbModel(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   AssetDbModel call({
     Object? id = const $CopyWithPlaceholder(),
     Object? originalSource = const $CopyWithPlaceholder(),

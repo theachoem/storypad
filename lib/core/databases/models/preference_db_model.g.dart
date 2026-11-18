@@ -69,7 +69,6 @@ class _$PreferenceDbModelCWProxyImpl implements _$PreferenceDbModelCWProxy {
   PreferenceDbModel permanentlyDeletedAt(DateTime? permanentlyDeletedAt) =>
       call(permanentlyDeletedAt: permanentlyDeletedAt);
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `PreferenceDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -77,6 +76,7 @@ class _$PreferenceDbModelCWProxyImpl implements _$PreferenceDbModelCWProxy {
   /// ```dart
   /// PreferenceDbModel(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   PreferenceDbModel call({
     Object? id = const $CopyWithPlaceholder(),
     Object? key = const $CopyWithPlaceholder(),

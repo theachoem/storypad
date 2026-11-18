@@ -78,7 +78,6 @@ class _$RelaxSoundMixModelCWProxyImpl implements _$RelaxSoundMixModelCWProxy {
   @override
   RelaxSoundMixModel index(int? index) => call(index: index);
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `RelaxSoundMixModel(...).copyWith.fieldName(value)`.
   ///
@@ -86,6 +85,7 @@ class _$RelaxSoundMixModelCWProxyImpl implements _$RelaxSoundMixModelCWProxy {
   /// ```dart
   /// RelaxSoundMixModel(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   RelaxSoundMixModel call({
     Object? id = const $CopyWithPlaceholder(),
     Object? name = const $CopyWithPlaceholder(),

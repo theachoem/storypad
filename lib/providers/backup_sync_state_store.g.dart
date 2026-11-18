@@ -59,7 +59,6 @@ class _$ServiceSyncStatusCWProxyImpl implements _$ServiceSyncStatusCWProxy {
   ServiceSyncStatus lastSyncedAt(DateTime? lastSyncedAt) =>
       call(lastSyncedAt: lastSyncedAt);
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `ServiceSyncStatus(...).copyWith.fieldName(value)`.
   ///
@@ -67,6 +66,7 @@ class _$ServiceSyncStatusCWProxyImpl implements _$ServiceSyncStatusCWProxy {
   /// ```dart
   /// ServiceSyncStatus(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   ServiceSyncStatus call({
     Object? activity = const $CopyWithPlaceholder(),
     Object? currentStep = const $CopyWithPlaceholder(),

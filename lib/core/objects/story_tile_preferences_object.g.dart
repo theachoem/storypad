@@ -83,7 +83,6 @@ class _$StoryTilePreferencesObjectCWProxyImpl
     int? displayCharacterCount,
   ) => call(displayCharacterCount: displayCharacterCount);
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryTilePreferencesObject(...).copyWith.fieldName(value)`.
   ///
@@ -91,6 +90,7 @@ class _$StoryTilePreferencesObjectCWProxyImpl
   /// ```dart
   /// StoryTilePreferencesObject(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   StoryTilePreferencesObject call({
     Object? showTime = const $CopyWithPlaceholder(),
     Object? showPageCount = const $CopyWithPlaceholder(),

@@ -35,7 +35,6 @@ class _$RelaxSoundModelCWProxyImpl implements _$RelaxSoundModelCWProxy {
   @override
   RelaxSoundModel volume(double volume) => call(volume: volume);
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `RelaxSoundModel(...).copyWith.fieldName(value)`.
   ///
@@ -43,6 +42,7 @@ class _$RelaxSoundModelCWProxyImpl implements _$RelaxSoundModelCWProxy {
   /// ```dart
   /// RelaxSoundModel(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   RelaxSoundModel call({
     Object? soundUrlPath = const $CopyWithPlaceholder(),
     Object? volume = const $CopyWithPlaceholder(),

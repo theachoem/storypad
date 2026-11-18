@@ -35,6 +35,8 @@ abstract class _$SearchFilterObjectCWProxy {
 
   SearchFilterObject limit(int? limit);
 
+  SearchFilterObject offset(int? offset);
+
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `SearchFilterObject(...).copyWith.fieldName(value)`.
   ///
@@ -57,6 +59,7 @@ abstract class _$SearchFilterObjectCWProxy {
     bool? starred,
     bool? pinned,
     int? limit,
+    int? offset,
   });
 }
 
@@ -113,6 +116,8 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
   SearchFilterObject limit(int? limit) => call(limit: limit);
 
   @override
+  SearchFilterObject offset(int? offset) => call(offset: offset);
+
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `SearchFilterObject(...).copyWith.fieldName(value)`.
   ///
@@ -120,6 +125,7 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
   /// ```dart
   /// SearchFilterObject(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   SearchFilterObject call({
     Object? years = const $CopyWithPlaceholder(),
     Object? types = const $CopyWithPlaceholder(),
@@ -135,6 +141,7 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
     Object? starred = const $CopyWithPlaceholder(),
     Object? pinned = const $CopyWithPlaceholder(),
     Object? limit = const $CopyWithPlaceholder(),
+    Object? offset = const $CopyWithPlaceholder(),
   }) {
     return SearchFilterObject(
       years: years == const $CopyWithPlaceholder() || years == null
@@ -193,6 +200,10 @@ class _$SearchFilterObjectCWProxyImpl implements _$SearchFilterObjectCWProxy {
           ? _value.limit
           // ignore: cast_nullable_to_non_nullable
           : limit as int?,
+      offset: offset == const $CopyWithPlaceholder()
+          ? _value.offset
+          // ignore: cast_nullable_to_non_nullable
+          : offset as int?,
     );
   }
 }
@@ -235,6 +246,7 @@ SearchFilterObject _$SearchFilterObjectFromJson(Map<String, dynamic> json) =>
       starred: json['starred'] as bool?,
       pinned: json['pinned'] as bool?,
       limit: (json['limit'] as num?)?.toInt(),
+      offset: (json['offset'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$SearchFilterObjectToJson(SearchFilterObject instance) =>
@@ -253,6 +265,7 @@ Map<String, dynamic> _$SearchFilterObjectToJson(SearchFilterObject instance) =>
       'starred': instance.starred,
       'pinned': instance.pinned,
       'limit': instance.limit,
+      'offset': instance.offset,
     };
 
 const _$PathTypeEnumMap = {

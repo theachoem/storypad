@@ -64,7 +64,6 @@ class _$StoryContentDbModelCWProxyImpl implements _$StoryContentDbModelCWProxy {
   @override
   StoryContentDbModel pages(List<List<dynamic>>? pages) => call(pages: pages);
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryContentDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -72,6 +71,7 @@ class _$StoryContentDbModelCWProxyImpl implements _$StoryContentDbModelCWProxy {
   /// ```dart
   /// StoryContentDbModel(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   StoryContentDbModel call({
     Object? id = const $CopyWithPlaceholder(),
     Object? title = const $CopyWithPlaceholder(),

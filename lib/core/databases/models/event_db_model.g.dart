@@ -81,7 +81,6 @@ class _$EventDbModelCWProxyImpl implements _$EventDbModelCWProxy {
   EventDbModel lastSavedDeviceId(String? lastSavedDeviceId) =>
       call(lastSavedDeviceId: lastSavedDeviceId);
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `EventDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -89,6 +88,7 @@ class _$EventDbModelCWProxyImpl implements _$EventDbModelCWProxy {
   /// ```dart
   /// EventDbModel(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   EventDbModel call({
     Object? id = const $CopyWithPlaceholder(),
     Object? year = const $CopyWithPlaceholder(),

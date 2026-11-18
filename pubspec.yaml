@@ -64,8 +64,8 @@ dependencies:
   latlong2: 0.9.1
   local_auth: 3.0.2
   flutter_material_design_icons: 3.1.0+7447
-  objectbox: 5.3.2
-  objectbox_flutter_libs: any
+  objectbox: 6.0.0-preview.6
+  objectbox_flutter_libs: 6.0.0-preview.6
   open_location_code: 1.0.1
   package_info_plus: 10.2.1
   photo_view: 0.15.0
@@ -96,7 +96,7 @@ dev_dependencies:
   flutter_lints: 6.0.0
   flutter_test:
     sdk: flutter
-  objectbox_generator: any
+  objectbox_generator: 6.0.0-preview.6
 
 flutter:
   uses-material-design: true
