@@ -154,6 +154,15 @@
       }
     },
     {
+      "identity" : "objectbox-swift-spm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/objectbox/objectbox-swift-spm.git",
+      "state" : {
+        "revision" : "eb4238dad6e07ca4f7d99e47ff2936fb837c0c39",
+        "version" : "5.3.0"
+      }
+    },
+    {
       "identity" : "promises",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/promises.git",

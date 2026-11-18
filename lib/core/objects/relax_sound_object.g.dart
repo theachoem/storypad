@@ -65,7 +65,6 @@ class _$RelaxSoundObjectCWProxyImpl implements _$RelaxSoundObjectCWProxy {
   @override
   RelaxSoundObject dayColor(int dayColor) => call(dayColor: dayColor);
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `RelaxSoundObject(...).copyWith.fieldName(value)`.
   ///
@@ -73,6 +72,7 @@ class _$RelaxSoundObjectCWProxyImpl implements _$RelaxSoundObjectCWProxy {
   /// ```dart
   /// RelaxSoundObject(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   RelaxSoundObject call({
     Object? artist = const $CopyWithPlaceholder(),
     Object? translationKey = const $CopyWithPlaceholder(),

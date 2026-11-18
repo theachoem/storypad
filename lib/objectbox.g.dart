@@ -740,11 +740,8 @@ final _entities = <obx_int.ModelEntity>[
 ///
 /// Note: for desktop apps it is recommended to specify a unique [directory].
 ///
-/// See [obx.Store.new] for an explanation of all parameters.
-///
-/// For Flutter apps, also calls `loadObjectBoxLibraryAndroidCompat()` from
-/// the ObjectBox Flutter library to fix loading the native ObjectBox library
-/// on Android 6 and older.
+/// Use [obx.Store.new] directly to use all its options. See its
+/// documentation for an explanation of all parameters.
 Future<obx.Store> openStore({
   String? directory,
   int? maxDBSizeInKB,
@@ -754,7 +751,6 @@ Future<obx.Store> openStore({
   bool queriesCaseSensitiveDefault = true,
   String? macosApplicationGroup,
 }) async {
-  await loadObjectBoxLibraryAndroidCompat();
   return obx.Store(
     getObjectBoxModel(),
     directory: directory ?? (await defaultStoreDirectory()).path,

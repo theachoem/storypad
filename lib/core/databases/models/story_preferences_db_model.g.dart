@@ -103,7 +103,6 @@ class _$StoryPreferencesDbModelCWProxyImpl
   StoryPreferencesDbModel layoutType(PageLayoutType layoutType) =>
       call(layoutType: layoutType);
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `StoryPreferencesDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -111,6 +110,7 @@ class _$StoryPreferencesDbModelCWProxyImpl
   /// ```dart
   /// StoryPreferencesDbModel(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   StoryPreferencesDbModel call({
     Object? showDayCount = const $CopyWithPlaceholder(),
     Object? colorSeedValue = const $CopyWithPlaceholder(),

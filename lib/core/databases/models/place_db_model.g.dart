@@ -68,7 +68,6 @@ class _$PlaceDbModelCWProxyImpl implements _$PlaceDbModelCWProxy {
   @override
   PlaceDbModel address(String? address) => call(address: address);
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `PlaceDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -76,6 +75,7 @@ class _$PlaceDbModelCWProxyImpl implements _$PlaceDbModelCWProxy {
   /// ```dart
   /// PlaceDbModel(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   PlaceDbModel call({
     Object? latitude = const $CopyWithPlaceholder(),
     Object? longitude = const $CopyWithPlaceholder(),

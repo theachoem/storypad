@@ -110,7 +110,6 @@ class _$TemplateDbModelCWProxyImpl implements _$TemplateDbModelCWProxy {
   @override
   TemplateDbModel index(int? index) => call(index: index);
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `TemplateDbModel(...).copyWith.fieldName(value)`.
   ///
@@ -118,6 +117,7 @@ class _$TemplateDbModelCWProxyImpl implements _$TemplateDbModelCWProxy {
   /// ```dart
   /// TemplateDbModel(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   TemplateDbModel call({
     Object? id = const $CopyWithPlaceholder(),
     Object? tags = const $CopyWithPlaceholder(),

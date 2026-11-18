@@ -695,9 +695,7 @@ class $AssetsLogosStorypadLogo61IconAssetsGen {
   List<AssetGenImage> get values => [storypadLogo61];
 }
 
-class Assets {
-  const Assets._();
-
+abstract final class Assets {
   static const $AssetsEmoji64Gen emoji64 = $AssetsEmoji64Gen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsLogosGen logos = $AssetsLogosGen();

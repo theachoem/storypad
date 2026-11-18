@@ -58,7 +58,6 @@ class _$NextcloudUserObjectCWProxyImpl implements _$NextcloudUserObjectCWProxy {
   NextcloudUserObject folderName(String? folderName) =>
       call(folderName: folderName);
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `NextcloudUserObject(...).copyWith.fieldName(value)`.
   ///
@@ -66,6 +65,7 @@ class _$NextcloudUserObjectCWProxyImpl implements _$NextcloudUserObjectCWProxy {
   /// ```dart
   /// NextcloudUserObject(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   NextcloudUserObject call({
     Object? serverUrl = const $CopyWithPlaceholder(),
     Object? username = const $CopyWithPlaceholder(),

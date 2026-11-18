@@ -49,7 +49,6 @@ class _$GalleryTemplateCategoryObjectCWProxyImpl
     List<GalleryTemplateObject> templates,
   ) => call(templates: templates);
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `GalleryTemplateCategoryObject(...).copyWith.fieldName(value)`.
   ///
@@ -57,6 +56,7 @@ class _$GalleryTemplateCategoryObjectCWProxyImpl
   /// ```dart
   /// GalleryTemplateCategoryObject(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   GalleryTemplateCategoryObject call({
     Object? name = const $CopyWithPlaceholder(),
     Object? description = const $CopyWithPlaceholder(),

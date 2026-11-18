@@ -196,7 +196,6 @@ class _$DevicePreferencesObjectCWProxyImpl
   DevicePreferencesObject mapStyle(SpMapStyle? mapStyle) =>
       call(mapStyle: mapStyle);
 
-  @override
   /// Creates a new instance with the provided field values.
   /// Passing `null` to a nullable field nullifies it, while `null` for a non-nullable field is ignored. To update a single field use `DevicePreferencesObject(...).copyWith.fieldName(value)`.
   ///
@@ -204,6 +203,7 @@ class _$DevicePreferencesObjectCWProxyImpl
   /// ```dart
   /// DevicePreferencesObject(...).copyWith(id: 12, name: "My name")
   /// ```
+  @override
   DevicePreferencesObject call({
     Object? fontFamily = const $CopyWithPlaceholder(),
     Object? fontSize = const $CopyWithPlaceholder(),
