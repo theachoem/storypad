@@ -182,7 +182,7 @@ The mirror of the importer, in the shapes StoryPad's Quill editor wrote: for rea
   in Quill.
 - **Desktop context menu** (`RawEditor.desktopContextMenu`, default `DesktopContextMenu.showDefault`): native is the
   goal everywhere. On macOS it's a real `NSMenu` with the Services submenu, from the plugin's `macos/` side
-  (CocoaPods podspec and Swift package, channel `storypad_editor/context_menu`). Flutter
+  (Swift package, channel `storypad_editor/context_menu`). Flutter
   has no native context-menu API there (`SystemContextMenu` is iOS-only). Windows/Linux, or a host without the plugin
   (`MissingPluginException`), get the Flutter-painted `DesktopContextMenu.showMaterial`.
 

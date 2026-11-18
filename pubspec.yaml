@@ -98,6 +98,15 @@ dev_dependencies:
     sdk: flutter
   objectbox_generator: 6.0.0-preview.6
 
+# super_keyboard from our fork for its Swift Package Manager support (upstream is CocoaPods-only), so iOS needs
+# no CocoaPods. Drop this once upstream ships it. Same override in storypad_editor_example/pubspec.yaml.
+dependency_overrides:
+  super_keyboard:
+    git:
+      url: https://github.com/theachoem/super_editor.git
+      ref: 3bf3e739838fcffaa91dd19250d0c0885bf0b44c
+      path: super_keyboard
+
 flutter:
   uses-material-design: true
   assets:

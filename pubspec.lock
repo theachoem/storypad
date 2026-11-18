@@ -1656,10 +1656,10 @@ packages:
     dependency: transitive
     description:
       name: material_ui
-      sha256: "6d056d60ce745335fcf1c726a4fc46a481a62229f202b65dbc2db5edbbabc7e2"
+      sha256: a6b19012df437a356cbc01f8ea22a105e07194c47c9a6009da0032a0ce35c4ab
       url: "https://pub.dev"
     source: hosted
-    version: "1.3.0"
+    version: "1.11.1"
   meta:
     dependency: transitive
     description:
@@ -2338,13 +2338,14 @@ packages:
     source: git
     version: "0.3.0-dev.52"
   super_keyboard:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
-      name: super_keyboard
-      sha256: fa52cc14354226aef3af2fa9adcd1d1db4dcd8e9c8c0263a1c4fb0a6b3a7bba0
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.4.1"
+      path: super_keyboard
+      ref: "3bf3e739838fcffaa91dd19250d0c0885bf0b44c"
+      resolved-ref: "3bf3e739838fcffaa91dd19250d0c0885bf0b44c"
+      url: "https://github.com/theachoem/super_editor.git"
+    source: git
+    version: "0.4.2"
   super_text_layout:
     dependency: transitive
     description:
@@ -2730,5 +2731,5 @@ packages:
     source: hosted
     version: "3.1.4"
 sdks:
-  dart: ">=3.12.0 <4.0.0"
-  flutter: ">=3.44.0"
+  dart: ">=3.13.0 <4.0.0"
+  flutter: ">=3.47.0"

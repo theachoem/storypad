@@ -24,7 +24,7 @@ function build_ipa() {
   run_command "rm -rf build/ios/ipa" # clean previous builds
   run_command "rm -rf ios/Flutter/Generated.xcconfig" # remove existing generated xcconfig
   run_command "rm -rf ios/Flutter/GeneratedDartDefines.xcconfig" # remove existing generated dart-defines
-  run_command "flutter pub get" # pod install required pub get first.
+  run_command "flutter pub get"
 
   # no actual build, it only generates Generated.xcconfig, Flutter/flutter_export_environment.sh etc.
   run_command "flutter build ios --release

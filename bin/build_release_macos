@@ -31,7 +31,7 @@ function build_pkg() {
   run_command "rm -rf $EXPORT_PATH" # clean previous export
   run_command "rm -rf macos/Flutter/ephemeral/Flutter-Generated.xcconfig" # remove existing generated xcconfig
   run_command "rm -rf macos/Flutter/ephemeral/GeneratedDartDefines.xcconfig" # remove existing generated dart-defines
-  run_command "flutter pub get" # pod install required pub get first.
+  run_command "flutter pub get"
 
   # no actual build, it only generates Flutter-Generated.xcconfig, Flutter/ephemeral/flutter_export_environment.sh etc.
   run_command "flutter build macos --release

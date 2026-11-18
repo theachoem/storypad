@@ -137,7 +137,6 @@
 				33CEB47122A05771004F2AC0 /* Flutter */,
 				331C80D6294CF71000263BE5 /* RunnerTests */,
 				33CC10EE2044A3C60003C045 /* Products */,
-				B25753D53A6FABA0E1A4031F /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -207,13 +206,6 @@
 				5E7A1C2B9D3F4A6B8C0D1E2F /* WindowAppearanceService.swift */,
 			);
 			path = services;
-			sourceTree = "<group>";
-		};
-		B25753D53A6FABA0E1A4031F /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

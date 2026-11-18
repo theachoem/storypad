@@ -39,7 +39,6 @@
 Before getting started, ensure you have the following tools:
 
 - Java: 21 [(LTS)](https://www.oracle.com/java/technologies/java-se-support-roadmap.html) (for Android)
-- Ruby: 3.3.5 (for IOS)
 - Flutter: 3.29.0
 
 For easy setup and running, the GoogleService-Info.plist and google-services.json are provided directly in this repo, and `bin/dev` generates an empty Dart-defines fallback automatically (RevenueCat, Maps, Google Sign-In, etc. just no-op). Simply run the project with any of the following commands:
