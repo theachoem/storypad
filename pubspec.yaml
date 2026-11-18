@@ -104,7 +104,7 @@ dependency_overrides:
   super_keyboard:
     git:
       url: https://github.com/theachoem/super_editor.git
-      ref: 3bf3e739838fcffaa91dd19250d0c0885bf0b44c
+      ref: 1.0.0
       path: super_keyboard
 
 flutter:

@@ -2341,8 +2341,8 @@ packages:
     dependency: "direct overridden"
     description:
       path: super_keyboard
-      ref: "3bf3e739838fcffaa91dd19250d0c0885bf0b44c"
-      resolved-ref: "3bf3e739838fcffaa91dd19250d0c0885bf0b44c"
+      ref: "1.0.0"
+      resolved-ref: "0c5e17ff169620f713c3de110f55706c2f99fb6c"
       url: "https://github.com/theachoem/super_editor.git"
     source: git
     version: "0.4.2"
